@@ -23,7 +23,8 @@
 # TODO
 # -----------------------------------------------------------------------------------------------
 # - global hotkey
-# - remember last window position                       https://wiki.tcl-lang.org/14452
+# - remember last window position           https://wiki.tcl-lang.org/14452
+# - image on button                         https://www.daniweb.com/programming/software-development/code/216852/an-image-button-python-and-tk
 
 
 # -----------------------------------------------------------------------------------------------
@@ -40,6 +41,7 @@ import os, fnmatch                  # for searching applications
 from subprocess import call         # for calling external commands
 import subprocess                   # for checking if cmd_exists
 
+import webbrowser                   # for opening urls (github project page)
 
 # dropdown
 #from Tkinter import *
@@ -51,7 +53,7 @@ import subprocess                   # for checking if cmd_exists
 # CONFIG
 # -----------------------------------------------------------------------------------------------
 appName = "pylad"
-appVersion = "20161022.01"
+appVersion = "20161022.02"
 appURL = "https://github.com/yafp/pylad"
 
 debug = True                    # True or False
@@ -90,52 +92,79 @@ class simpleapp_tk(tk.Tk):
         #
         self.entryVariable = tk.StringVar()
         self.entry = tk.Entry(self,textvariable=self.entryVariable)
-        self.entry.grid(row=0, column=0, padx=5, pady=0,sticky='EW')            # set padding
-        self.entry.config(background="white")                       # set background color
-        self.entry.config(foreground="gray")                       # set font color
-        self.entry.config(highlightbackground="gray")               # set border color
-        #
-        self.entry.bind("<Return>", self.OnPressEnter)
+        self.entry.config(background='white')                       # set background color
+        self.entry.config(foreground='gray')                       # set font color
+        self.entry.config(highlightbackground='gray')               # set border color
+        self.entry.bind('<Return>', self.OnPressEnter)
         #self.entry.bind("<Return>", self.launchExternalApp)
         self.entry.bind('<Down>', self.OnArrowDown)                 # on Arrow Down
         #self.entry.bind('<Key>', self.OnPressKey)                   # on keypress
         self.entry.bind('<KeyRelease>', self.getSearchString)       # on keypress release
         self.entry.bind('<Escape>', self.OnPressESC)                # on ESC
-
-        #
+        self.entry.grid(row=0, column=0, columnspan=2, padx=5, pady=0, sticky='EW')  # set padding
         self.entryVariable.set(u"")                                 # set content on start = empty
 
         # Launch button
         self.button = tk.Button(self,text=u"Launch", command=self.OnButtonClick)
-        self.button.grid(row=0, column=0, padx=5, pady=0)
-        self.button.configure(foreground="black")
-        self.button.bind("<Return>", self.OnButtonClick)
+        self.button.configure(foreground='black')
+        self.button.bind('<Return>', self.OnButtonClick)
         self.button['state'] = 'disabled'
-        self.button.grid(column=1,row=0)
+        self.button.grid(row=0, column=2, padx=5, pady=0)
 
         # Dropdown (featuring results from search)
         #
         #optionList = ('Result', 'Option 2', 'Option 3')
         optionList = (' ')
         self.v = tk.StringVar()
-        #self.v.set(optionList[0]) # select 1 item of list
+        #self.v.set(optionList[0])                              # select 1 item of list
         self.om = tk.OptionMenu(self, self.v, *optionList)
-        self.om.grid(row=1, column=0, padx=5, pady=0,sticky='EW')
+        self.om.grid(row=1, column=0, columnspan=2, padx=5, pady=0, sticky='EW')
         self.om.bind('<Escape>', self.OnPressESC)                # on ESC
+        self.om.bind("<Return>", self.OnPressEnter)
+        self.om['state'] = 'disabled'
 
         # Status label
         self.labelVariable = tk.StringVar()
         self.label = tk.Label(self,textvariable=self.labelVariable, anchor="center",fg="gray")
-        self.label.grid(row=1, column=1, sticky='EW', padx=5, pady=0)
+        self.label.grid(row=1, column=2, padx=5, pady=0)
         self.labelVariable.set(u"") # set empty text
+
+
+        # Github button
+        #
+        # pick a (small) image file you have in the working directory ...
+        photo2 = tk.PhotoImage(file="g.png")
+        #
+        self.githubButton = tk.Button(self,text=u"Prefs", image=photo2, highlightthickness=0,bd=0, command=self.OnGithubButtonClick)
+        #self.githubButton = tk.Button(self,text=u"Prefs", command=self.OnPrefButtonClick)
+        self.githubButton.configure(foreground='black')
+        self.githubButton.bind('<Return>', self.OnPrefButtonClick)
+        self.githubButton['state'] = 'normal'
+        self.githubButton.grid(row=3, column=2, padx=5, pady=0)
+        #
+        # save the button's image from garbage collection (needed?)
+        self.githubButton.image = photo2
 
         # Version label
         self.labelVersionVariable = tk.StringVar()
         self.labelVersion = tk.Label(self,textvariable=self.labelVersionVariable, anchor="center",fg="gray")
-        self.labelVersion.grid(column=0,row=2,columnspan=2,sticky='EW')
-        self.labelVersionVariable.set("r"+appVersion)
-        self.labelVersionVariable.set(appURL +" - r"+appVersion)
+        self.labelVersion.grid(row=3, column=0, columnspan=1, sticky='EW')
+        self.labelVersionVariable.set("Version "+appVersion)
 
+        # Preference button
+        #
+        # pick a (small) image file you have in the working directory ...
+        photo1 = tk.PhotoImage(file="f.png")
+        #
+        self.prefButton = tk.Button(self,text=u"Prefs", image=photo1, highlightthickness=0,bd=0, command=self.OnPrefButtonClick)
+        #self.prefButton = tk.Button(self,text=u"Prefs", command=self.OnPrefButtonClick)
+        self.prefButton.configure(foreground='black')
+        self.prefButton.bind('<Return>', self.OnPrefButtonClick)
+        self.prefButton['state'] = 'normal'
+        self.prefButton.grid(row=2, column=2, padx=5, pady=0)
+        #
+        # save the button's image from garbage collection (needed?)
+        self.prefButton.image = photo1
 
         # misc
         self.grid_columnconfigure(0,weight=1)
@@ -167,12 +196,29 @@ class simpleapp_tk(tk.Tk):
 
 
             self.labelVariable.set(len(searchResults)) # show number of search results in status label
-            if(len(searchResults) == 1):     # if we got 1 search-results
+
+            if(len(searchResults) == 0):
+                # search field
+                self.entry.config(background="white")           # set background color
+                self.entry.config(foreground="gray")            # set font color
+                self.entry.config(highlightbackground="red")    # set border color
+
+                # launch button
+                self.button['state'] = 'disabled'               # disabling Launch Button
+
+                # dropdown
+                optionList = (' ')
+                self.om = tk.OptionMenu(self, self.v, *optionList)
+                self.om.grid(row=1, column=0, padx=5, pady=0, sticky='EW')
+                self.v.set(optionList[0])                                   # select 1 menu-item
+                self.om['state'] = 'disabled'
+
+                # label
+                self.label.config(fg='red',bg="lightgray")
+
+            elif(len(searchResults) == 1):     # if we got 1 search-results
                 printDebugToTerminal(searchResults[0])
                 printDebugToTerminal('Autocompleting search field')
-
-                self.label.config(fg='green',bg="lightgray")    # Change color of status label
-                self.button['state'] = 'normal'                 # enabling Launch Button
 
                 # search field
                 self.entry.config(background="white")           # set background color
@@ -183,12 +229,28 @@ class simpleapp_tk(tk.Tk):
                 #self.entry.selection_range(0, tk.END)      # select entire field content
                 self.entry.icursor(tk.END)                      # set cursor to end
 
+                # launch button
+                self.button['state'] = 'normal'                 # enabling Launch Button
+
+                # dropdown
+                self.om['state'] = 'disabled'
+
+                #status label
+                self.label.config(fg='green',bg="lightgray")    # Change color of status label
+
             else:           # got several hits
                 printDebugToTerminal('Results:')
+
                 self.entry.config(background="white")           # set background color
                 self.entry.config(foreground="gray")            # set font color
                 self.entry.config(highlightbackground="red")    # set border color
+                # launch button
                 self.button['state'] = 'disabled'               # disabling Launch Button
+
+                # drpdowm
+                self.om['state'] = 'normal'
+
+                #status label
                 self.label.config(fg='red',bg="lightgray")
 
             # Update Dropdown
@@ -209,6 +271,14 @@ class simpleapp_tk(tk.Tk):
         printDebugToTerminal('----------- Clicked the button ------------')
         self.launchExternalApp()                                          # reset the UI
 
+    # On Pressing button
+    def OnPrefButtonClick(self):
+        printDebugToTerminal('----------- Clicked the preference button ------------')
+
+    # On Pressing button
+    def OnGithubButtonClick(self):
+        printDebugToTerminal('----------- Clicked the github button ------------')
+        webbrowser.open('https://github.com/yafp/pylad')  # Go to github
 
     # launching external application
     def launchExternalApp(self):
@@ -256,7 +326,7 @@ class simpleapp_tk(tk.Tk):
 
     # Arrow Down in Search field should list
     def OnArrowDown(self, event):
-        print ("Arrow down pressed - should option Option list and set focus to it")
+        #printDebugToTerminal("Arrow down pressed - should option Option list and set focus to it")
         self.om.focus_set()
         self.event_generate('<space>') # - Open the OptionMenu by simulating a keypress
         return;
@@ -265,7 +335,8 @@ class simpleapp_tk(tk.Tk):
     # reset the UI back to default
     def resetUI(self):
         print ("\n")
-        printDebugToTerminal('Resetting UI')
+        #printDebugToTerminal('Resetting UI')
+
         # search field
         self.entry.config(background="white")                       # set background color
         self.entry.config(foreground="gray")                        # set foreground color
@@ -273,13 +344,17 @@ class simpleapp_tk(tk.Tk):
         self.entryVariable.set(u"")                                 # Empty search
         self.entry.focus_set()                                      # set focus to search field
         self.entry.selection_range(0, tk.END)
+
         # dropdown
         optionList = (' ')
         self.om = tk.OptionMenu(self, self.v, *optionList)
         self.om.grid(row=1, column=0, padx=5, pady=0, sticky='EW')
         self.v.set(optionList[0])                                   # select 1 menu-item
+        self.om['state'] = 'disabled'
+
         # button
         self.button['state'] = 'disabled'                           # disable launch-button
+
         # status label
         self.labelVariable.set("")                                  # empty status label
         self.label.config(fg='gray',bg="lightgray")                 # reset status label colors
