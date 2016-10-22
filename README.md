@@ -3,3 +3,8 @@
 
 ## About
 pylad is a python based application launcher
+
+
+## Requirements
+- Python
+- Tkinter
