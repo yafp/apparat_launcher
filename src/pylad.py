@@ -15,7 +15,7 @@
 # Dropdown:                                 https://www.reddit.com/r/learnpython/comments/2wn1w6/how_to_create_a_drop_down_list_using_tkinter/
 # Search icon:                              http://fontawesome.io/icon/search/
 # dropdown for results                      https://www.tutorialspoint.com/python/tk_menubutton.htm
-
+# image on button                         https://www.daniweb.com/programming/software-development/code/216852/an-image-button-python-and-tk
 
 
 
@@ -24,7 +24,7 @@
 # -----------------------------------------------------------------------------------------------
 # - global hotkey
 # - remember last window position           https://wiki.tcl-lang.org/14452
-# - image on button                         https://www.daniweb.com/programming/software-development/code/216852/an-image-button-python-and-tk
+# - no window decoration -> keyword: overrideredirect
 
 
 # -----------------------------------------------------------------------------------------------
@@ -43,17 +43,13 @@ import subprocess                   # for checking if cmd_exists
 
 import webbrowser                   # for opening urls (github project page)
 
-# dropdown
-#from Tkinter import *
-#import Tkinter as ttk
-#from ttk import *
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG
 # -----------------------------------------------------------------------------------------------
 appName = "pylad"
-appVersion = "20161022.02"
+appVersion = "20161023.01"
 appURL = "https://github.com/yafp/pylad"
 
 debug = True                    # True or False
@@ -66,7 +62,6 @@ debug = True                    # True or False
 # -----------------------------------------------------------------------------------------------
 
 # Check if command exists
-#
 # via: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python/377028
 def cmd_exists(cmd):
     printDebugToTerminal('Executing method cmd_exists')
@@ -85,6 +80,7 @@ class simpleapp_tk(tk.Tk):
         self.parent = parent
         self.initialize()
 
+
     def initialize(self):
         self.grid()
 
@@ -92,24 +88,24 @@ class simpleapp_tk(tk.Tk):
         #
         self.entryVariable = tk.StringVar()
         self.entry = tk.Entry(self,textvariable=self.entryVariable)
-        self.entry.config(background='white')                       # set background color
-        self.entry.config(foreground='gray')                       # set font color
+        #self.entry.config(background='white')                       # set background color
+        #self.entry.config(foreground='gray')                       # set font color
         self.entry.config(highlightbackground='gray')               # set border color
         self.entry.bind('<Return>', self.OnPressEnter)
-        #self.entry.bind("<Return>", self.launchExternalApp)
         self.entry.bind('<Down>', self.OnArrowDown)                 # on Arrow Down
         #self.entry.bind('<Key>', self.OnPressKey)                   # on keypress
         self.entry.bind('<KeyRelease>', self.getSearchString)       # on keypress release
         self.entry.bind('<Escape>', self.OnPressESC)                # on ESC
-        self.entry.grid(row=0, column=0, columnspan=2, padx=5, pady=0, sticky='EW')  # set padding
+        self.entry.grid(row=0, column=0, columnspan=2, padx=10, pady=(10,0), ipady=0, ipadx=0, sticky='EW')  # set padding
         self.entryVariable.set(u"")                                 # set content on start = empty
 
         # Launch button
+        #
         self.button = tk.Button(self,text=u"Launch", command=self.OnButtonClick)
         self.button.configure(foreground='black')
         self.button.bind('<Return>', self.OnButtonClick)
         self.button['state'] = 'disabled'
-        self.button.grid(row=0, column=2, padx=5, pady=0)
+        self.button.grid(row=0, column=2, padx=(0,10), pady=(10,0))
 
         # Dropdown (featuring results from search)
         #
@@ -117,54 +113,51 @@ class simpleapp_tk(tk.Tk):
         optionList = (' ')
         self.v = tk.StringVar()
         #self.v.set(optionList[0])                              # select 1 item of list
-        self.om = tk.OptionMenu(self, self.v, *optionList)
-        self.om.grid(row=1, column=0, columnspan=2, padx=5, pady=0, sticky='EW')
-        self.om.bind('<Escape>', self.OnPressESC)                # on ESC
+        #self.om = tk.OptionMenu(self, self.v, *optionList)
+        self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
+        self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
+        self.om.bind('<Escape>', self.OnMenuPressESC)                # on ESC
         self.om.bind("<Return>", self.OnPressEnter)
         self.om['state'] = 'disabled'
 
         # Status label
-        self.labelVariable = tk.StringVar()
-        self.label = tk.Label(self,textvariable=self.labelVariable, anchor="center",fg="gray")
-        self.label.grid(row=1, column=2, padx=5, pady=0)
-        self.labelVariable.set(u"") # set empty text
-
-
-        # Github button
         #
-        # pick a (small) image file you have in the working directory ...
-        photo2 = tk.PhotoImage(file="g.png")
-        #
-        self.githubButton = tk.Button(self,text=u"Prefs", image=photo2, highlightthickness=0,bd=0, command=self.OnGithubButtonClick)
-        #self.githubButton = tk.Button(self,text=u"Prefs", command=self.OnPrefButtonClick)
-        self.githubButton.configure(foreground='black')
-        self.githubButton.bind('<Return>', self.OnPrefButtonClick)
-        self.githubButton['state'] = 'normal'
-        self.githubButton.grid(row=3, column=2, padx=5, pady=0)
-        #
-        # save the button's image from garbage collection (needed?)
-        self.githubButton.image = photo2
-
-        # Version label
-        self.labelVersionVariable = tk.StringVar()
-        self.labelVersion = tk.Label(self,textvariable=self.labelVersionVariable, anchor="center",fg="gray")
-        self.labelVersion.grid(row=3, column=0, columnspan=1, sticky='EW')
-        self.labelVersionVariable.set("Version "+appVersion)
+        self.statusLabelVariable = tk.StringVar()
+        self.statusLabel = tk.Label(self,textvariable=self.statusLabelVariable, anchor="center",fg="gray")
+        self.statusLabel.grid(row=1, column=2, padx=5, pady=0)
+        self.statusLabelVariable.set(u"") # set empty text
 
         # Preference button
         #
         # pick a (small) image file you have in the working directory ...
-        photo1 = tk.PhotoImage(file="f.png")
+        bt_IconPreferences = tk.PhotoImage(file="f.png")
         #
-        self.prefButton = tk.Button(self,text=u"Prefs", image=photo1, highlightthickness=0,bd=0, command=self.OnPrefButtonClick)
+        self.prefButton = tk.Button(self,text=u"Prefs", image=bt_IconPreferences, highlightthickness=0, bd=0, command=self.OnPrefButtonClick)
         #self.prefButton = tk.Button(self,text=u"Prefs", command=self.OnPrefButtonClick)
         self.prefButton.configure(foreground='black')
         self.prefButton.bind('<Return>', self.OnPrefButtonClick)
         self.prefButton['state'] = 'normal'
         self.prefButton.grid(row=2, column=2, padx=5, pady=0)
+        self.prefButton.image = bt_IconPreferences # save the button's image from garbage collection
+
+        # Version label
+        self.versionLabelVariable = tk.StringVar()
+        self.versionLabel = tk.Label(self,textvariable=self.versionLabelVariable, anchor="center",fg="gray")
+        self.versionLabel.grid(row=3, column=0, columnspan=1, padx=5, pady=(0,5), sticky='EW')
+        self.versionLabelVariable.set("Version "+appVersion)
+
+        # Github button
         #
-        # save the button's image from garbage collection (needed?)
-        self.prefButton.image = photo1
+        # pick a (small) image file you have in the working directory ...
+        bt_IconGithub = tk.PhotoImage(file="g.png")
+        #
+        self.githubButton = tk.Button(self,text=u"Prefs", image=bt_IconGithub, highlightthickness=0, bd=0, command=self.OnGithubButtonClick)
+        self.githubButton.configure(foreground='black')
+        self.githubButton.bind('<Return>', self.OnPrefButtonClick)
+        self.githubButton['state'] = 'normal'
+        self.githubButton.grid(row=3, column=2, padx=5, pady=(5,5))
+        self.githubButton.image = bt_IconGithub     # save the button's image from garbage collection
+
 
         # misc
         self.grid_columnconfigure(0,weight=1)
@@ -181,6 +174,11 @@ class simpleapp_tk(tk.Tk):
 
 
 
+    def OptionMenu_SelectionEvent(self, event): # I'm not sure on the arguments here, it works though
+        ## do something
+        print ("Dropdown menu - selection change event")
+        self.entry.focus_set() # set focus to search field
+
     # search matching application for the current searchstring
     def searchingApplication(self, str):
         lengthOfSearchString =  len(str)
@@ -194,8 +192,7 @@ class simpleapp_tk(tk.Tk):
             printDebugToTerminal('Searching matching application for: '+str)
             searchResults = fnmatch.filter(os.listdir('/usr/bin'), '*'+str+'*')     # search for executables featuring *str*
 
-
-            self.labelVariable.set(len(searchResults)) # show number of search results in status label
+            self.statusLabelVariable.set(len(searchResults)) # show number of search results in status label
 
             if(len(searchResults) == 0):
                 # search field
@@ -208,23 +205,23 @@ class simpleapp_tk(tk.Tk):
 
                 # dropdown
                 optionList = (' ')
-                self.om = tk.OptionMenu(self, self.v, *optionList)
-                self.om.grid(row=1, column=0, padx=5, pady=0, sticky='EW')
+                #self.om = tk.OptionMenu(self, self.v, *optionList)
+                self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
+                self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
                 self.v.set(optionList[0])                                   # select 1 menu-item
                 self.om['state'] = 'disabled'
 
                 # label
-                self.label.config(fg='red',bg="lightgray")
+                self.statusLabel.config(fg='red',bg="lightgray")
 
             elif(len(searchResults) == 1):     # if we got 1 search-results
-                printDebugToTerminal(searchResults[0])
                 printDebugToTerminal('Autocompleting search field')
+                printDebugToTerminal(searchResults[0])
 
                 # search field
                 self.entry.config(background="white")           # set background color
                 self.entry.config(foreground="green")           # set font color
                 self.entry.config(highlightbackground="green")  # set border color
-                #self.entryVariable.set(searchResults[0])        # Display name of executable in search field
                 self.entry.focus_set()
                 #self.entry.selection_range(0, tk.END)      # select entire field content
                 self.entry.icursor(tk.END)                      # set cursor to end
@@ -234,40 +231,50 @@ class simpleapp_tk(tk.Tk):
 
                 # dropdown
                 self.om['state'] = 'disabled'
+                # Update Dropdown
+                optionList = searchResults
+                self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
+                self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
+                self.v.set(optionList[0]) # select first search-result
 
                 #status label
-                self.label.config(fg='green',bg="lightgray")    # Change color of status label
+                self.statusLabel.config(fg='green',bg="lightgray")    # Change color of status label
 
             else:           # got several hits
-                printDebugToTerminal('Results:')
-
+                # search field
                 self.entry.config(background="white")           # set background color
                 self.entry.config(foreground="gray")            # set font color
                 self.entry.config(highlightbackground="red")    # set border color
+
                 # launch button
                 self.button['state'] = 'disabled'               # disabling Launch Button
 
-                # drpdowm
+                # dropdown
                 self.om['state'] = 'normal'
+                # Update Dropdown
+                optionList = searchResults
+                self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
+                self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
+                #self.v.set(optionList[0]) # select first search-result
 
                 #status label
-                self.label.config(fg='red',bg="lightgray")
+                self.statusLabel.config(fg='red',bg="lightgray")
 
             # Update Dropdown
-            #optionList = ('one', 'two', 'three')
-            optionList = searchResults
-            self.om = tk.OptionMenu(self, self.v, *optionList)
-            self.om.grid(row=1, column=0, padx=5, pady=0, sticky='EW')
-            self.v.set(optionList[0])
+            #optionList = searchResults
+            #self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
+            #self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
+            #self.v.set(optionList[0]) # select first search-result
 
-            print(len(searchResults))
-            print(searchResults)
+            printDebugToTerminal('Results:')
+            print(len(searchResults)) # show amount of search matches
+            #print(searchResults) # show search results
             return;
 
 
     # On Pressing button
     def OnButtonClick(self):
-        #self.labelVariable.set( self.entryVariable.get()+" (Clicked the button)" )
+        #self.statusLabelVariable.set( self.entryVariable.get()+" (Clicked the button)" )
         printDebugToTerminal('----------- Clicked the button ------------')
         self.launchExternalApp()                                          # reset the UI
 
@@ -283,7 +290,7 @@ class simpleapp_tk(tk.Tk):
     # launching external application
     def launchExternalApp(self):
         printDebugToTerminal('launching external application')
-        #self.labelVariable.set( self.entryVariable.get()+" (Clicked the button)" )
+        #self.statusLabelVariable.set( self.entryVariable.get()+" (Clicked the button)" )
         selectedApplicationName = self.v.get()          # get value of OptionMenu
         if selectedApplicationName != "":
             checkExecutable = cmd_exists(selectedApplicationName)                  # check if name exists and is executable
@@ -298,7 +305,7 @@ class simpleapp_tk(tk.Tk):
 
     # On Pressing ENTER
     def OnPressEnter(self,event):
-        #self.labelVariable.set( self.entryVariable.get()+" (Pressed ENTER)" )
+        #self.statusLabelVariable.set( self.entryVariable.get()+" (Pressed ENTER)" )
         printDebugToTerminal('----------- Pressed Enter ------------')
         self.launchExternalApp()
 
@@ -315,9 +322,15 @@ class simpleapp_tk(tk.Tk):
         self.resetUI()
         return;
 
+    # On ESC
+    def OnMenuPressESC(self, event):
+        printDebugToTerminal('Pressed ESC on Menu')
+        return;
+
 
     # update current search string and trigger app search
     def getSearchString(self, event):
+        print("Method: getSearchString")
         if event.char != '': # if not ARRAY DOWN then
             curString = self.entryVariable.get()                        # get current search string
             #printDebugToTerminal('Search-String:\t '+curString)         # output current content of search field
@@ -347,8 +360,9 @@ class simpleapp_tk(tk.Tk):
 
         # dropdown
         optionList = (' ')
-        self.om = tk.OptionMenu(self, self.v, *optionList)
-        self.om.grid(row=1, column=0, padx=5, pady=0, sticky='EW')
+        #self.om = tk.OptionMenu(self, self.v, *optionList)
+        self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
+        self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
         self.v.set(optionList[0])                                   # select 1 menu-item
         self.om['state'] = 'disabled'
 
@@ -356,8 +370,8 @@ class simpleapp_tk(tk.Tk):
         self.button['state'] = 'disabled'                           # disable launch-button
 
         # status label
-        self.labelVariable.set("")                                  # empty status label
-        self.label.config(fg='gray',bg="lightgray")                 # reset status label colors
+        self.statusLabelVariable.set("")                                  # empty status label
+        self.statusLabel.config(fg='gray',bg="lightgray")                 # reset status label colors
 
 
 if __name__ == "__main__":
