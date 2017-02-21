@@ -24,6 +24,21 @@ def handler(reply):
             # BUTTON RELEASED
             print "released"
 
+
+
+
+        if(event.detail == 65):
+            print "SPACE"
+            
+        if(event.detail == 52):
+            print "Y"
+            
+        if(event.detail == 49):
+            print "Y.,-,"
+            
+        if(event.detail == '<Control-Shift-KeyPress-H>'):
+            print "ole"
+
 # get current display
 disp = Display()
 root = disp.screen().root
@@ -34,7 +49,7 @@ ctx = disp.record_create_context(
             [record.AllClients],
             [{
                     'core_requests': (0, 0),
-                    'core_replies': (0, 0),
+                    'core_replies': (0, 0),#
                     'ext_requests': (0, 0, 0, 0),
                     'ext_replies': (0, 0, 0, 0),
                     'delivered_events': (0, 0),
