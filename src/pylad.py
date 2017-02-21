@@ -16,7 +16,8 @@
 # Search icon:                              http://fontawesome.io/icon/search/
 # dropdown for results                      https://www.tutorialspoint.com/python/tk_menubutton.htm
 # image on button                           https://www.daniweb.com/programming/software-development/code/216852/an-image-button-python-and-tk
-
+# colors:                                   "white", "black", "red", "green", "blue", "cyan", "yellow", and "magenta" are default
+# Event types:                              http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/event-types.html
 
 
 # -----------------------------------------------------------------------------------------------
@@ -24,8 +25,18 @@
 # -----------------------------------------------------------------------------------------------
 # - global hotkey to bring running app in foreground
 # - remember last window position           https://wiki.tcl-lang.org/14452
-# - no window decoration -> keyword: overrideredirect
-# - show related icon of selected application if possible (in dropdown / optionmenu)
+# - no window decoration -> keyword: overrideredirect -> broken
+# - ui fade in on launch
+
+
+# -----------------------------------------------------------------------------------------------
+# CHANGES
+# -----------------------------------------------------------------------------------------------
+# - display application icon on linux
+# - optimized icon search and display process (scale & subsample)
+# - optimize tab-ability of UI
+# - added error dialogs to platform detection
+# - removed un-needed import of Gio
 
 
 # -----------------------------------------------------------------------------------------------
@@ -40,34 +51,36 @@ except ImportError:
     import tkinter as tk            # for the UI
     import tkMessageBox             # for the pref dummy dialog
 
+# not yet documented
 import os, fnmatch                  # for searching applications
 from subprocess import call         # for calling external commands
 import subprocess                   # for checking if cmd_exists
+
 from sys import platform            # for checking platform
-
 import webbrowser                   # for opening urls (example: github project page)
-
-
-
-import gtk
-import gio # finding app icons
-
-
-
-
-
+import gtk                          # for app-icon handling
 
 
 # -----------------------------------------------------------------------------------------------
-# CONFIG
+# CONSTANTS (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
 appName = "pylad"
-appVersion = "20170220.01"
 appURL = "https://github.com/yafp/pylad"
 
+
+# -----------------------------------------------------------------------------------------------
+# CONFIG (DEVELOPER)
+# -----------------------------------------------------------------------------------------------
+appVersion = "20170221.01"
 debug = True                    # True or False
 #debug = False                    # True or False
+targetIconSize = 32
 
+
+# -----------------------------------------------------------------------------------------------
+# CONFIG (USER)
+# -----------------------------------------------------------------------------------------------
+appTransparency = 0.95           # 1.0 = not tranparet / 0.9 slighty
 
 
 # -----------------------------------------------------------------------------------------------
@@ -97,20 +110,22 @@ class simpleapp_tk(tk.Tk):
 
 
     def checkPlatform(self):
-        printDebugToTerminal('Method: checkPlatform')
+        printDebugToTerminal('Method: checkPlatform - start')
         if platform == "linux" or platform == "linux2":             # linux
             printDebugToTerminal("\tDetected linux")
         elif platform == "darwin":                                  # OS X
             printDebugToTerminal("Unsupported platform, exiting.")
+            tkMessageBox.showerror("Error", "Unsupported platform. Bye")
             quit() 
         elif platform == "win32":                                   # Windows
             printDebugToTerminal("Unsupported platform, exiting.")
-            quit() 
+            tkMessageBox.showerror("Error", "Unsupported platform. Bye")
+            quit()
+        printDebugToTerminal('Method: checkPlatform - end')
 
 
     def initUI(self):
-        printDebugToTerminal('Method: initUI')
-        
+        printDebugToTerminal('Method: initUI - start')
         self.grid()
 
         # define some images
@@ -121,30 +136,34 @@ class simpleapp_tk(tk.Tk):
         # Search field
         printDebugToTerminal('\tConfiguring searchInputEntry')
         self.searchInputEntryVariable = tk.StringVar()
-        self.searchInputEntry = tk.Entry(self,textvariable=self.searchInputEntryVariable, width=6)
-        self.searchInputEntry.config(highlightbackground='gray')               # set border color
         self.searchInputEntryVariable.set(u"")                                 # set content on start = empty
-        # key bindings
-        self.searchInputEntry.bind('<Return>', self.OnSearchPressEnter)
-        self.searchInputEntry.bind('<Down>', self.OnSearchArrowDown)           # on Arrow Down
-        self.searchInputEntry.bind('<KeyRelease>', self.getSearchString)       # on keypress release
-        self.searchInputEntry.bind('<Escape>', self.OnSearchPressESC)          # on ESC
+        self.searchInputEntry = tk.Entry(self,textvariable=self.searchInputEntryVariable, width=6)
         self.searchInputEntry.grid(row=0, column=0, columnspan=2, padx=10, pady=(10,0), ipady=0, ipadx=0, sticky='EW')  # set padding
+        self.searchInputEntry.config(highlightbackground='gray')               # set border color
+        
+        # key bindings
+        self.searchInputEntry.bind('<Return>', self.onSearchPressEnter)
+        self.searchInputEntry.bind('<Down>', self.onSearchArrowDown)           # on Arrow Down
+        self.searchInputEntry.bind('<KeyRelease>', self.getSearchString)       # on keypress release
+        self.searchInputEntry.bind('<Escape>', self.onSearchPressESC)          # on ESC
         # input
         self.searchInputEntry.config(foreground="gray")         # font color
         self.searchInputEntry.config(background="lightgray")    # background
         # font
-        self.searchInputEntry.config(font="Helvetica 30 bold")
+        self.searchInputEntry.config(font="Helvetica 32 bold")
         self.searchInputEntry.config(justify="center")
         # cursor
         self.searchInputEntry.config(insertbackground='gray')                   # cursor color
         self.searchInputEntry.config(insertofftime=512)                        # = 0 dont blink - integer value indicating the number of milliseconds the insertion cursor should remain ``off'' in each blink cycle
         self.searchInputEntry.config(insertontime=1024)                            # indicating the number of milliseconds the insertion cursor should remain ``on'' in each blink cycle. 
         self.searchInputEntry.config(insertwidth=4)                             # total width of the insertion cursor.
+        # border
+        self.searchInputEntry.config(highlightthickness=2)                      # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus. 
+        self.searchInputEntry.config(highlightbackground="gray")                # Background color of the highlight region when the widget has focus.
 
         # Launch button
         printDebugToTerminal('\tConfiguring launchButton')
-        self.launchButton = tk.Button(self,text=u"Launch", image=self.bt_IconExecute, highlightthickness=0, compound="left", command=self.OnLaunchButtonClick)
+        self.launchButton = tk.Button(self,text=u"", image=self.bt_IconExecute, highlightthickness=0, compound="left", height=56, width=56, relief='raised', command=self.OnLaunchButtonClick)
         self.launchButton.configure(foreground='black')
         self.launchButton.bind('<Return>', self.OnLaunchButtonClick)
         self.launchButton['state'] = 'disabled'
@@ -157,8 +176,13 @@ class simpleapp_tk(tk.Tk):
         self.v = tk.StringVar()
         self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
         self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
-        self.om.bind('<Escape>', self.OnMenuPressESC)               # on ESC - does not work - while it still closes the Menu
-        self.om.bind('<Return>', self.OnMenuPressEnter)
+        self.om.bind('<Return>', self.onMenuPressEnter)
+        self.om.bind('<Leave>', self.onMenuLeave)
+        # testing
+        self.om.bind('<Escape>', self.onMenuPressESC)               # on ESC - does not work - while it still closes the Menu
+        self.om.bind("<FocusIn>", self.focusIn) # testing
+        self.om.bind('<FocusOut>', self.focusOut) # testing
+        
         self.om['state'] = 'disabled' # disable the dropdown at start
         self.om.config(bd=0)    # disable the border
         self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus. 
@@ -166,13 +190,14 @@ class simpleapp_tk(tk.Tk):
         # SearchResult-Count label
         printDebugToTerminal('\tConfiguring searchResultCount')
         self.searchResultCountVariable = tk.StringVar()
-        self.searchResultCount = tk.Label(self,textvariable=self.searchResultCountVariable, anchor="center",fg="gray")
-        self.searchResultCount.grid(row=1, column=2, padx=5, pady=0)
+        #self.searchResultCountVariable.set('') # overwrite - to get rid of old content
         self.searchResultCountVariable.set('0') # set empty text
-
+        self.searchResultCount = tk.Label(self,textvariable=self.searchResultCountVariable, anchor="center",fg="gray", takefocus=0)
+        self.searchResultCount.grid(row=1, column=2, padx=5, pady=0)
+        
         # Preference button
         printDebugToTerminal('\tConfiguring prefButton')
-        self.prefButton = tk.Button(self,text=u"Prefs", image=self.bt_IconPreferences, highlightthickness=0, bd=0, command=self.OnPrefButtonClick)
+        self.prefButton = tk.Button(self,text=u"Prefs", image=self.bt_IconPreferences, highlightthickness=0, bd=0, command=self.OnPrefButtonClick, takefocus=0)
         self.prefButton.configure(foreground='black')
         self.prefButton['state'] = 'normal'
         self.prefButton.grid(row=2, column=2, padx=5, pady=0)
@@ -181,13 +206,13 @@ class simpleapp_tk(tk.Tk):
         # Version label
         printDebugToTerminal('\tConfiguring versionLabel')
         self.versionLabelVariable = tk.StringVar()
-        self.versionLabel = tk.Label(self,textvariable=self.versionLabelVariable, anchor="center",fg="gray")
+        self.versionLabel = tk.Label(self,textvariable=self.versionLabelVariable, anchor="center",fg="gray", takefocus=0)
         self.versionLabel.grid(row=3, column=0, columnspan=1, padx=5, pady=(0,5), sticky='EW')
         self.versionLabelVariable.set('Version '+appVersion)
 
         # Github button
         printDebugToTerminal('\tConfiguring githubButton')
-        self.githubButton = tk.Button(self,text=u"Prefs", image=self.bt_IconGithub, highlightthickness=0, bd=0, command=self.OnGithubButtonClick)
+        self.githubButton = tk.Button(self,text=u"Prefs", image=self.bt_IconGithub, highlightthickness=0, bd=0, command=self.OnGithubButtonClick, takefocus=0)
         self.githubButton.configure(foreground='black')
         self.githubButton['state'] = 'normal'
         self.githubButton.grid(row=3, column=2, padx=5, pady=(5,5))
@@ -200,61 +225,86 @@ class simpleapp_tk(tk.Tk):
         self.update()
         
         self.searchInputEntry.focus_set()       # set cursor focus to search field
-        
-        printDebugToTerminal('\tConfiguring UI finished')
+
+        printDebugToTerminal('Method: initUI - end')
 
 
-    def centerUI(self):
-        printDebugToTerminal('Method: centerUI')
+    def setApplicationIcon(self):
+        printDebugToTerminal('Method: setApplicationIcon - start')
+        # set app icon
+        img = tk.Image("photo", file="bt_play.png")
+        self.tk.call('wm','iconphoto',self._w,img)
+        printDebugToTerminal('Method: setApplicationIcon - end')
+
+
+    def focusIn(self, event):
+        print("-------------------------------")
+        print("Focus In")
+        print("-------------------------------")
         
-        # Min size: http://stackoverflow.com/questions/10448882/how-do-i-set-a-minimum-window-size-in-tkinter
-        #self.minsize(self.winfo_width()+200, self.winfo_height())
         
-        # Window Size and Position
+    def focusOut(self, event):
+        print("-------------------------------")
+        print("Focus Out")
+        print("-------------------------------")
+        
+        
+    def onMenuLeave(self, event):
+        printDebugToTerminal('Method: onMenuLeave - start')
+        printDebugToTerminal('\tSetting focus back to search')
+        self.searchInputEntry.focus_set()       # set cursor focus to search field
+        printDebugToTerminal('Method: onMenuLeave - end')
+
+
+    def centerUI(self):     # Window Size and Position
+        printDebugToTerminal('Method: centerUI - start')
         printDebugToTerminal('\tConfiguring window size and position')
         #
         # v1:
         #self.geometry(self.geometry())
         #
         # v2:
-        #
         # Define window dimensions
         windowWidth = 600 # width for the Tk root
         windowHeight = 150 # height for the Tk root
-        #
+
         # get screen width and height
         screenWidth = self.winfo_screenwidth() # width of the screen
         screenheight = self.winfo_screenheight() # height of the screen
-        #
+
         # calculate x and y coordinates for the Tk root window
         x = (screenWidth/4) - (windowWidth/2) # ws/2 = default -> /4 because of dualscreen
         y = (screenheight/2) - (windowHeight/2)
-        #
+
         # set the dimensions of the screen and where it is placed
         self.geometry('%dx%d+%d+%d' % (windowWidth, windowHeight, x, y))
         
-        self.attributes("-alpha", 0.9) # Transparent UI (1.0 = not transparent)
+        self.attributes("-alpha", appTransparency) # Transparent UI (1.0 = not transparent)
+        
         #self.searchInputEntry.selection_range(0, tk.END)
+        printDebugToTerminal('Method: centerUI - end')
 
 
     def initialize(self):
-        printDebugToTerminal('Method: initialize')
+        printDebugToTerminal('Method: initialize - start')
         self.initUI()
+        self.setApplicationIcon()
         self.centerUI()
-
+        printDebugToTerminal('Method: initialize - end')
 
 
     def OptionMenu_SelectionEvent(self, event): # I'm not sure on the arguments here, it works though
-        printDebugToTerminal('Method: OptionMenu_SelectionEvent')
+        printDebugToTerminal('Method: OptionMenu_SelectionEvent - start')
         printDebugToTerminal('\tSearch-field: got focus')
         self.searchInputEntry.focus_set() # set focus to search field
         printDebugToTerminal('\tLaunch-button: enabled')
         self.launchButton['state'] = 'normal'                 # enabling Launch Button
+        printDebugToTerminal('Method: OptionMenu_SelectionEvent - end')
 
 
     # search matching application for the current searchstring
     def searchingApplication(self, string):
-        printDebugToTerminal('Method: searchingApplication')
+        printDebugToTerminal('Method: searchingApplication - start')
         string = string.lower() # lowercase search-string
         lengthOfSearchString =  len(string) # detect length of search string
         
@@ -280,26 +330,21 @@ class simpleapp_tk(tk.Tk):
 
                 # dropdown
                 optionList = (' ')
-                #self.om = tk.OptionMenu(self, self.v, *optionList)
                 self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
-                self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
+                self.om.grid(row=1, column=0, columnspan=2, padx=100, pady=0, sticky='EW')
                 self.v.set(optionList[0])                                   # select 1 menu-item
                 self.om['state'] = 'disabled'
-                self.om.config(bd=0) # disable the border
-                self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus.
                 
                 self.searchResultCount.config(fg='red') # colorize search results count label
 
             elif(len(searchResults) == 1):     # if we got 1 search-results
-                printDebugToTerminal('\tGot 1 result')
+                #printDebugToTerminal('\tGot 1 search result')
                 printDebugToTerminal('\tAutocompleting search field to: '+searchResults[0])
 
                 # search field
                 self.searchInputEntry.config(background="white")           # set background color
-                self.searchInputEntry.config(foreground="green")           # set font color
                 self.searchInputEntry.config(highlightbackground="green")  # set border color
                 self.searchInputEntry.focus_set()
-                #self.searchInputEntry.selection_range(0, tk.END)      # select entire field content
                 #self.searchInputEntryVariable.set(searchResults[0])           # bad idea - if someone wants to delete the content or parts
                 self.searchInputEntry.icursor(tk.END)                      # set cursor to end
 
@@ -311,24 +356,33 @@ class simpleapp_tk(tk.Tk):
                 # get app-icon for selected application from operating system
                 icon_theme = gtk.icon_theme_get_default()
                 icon_info = icon_theme.lookup_icon(searchResults[0], 16, 0)
+                print(icon_info)
                 icon_path =icon_info.get_filename()
-                printDebugToTerminal('\tFound icon at: '+icon_path)
-                printDebugToTerminal('\tLaunch-Button: updating app icon')
-                
-                # Update icon of launch button
-                #
-                self.curAppIcon = tk.PhotoImage(file=icon_path)
-                # icon might be to large or to small - resizing could make sense
-                
-                if "32x32" not in icon_path: 
-                    printDebugToTerminal('\tSubsampling icon - this is currently disabled')
-                    #self.curAppIcon = self.curAppIcon.subsample(32) 
-                else:
-                    self.launchButton.configure(image= self.curAppIcon)
+                if(icon_path <> ""): # found icon
+                    self.curAppIcon = tk.PhotoImage(file=icon_path)
+                    curIconSize=self.curAppIcon.width() # detect icon size
+                    printDebugToTerminal('\tFound '+str(curIconSize)+'px icon at: '+icon_path)
+                    # icon might be to large or to small - resizing could make sense
+                    if targetIconSize == curIconSize:
+                        printDebugToTerminal("\tIcon size matches - no resizing needed")
+                        self.launchButton.configure(image= self.curAppIcon) # set button-icon
+                    else:
+                        printDebugToTerminal("\tIcon size does not match, resizing needed.")
+                        if(curIconSize > targetIconSize): # icon is to big - shrink it
+                            printDebugToTerminal("\tAdjusting icon using subsample")
+                            self.curAppIcon = self.curAppIcon.subsample(curIconSize/targetIconSize) 
+                            self.launchButton.configure(image= self.curAppIcon) # set button-icon
+                        else: # icon is too small -> zoom it
+                            printDebugToTerminal("\tAdjusting icon using zoom")
+                            scale_w = targetIconSize/curIconSize
+                            scale_h = targetIconSize/curIconSize
+                            self.curAppIcon = self.curAppIcon.zoom(scale_w, scale_h)
+                            self.launchButton.configure(image= self.curAppIcon) # set button-icon
+                else: # no icon
+                    printDebugToTerminal("\tNo icon found")
 
                 printDebugToTerminal('\tLaunch-Button: enabled')
                 self.launchButton['state'] = 'normal'                 # enabling Launch Button
-
 
                 # dropdown
                 self.om['state'] = 'disabled'
@@ -337,14 +391,11 @@ class simpleapp_tk(tk.Tk):
                 self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
                 self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
                 self.v.set(optionList[0]) # select first search-result
-                self.om.config(bd=0) # disable the border
-                self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus.
 
-                # search result count label
+                # change color of searchResultCount
                 self.searchResultCount.config(fg='green')    # Change color of search result count label
 
             else:           # got several hits
-                #printDebugToTerminal('\tGot >1 results')
                 # search field
                 self.searchInputEntry.config(background="white")           # set background color
                 self.searchInputEntry.config(foreground="gray")            # set font color
@@ -352,22 +403,20 @@ class simpleapp_tk(tk.Tk):
 
                 # dropdown
                 self.om['state'] = 'normal'
-                # Update Dropdown
                 optionList = searchResults
                 self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
                 self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
-                #self.v.set(optionList[0]) # select first search-result
-                self.om.config(bd=0) # disable the border
-                self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus.
 
-                # search result count
+                # change color of searchResultCount
                 self.searchResultCount.config(fg='red') # adjust colors
                 
                 # CONSTRUCTION SITE
-                #
                 #self.openSearchResultList() # open search result list
-                self.searchInputEntry.focus_set()
+                #self.searchInputEntry.focus_set()
 
+            # OptionMenu should be non eye-catchy
+            self.om.config(bd=0) # disable the border
+            self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus.
 
             # Update Dropdown
             #optionList = searchResults
@@ -375,32 +424,36 @@ class simpleapp_tk(tk.Tk):
             #self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
             #self.v.set(optionList[0]) # select first search-result
 
-            printDebugToTerminal('\tResults:\t'+str(len(searchResults)))
+            printDebugToTerminal('\tSearch-Results:\t'+str(len(searchResults)))
+        printDebugToTerminal('Method: searchingApplication - end')
 
 
     # On Pressing Launch button
     def OnLaunchButtonClick(self):
-        printDebugToTerminal('Method: OnLaunchButtonClick')
+        printDebugToTerminal('Method: OnLaunchButtonClick - start')
         self.launchExternalApp()                                          # reset the UI
+        printDebugToTerminal('Method: OnLaunchButtonClick - end')
 
 
     # On Pressing Preferences button
     def OnPrefButtonClick(self):
-        printDebugToTerminal('Method: OnPrefButtonClick')
+        printDebugToTerminal('Method: OnPrefButtonClick - start')
         printDebugToTerminal('\tOpening the preference dialog')
         self.messageBox = tkMessageBox.showinfo("pylad Preferences", "not yet implemented")
+        printDebugToTerminal('Method: OnPrefButtonClick - end')
 
 
     # On Pressing GitHub button
     def OnGithubButtonClick(self):
-        printDebugToTerminal('Method: OnGithubButtonClick')
+        printDebugToTerminal('Method: OnGithubButtonClick - start')
         printDebugToTerminal('\tOpening project URL ('+appURL+') in default browser')
         webbrowser.open(appURL)  # Go to github
+        printDebugToTerminal('Method: OnGithubButtonClick - end')
 
 
     # launching external application
     def launchExternalApp(self):
-        printDebugToTerminal('Method: launchExternalApp')
+        printDebugToTerminal('Method: launchExternalApp - start')
         selectedApplicationName = self.v.get()          # get value of OptionMenu
         if selectedApplicationName != "":
             checkExecutable = cmd_exists(selectedApplicationName)                   # check if name exists and is executable
@@ -411,47 +464,52 @@ class simpleapp_tk(tk.Tk):
                 print ('\tERROR >> Checking the executable failed....')
         else:
             printDebugToTerminal('\tNo application selected')
+        printDebugToTerminal('Method: launchExternalApp - end')
 
 
     # On Pressing ENTER
-    def OnMenuPressEnter(self,event):
-        printDebugToTerminal('Method: OnMenuPressEnter')
+    def onMenuPressEnter(self,event):
+        printDebugToTerminal('Method: onMenuPressEnter - start')
         self.launchExternalApp()
+        printDebugToTerminal('Method: onMenuPressEnter - end')
 
 
     # On Search Pressing ENTER
-    def OnSearchPressEnter(self,event):
-        printDebugToTerminal('Method: OnSearchPressEnter')
+    def onSearchPressEnter(self,event):
+        printDebugToTerminal('Method: onSearchPressEnter - start')
         self.launchExternalApp()
+        printDebugToTerminal('Method: onSearchPressEnter - end')
 
 
     # On ESC in Search
-    def OnSearchPressESC(self, event):
-        printDebugToTerminal('Method: OnSearchPressESC')
+    def onSearchPressESC(self, event):
+        printDebugToTerminal('Method: onSearchPressESC - start')
         self.initUI()
+        printDebugToTerminal('Method: onSearchPressESC - end')
 
 
     # On Menu/Dropdown press ESC (is not triggered)
-    def OnMenuPressESC(self, event):
-        printDebugToTerminal('Method: OnMenuPressESC')
+    def onMenuPressESC(self, event):
+        printDebugToTerminal('Method: onMenuPressESC - start')
+        printDebugToTerminal('Method: onMenuPressESC - end')
 
 
     # update current search string and trigger app search
     def getSearchString(self, event):
-        printDebugToTerminal('Method: getSearchString')
-        if event.char != '': # if not ARRAY DOWN then
+        printDebugToTerminal('Method: getSearchString - start')
+        if event.char != '': # if not ARROW DOWN then
             curString = self.searchInputEntryVariable.get()                         # get current search string
-            if(len(curString) > 0):
+            if(len(curString) > 0):                                                 # if current string exists
+                print(len(curString))
                 self.searchingApplication(curString)                                # start search for this string
-            else:
+            else:                                                                   # if search string is empty
                 self.initUI()                                                       # reset UI
-
+        printDebugToTerminal('Method: getSearchString - end')
+        
 
     def openSearchResultList(self):
-        printDebugToTerminal('Method: openSearchResultList')
-        # check if we got searchResults at all - otherwise do nothing
-        curSearchResults = self.searchResultCountVariable.get()
-        print(curSearchResults)
+        printDebugToTerminal('Method: openSearchResultList - start')
+        curSearchResults = self.searchResultCountVariable.get()     # check if we got searchResults at all - otherwise do nothing
         if(curSearchResults)==str(0):    # we got no search results - so opening the OptionMenu makes no sense at all
             printDebugToTerminal('\tArray-Down without search results is stupid. Lets stop here')
             printDebugToTerminal('\tSetting focus back to search')
@@ -460,14 +518,17 @@ class simpleapp_tk(tk.Tk):
             printDebugToTerminal('\tSetting focus to dropdown')
             self.om.focus_set()             # Set focus to OpionMenu / Dropdown
             printDebugToTerminal('\tSimulate space key')
-            self.event_generate('<space>')  # Open the OptionMenu by simulating a keypress
-            return;
+            self.om.event_generate('<space>')  # Open the OptionMenu by simulating a keypress
+            #
+            #self.searchInputEntry.focus_set()             # Set focus back to search field
+        printDebugToTerminal('Method: openSearchResultList - end')
 
 
     # Arrow Down in Search field should list
-    def OnSearchArrowDown(self, event):
-        printDebugToTerminal('Method: OnSearchArrowDown')
+    def onSearchArrowDown(self, event):
+        printDebugToTerminal('Method: onSearchArrowDown - start')
         self.openSearchResultList()
+        printDebugToTerminal('Method: onSearchArrowDown - end')
 
 
 if __name__ == "__main__":
