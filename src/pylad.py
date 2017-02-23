@@ -1,537 +1,482 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
 
-# NAME:         pylad
-# DESCRIPTION:  Python based application launcher
-# AUTHOR:       yafp
-# URL:          https://github.com/yafp/pylad
-
-
-# -----------------------------------------------------------------------------------------------
-# RESOURCES
-# -----------------------------------------------------------------------------------------------
-# General App tutorial:                     http://sebsauvage.net/python/gui/#our_project
-# Tkinter:                                  https://docs.python.org/2/library/tkinter.html
-# Dropdown:                                 https://www.reddit.com/r/learnpython/comments/2wn1w6/how_to_create_a_drop_down_list_using_tkinter/
-# Search icon:                              http://fontawesome.io/icon/search/
-# dropdown for results                      https://www.tutorialspoint.com/python/tk_menubutton.htm
-# image on button                           https://www.daniweb.com/programming/software-development/code/216852/an-image-button-python-and-tk
-# colors:                                   "white", "black", "red", "green", "blue", "cyan", "yellow", and "magenta" are default
-# Event types:                              http://infohost.nmt.edu/tcc/help/pubs/tkinter/web/event-types.html
-
-
-# -----------------------------------------------------------------------------------------------
-# REMINDER/OPEN
-# -----------------------------------------------------------------------------------------------
-# - global hotkey to bring running app in foreground
-# - remember last window position           https://wiki.tcl-lang.org/14452
-# - no window decoration -> keyword: overrideredirect -> broken
-# - ui fade in on launch
-
-
-# -----------------------------------------------------------------------------------------------
-# CHANGES
-# -----------------------------------------------------------------------------------------------
-# - display application icon on linux
-# - optimized icon search and display process (scale & subsample)
-# - optimize tab-ability of UI
-# - added error dialogs to platform detection
-# - removed un-needed import of Gio
+# via: http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
 
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
-try:
-    # Python2
-    import Tkinter as tk            # for the UI
-    import tkMessageBox             # for the pref dummy dialog
-except ImportError:
-    # Python3
-    import tkinter as tk            # for the UI
-    import tkMessageBox             # for the pref dummy dialog
-
-# not yet documented
+import wx                           # for all the WX items
 import os, fnmatch                  # for searching applications
+import webbrowser                   # for opening urls (example: github project page)
+import gtk                          # for app-icon handling - crashes - reason: wx?
+gtk.remove_log_handlers()           # if this line is removed - app is crashing as long as both WX and GTK are imported.
+                                    # reference: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
 from subprocess import call         # for calling external commands
 import subprocess                   # for checking if cmd_exists
 
-from sys import platform            # for checking platform
-import webbrowser                   # for opening urls (example: github project page)
-import gtk                          # for app-icon handling
 
 
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-appName = "pylad"
-appURL = "https://github.com/yafp/pylad"
+TRAY_TOOLTIP = 'pylad'
+TRAY_ICON = 'gfx/bt_appIcon_16.png'
+appName = 'pylad'
+appURL = 'https://github.com/yafp/pylad'
+targetIconSize = 128
+
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-appVersion = "20170221.01"
-debug = True                    # True or False
-#debug = False                    # True or False
-targetIconSize = 32
+appVersion = '20170222.01'
 
-
-# -----------------------------------------------------------------------------------------------
-# CONFIG (USER)
-# -----------------------------------------------------------------------------------------------
-appTransparency = 0.95           # 1.0 = not tranparet / 0.9 slighty
 
 
 # -----------------------------------------------------------------------------------------------
 # CODE
 # -----------------------------------------------------------------------------------------------
-
-# Check if command exists
-# via: http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python/377028
 def cmd_exists(cmd):
-    printDebugToTerminal('Method: cmd_exists')
-    return subprocess.call("type " + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
+    print('Method: cmd_exists')
+    return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
-# used to print debug-output if debug = TRUE
-def printDebugToTerminal(string):
-    if(debug == True):
-        print ("debug >> "+string)
+
+class MyFrame(wx.Frame):
+    # We simply derive a new class of Frame. """
+    def __init__(self, parent, title):
+        wx.Frame.__init__(self, parent, title=title, size=(400,330))
+        self.SetSizeHintsSz( wx.Size( 400,330 ), wx.Size( 400,330 ) )   # forcing min and max size to same values - prevents resizing option
+
+        # set an application icon
+        appIcon = wx.Icon('gfx/bt_appIcon_16.png', wx.BITMAP_TYPE_PNG)
+        self.SetIcon(appIcon)
 
 
-class simpleapp_tk(tk.Tk):
+        # ------------------------------------------------
+        # Define UI Elements
+        # ------------------------------------------------
 
-    def __init__(self,parent):
-        tk.Tk.__init__(self,parent)
-        self.parent = parent
-        self.checkPlatform()
-        self.initialize()
-
-
-    def checkPlatform(self):
-        printDebugToTerminal('Method: checkPlatform - start')
-        if platform == "linux" or platform == "linux2":             # linux
-            printDebugToTerminal("\tDetected linux")
-        elif platform == "darwin":                                  # OS X
-            printDebugToTerminal("Unsupported platform, exiting.")
-            tkMessageBox.showerror("Error", "Unsupported platform. Bye")
-            quit() 
-        elif platform == "win32":                                   # Windows
-            printDebugToTerminal("Unsupported platform, exiting.")
-            tkMessageBox.showerror("Error", "Unsupported platform. Bye")
-            quit()
-        printDebugToTerminal('Method: checkPlatform - end')
-
-
-    def initUI(self):
-        printDebugToTerminal('Method: initUI - start')
-        self.grid()
-
-        # define some images
-        self.bt_IconExecute = tk.PhotoImage(file="bt_play.png")        # pick a (small) image file you have in the working directory
-        self.bt_IconPreferences = tk.PhotoImage(file="bt_prefs.png")
-        self.bt_IconGithub = tk.PhotoImage(file="bt_github.png") 
-
-        # Search field
-        printDebugToTerminal('\tConfiguring searchInputEntry')
-        self.searchInputEntryVariable = tk.StringVar()
-        self.searchInputEntryVariable.set(u"")                                 # set content on start = empty
-        self.searchInputEntry = tk.Entry(self,textvariable=self.searchInputEntryVariable, width=6)
-        self.searchInputEntry.grid(row=0, column=0, columnspan=2, padx=10, pady=(10,0), ipady=0, ipadx=0, sticky='EW')  # set padding
-        self.searchInputEntry.config(highlightbackground='gray')               # set border color
-        
-        # key bindings
-        self.searchInputEntry.bind('<Return>', self.onSearchPressEnter)
-        self.searchInputEntry.bind('<Down>', self.onSearchArrowDown)           # on Arrow Down
-        self.searchInputEntry.bind('<KeyRelease>', self.getSearchString)       # on keypress release
-        self.searchInputEntry.bind('<Escape>', self.onSearchPressESC)          # on ESC
-        # input
-        self.searchInputEntry.config(foreground="gray")         # font color
-        self.searchInputEntry.config(background="lightgray")    # background
-        # font
-        self.searchInputEntry.config(font="Helvetica 32 bold")
-        self.searchInputEntry.config(justify="center")
-        # cursor
-        self.searchInputEntry.config(insertbackground='gray')                   # cursor color
-        self.searchInputEntry.config(insertofftime=512)                        # = 0 dont blink - integer value indicating the number of milliseconds the insertion cursor should remain ``off'' in each blink cycle
-        self.searchInputEntry.config(insertontime=1024)                            # indicating the number of milliseconds the insertion cursor should remain ``on'' in each blink cycle. 
-        self.searchInputEntry.config(insertwidth=4)                             # total width of the insertion cursor.
-        # border
-        self.searchInputEntry.config(highlightthickness=2)                      # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus. 
-        self.searchInputEntry.config(highlightbackground="gray")                # Background color of the highlight region when the widget has focus.
-
-        # Launch button
-        printDebugToTerminal('\tConfiguring launchButton')
-        self.launchButton = tk.Button(self,text=u"", image=self.bt_IconExecute, highlightthickness=0, compound="left", height=56, width=56, relief='raised', command=self.OnLaunchButtonClick)
-        self.launchButton.configure(foreground='black')
-        self.launchButton.bind('<Return>', self.OnLaunchButtonClick)
-        self.launchButton['state'] = 'disabled'
-        self.launchButton.grid(row=0, column=2, padx=(0,10), pady=(10,0))
-        self.launchButton.image = self.bt_IconExecute # save the button's image from garbage collection
-
-        # Dropdown (featuring results from search)
-        printDebugToTerminal('\tConfiguring optionMenu/Dropdown')
-        optionList = (' ')                                      #optionList = ('Result', 'Option 2', 'Option 3')
-        self.v = tk.StringVar()
-        self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
-        self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
-        self.om.bind('<Return>', self.onMenuPressEnter)
-        self.om.bind('<Leave>', self.onMenuLeave)
-        # testing
-        self.om.bind('<Escape>', self.onMenuPressESC)               # on ESC - does not work - while it still closes the Menu
-        self.om.bind("<FocusIn>", self.focusIn) # testing
-        self.om.bind('<FocusOut>', self.focusOut) # testing
-        
-        self.om['state'] = 'disabled' # disable the dropdown at start
-        self.om.config(bd=0)    # disable the border
-        self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus. 
-
-        # SearchResult-Count label
-        printDebugToTerminal('\tConfiguring searchResultCount')
-        self.searchResultCountVariable = tk.StringVar()
-        #self.searchResultCountVariable.set('') # overwrite - to get rid of old content
-        self.searchResultCountVariable.set('0') # set empty text
-        self.searchResultCount = tk.Label(self,textvariable=self.searchResultCountVariable, anchor="center",fg="gray", takefocus=0)
-        self.searchResultCount.grid(row=1, column=2, padx=5, pady=0)
-        
         # Preference button
-        printDebugToTerminal('\tConfiguring prefButton')
-        self.prefButton = tk.Button(self,text=u"Prefs", image=self.bt_IconPreferences, highlightthickness=0, bd=0, command=self.OnPrefButtonClick, takefocus=0)
-        self.prefButton.configure(foreground='black')
-        self.prefButton['state'] = 'normal'
-        self.prefButton.grid(row=2, column=2, padx=5, pady=0)
-        self.prefButton.image = self.bt_IconPreferences # save the button's image from garbage collection
-
-        # Version label
-        printDebugToTerminal('\tConfiguring versionLabel')
-        self.versionLabelVariable = tk.StringVar()
-        self.versionLabel = tk.Label(self,textvariable=self.versionLabelVariable, anchor="center",fg="gray", takefocus=0)
-        self.versionLabel.grid(row=3, column=0, columnspan=1, padx=5, pady=(0,5), sticky='EW')
-        self.versionLabelVariable.set('Version '+appVersion)
-
-        # Github button
-        printDebugToTerminal('\tConfiguring githubButton')
-        self.githubButton = tk.Button(self,text=u"Prefs", image=self.bt_IconGithub, highlightthickness=0, bd=0, command=self.OnGithubButtonClick, takefocus=0)
-        self.githubButton.configure(foreground='black')
-        self.githubButton['state'] = 'normal'
-        self.githubButton.grid(row=3, column=2, padx=5, pady=(5,5))
-        self.githubButton.image = self.bt_IconGithub     # save the button's image from garbage collection
-
-        # misc
-        self.grid_columnconfigure(0,weight=1)
-        self.resizable(False,False) # make it un-resizeable
-        #self.overrideredirect(True) # Buggy - Disable windows-decoration - as a result the window is not longer dragable
-        self.update()
-        
-        self.searchInputEntry.focus_set()       # set cursor focus to search field
-
-        printDebugToTerminal('Method: initUI - end')
+        img_preferences = wx.Bitmap('gfx/bt_prefs_16.png', wx.BITMAP_TYPE_BMP)
+        #self.bt_preferences = wx.BitmapButton(self, id = wx.ID_ANY, bitmap = img_preferences, size = (img_preferences.GetWidth()+10, img_preferences.GetHeight()+10))
+        self.bt_preferences = wx.BitmapButton(self, id = wx.ID_ANY, style=wx.NO_BORDER, bitmap = img_preferences, size = (img_preferences.GetWidth()+10, img_preferences.GetHeight()+10))
+        self.bt_preferences.SetLabel('Preferences')
+        self.bt_preferences.SetToolTipString( u'Open Preferences' )
 
 
-    def setApplicationIcon(self):
-        printDebugToTerminal('Method: setApplicationIcon - start')
-        # set app icon
-        img = tk.Image("photo", file="bt_play.png")
-        self.tk.call('wm','iconphoto',self._w,img)
-        printDebugToTerminal('Method: setApplicationIcon - end')
-
-
-    def focusIn(self, event):
-        print("-------------------------------")
-        print("Focus In")
-        print("-------------------------------")
+        # Search & Search Results as comboBox
+        m_comboBox1Choices = []
+        self.m_comboBox1 = wx.ComboBox( self, wx.ID_ANY, u"", wx.DefaultPosition, wx.DefaultSize, m_comboBox1Choices, 0 )
+        self.m_comboBox1.SetToolTipString( u'Search & Results' )
         
         
-    def focusOut(self, event):
-        print("-------------------------------")
-        print("Focus Out")
-        print("-------------------------------")
+        # launchbutton
+        self.img_application = wx.Image('gfx/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.bt_application = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size( 156,156 ), wx.BU_AUTODRAW )
+        self.bt_application.SetBitmapFocus( wx.NullBitmap )
+        self.bt_application.SetBitmapHover( wx.NullBitmap )
+        #self.bt_application.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_BTNFACE ) )
+        #self.bt_application.SetBackgroundColour( wx.Colour( 255, 0, 255 ) )
+        self.bt_application.SetToolTipString( u'Launch' )
+        self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
+        self.bt_application.SetLabel('Launch')
+        self.bt_application.Enable( False )
         
         
-    def onMenuLeave(self, event):
-        printDebugToTerminal('Method: onMenuLeave - start')
-        printDebugToTerminal('\tSetting focus back to search')
-        self.searchInputEntry.focus_set()       # set cursor focus to search field
-        printDebugToTerminal('Method: onMenuLeave - end')
-
-
-    def centerUI(self):     # Window Size and Position
-        printDebugToTerminal('Method: centerUI - start')
-        printDebugToTerminal('\tConfiguring window size and position')
-        #
-        # v1:
-        #self.geometry(self.geometry())
-        #
-        # v2:
-        # Define window dimensions
-        windowWidth = 600 # width for the Tk root
-        windowHeight = 150 # height for the Tk root
-
-        # get screen width and height
-        screenWidth = self.winfo_screenwidth() # width of the screen
-        screenheight = self.winfo_screenheight() # height of the screen
-
-        # calculate x and y coordinates for the Tk root window
-        x = (screenWidth/4) - (windowWidth/2) # ws/2 = default -> /4 because of dualscreen
-        y = (screenheight/2) - (windowHeight/2)
-
-        # set the dimensions of the screen and where it is placed
-        self.geometry('%dx%d+%d+%d' % (windowWidth, windowHeight, x, y))
+        # optionbutton
+        self.img_options = wx.Image('gfx/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.bt_options = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size( 156,156 ), wx.BU_AUTODRAW )
+        self.bt_options.SetBitmapFocus( wx.NullBitmap )
+        self.bt_options.SetBitmapHover( wx.NullBitmap )
+        self.bt_options.SetToolTipString( u'Options' )
+        self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
+        self.bt_options.SetLabel('Options')
+        self.bt_options.Enable( False )
         
-        self.attributes("-alpha", appTransparency) # Transparent UI (1.0 = not transparent)
         
-        #self.searchInputEntry.selection_range(0, tk.END)
-        printDebugToTerminal('Method: centerUI - end')
-
-
-    def initialize(self):
-        printDebugToTerminal('Method: initialize - start')
-        self.initUI()
-        self.setApplicationIcon()
-        self.centerUI()
-        printDebugToTerminal('Method: initialize - end')
-
-
-    def OptionMenu_SelectionEvent(self, event): # I'm not sure on the arguments here, it works though
-        printDebugToTerminal('Method: OptionMenu_SelectionEvent - start')
-        printDebugToTerminal('\tSearch-field: got focus')
-        self.searchInputEntry.focus_set() # set focus to search field
-        printDebugToTerminal('\tLaunch-button: enabled')
-        self.launchButton['state'] = 'normal'                 # enabling Launch Button
-        printDebugToTerminal('Method: OptionMenu_SelectionEvent - end')
-
-
-    # search matching application for the current searchstring
-    def searchingApplication(self, string):
-        printDebugToTerminal('Method: searchingApplication - start')
-        string = string.lower() # lowercase search-string
-        lengthOfSearchString =  len(string) # detect length of search string
+        # label 1
+        self.m_textCtrl3 = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE|wx.NO_BORDER, size=(100, -1), pos=(10, 10) )
+        self.m_textCtrl3.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
+        self.m_textCtrl3.SetToolTipString( u'Launch' )
+        self.m_textCtrl3.SetMinSize( wx.Size( 156,30 ) )
+        self.m_textCtrl3.SetMaxSize( wx.Size( 156,30 ) )
+        self.m_textCtrl3.SetEditable(True)
+        self.m_textCtrl3.Enable( True )
         
-        if lengthOfSearchString < 1:
-            printDebugToTerminal('\tSearch string is empty')
-            self.initUI()
+        
+        # label 2
+        self.m_textCtrl4 = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE|wx.NO_BORDER, size=(100, -1), pos=(10, 10) )
+        self.m_textCtrl4.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
+        self.m_textCtrl4.SetToolTipString( u'Launch' )
+        self.m_textCtrl4.SetMinSize( wx.Size( 156,30 ) )
+        self.m_textCtrl4.SetMaxSize( wx.Size( 156,30 ) )
+        self.m_textCtrl4.SetEditable(True)
+        self.m_textCtrl4.Enable( True )
+        
+        
+        #  result counter
+        #self.txt_resultCounter = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.txt_resultCounter = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE|wx.NO_BORDER, size=(100, -1), pos=(10, 10) )
+        self.txt_resultCounter.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
+        self.txt_resultCounter.SetToolTipString( u'Result count' )
+        self.txt_resultCounter.SetMinSize( wx.Size( 100,30 ) )
+        self.txt_resultCounter.SetMaxSize( wx.Size( 100,30 ) )
+        self.txt_resultCounter.SetEditable(False)
+        self.txt_resultCounter.Enable( False )
+        
+        
+        # Version Information
+        self.txt_versionInformation = wx.StaticText( self, wx.ID_ANY, ' v'+appVersion, wx.DefaultPosition, wx.DefaultSize, 0 )
+        self.txt_versionInformation.Wrap( -1 )
+        self.txt_versionInformation.SetFont( wx.Font( 8, 74, 90, 90, False, 'Sans' ) )
+        self.txt_versionInformation.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_GRAYTEXT ) )
+        
+        
+        # ------------------------------------------------
+        # Layout
+        # ------------------------------------------------
+        
+        # define layout container
+        bSizer1 = wx.BoxSizer( wx.VERTICAL )
+        
+        bSizer1.Add( self.bt_preferences, 0, wx.ALIGN_RIGHT, 100)           # preferences
+        bSizer1.Add( self.m_comboBox1, 0, wx.EXPAND)                        # search / dropdown
+        
+        box1 = wx.BoxSizer(wx.HORIZONTAL)
+        box1.Add( self.bt_application, 0, wx.CENTRE)                               # launch button
+        box1.Add( self.bt_options, 0, wx.CENTRE)                               # options button
+        bSizer1.Add( box1, 0, wx.CENTRE)                                   
+        
+        box2 = wx.BoxSizer(wx.HORIZONTAL)
+        box2.Add( self.m_textCtrl3, 0, wx.CENTRE)                           # launch text
+        box2.Add( self.m_textCtrl4, 0, wx.CENTRE)                           # option text
+        bSizer1.Add( box2, 0, wx.CENTRE)
+        
+        bSizer1.Add( self.txt_resultCounter, 0, wx.CENTRE)                  # result count
+        bSizer1.Add( self.txt_versionInformation, 0, wx.CENTRE )            # version
+        
+        self.SetSizer( bSizer1 )
+        #self.Layout()
+
+        self.Center() # open window centered
+
+
+        # ------------------------------------------------
+        # Bind/Connect Events
+        # ------------------------------------------------
+        self.m_comboBox1.Bind( wx.EVT_KEY_UP, self.onKeyPressInCombobox )               # ComboBox
+        # image buttons - https://www.tutorialspoint.com/wxpython/wxpython_buttons.htm
+        self.bt_preferences.Bind(wx.EVT_BUTTON, self.OnClicked) 
+        
+
+
+        # ------------------------------------------------
+        # Statusbar (on bottom of window)
+        # ------------------------------------------------
+        #self.CreateStatusBar() # A Statusbar in the bottom of the window
+        
+        
+        # ------------------------------------------------
+        # Menubar
+        # ------------------------------------------------
+        ## Setting up the menu.
+        #filemenu= wx.Menu()
+        
+        ## wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
+        #filemenu.Append(wx.ID_ABOUT, '&About',' Information about this program')
+        #filemenu.AppendSeparator()
+        #filemenu.Append(wx.ID_EXIT,'E&xit',' Terminate the program')
+
+        ## Creating the menubar.
+        #menuBar = wx.MenuBar()
+        #menuBar.Append(filemenu,'&File') # Adding the "filemenu" to the MenuBar
+        #self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
+        
+        self.Show(True)
+        
+        self.m_comboBox1.SetFocus()     # set focus to search
+
+
+    def OnClicked(self, event): 
+        btn = event.GetEventObject().GetLabel() 
+        print 'Label of pressed button = ',btn 
+        if (btn =='Preferences'):
+            print('\nOpen Preferences')
+            self.m_comboBox1.SetFocus() # set focus back to search
+
+
+
+    def onEnter(self, event):
+        print('Enter in Search')
+
+
+
+    def onKeyPressInCombobox(self, event):
+        print('\nOn Key Press On Comboxbox')
+        kc = event.GetKeyCode()
+        if(kc == 13) : # Enter
+            print('\tENTER')
+            self.launchExternalApplication()
+            
+        elif(kc == 27) : # ESC
+            print('\tESC in combobox')
+            self.resetUI()
+            
+        elif(kc == 317):    # Arrow Down
+            print('\tARROW DOWN')
+            self.m_comboBox1.Popup()
         else:
-            printDebugToTerminal('\tSearching:\t"'+string+'" ('+str(lengthOfSearchString)+')') # Print search string and length of it
-            searchResults = fnmatch.filter(os.listdir('/usr/bin'), '*'+string+'*')     # search for executables matching users searchstring
-            searchResults.sort() # sort search results (from a to z)
+            currentSearchString=self.m_comboBox1.GetValue()
+            if(len(currentSearchString) == 0):
+                self.resetUI()
+            else:
+                print('\tSearching: '+currentSearchString)
+                self.searchApplications(currentSearchString)
+        
+    
+    
+    def launchExternalApplication(self):
+        print('\nlaunchExternalApplication')
+        currentSelectedAppName = self.searchApplications(self.m_comboBox1.GetValue())
 
-            self.searchResultCountVariable.set(len(searchResults)) # show number of search results
+        #if currentSelectedAppName != '' or currentSelectedAppName != 'None':
+        if(currentSelectedAppName is not None): # Check if the dropdown contains something at all or not
+            print("\tShould execute: "+currentSelectedAppName)
+            checkExecutable = cmd_exists(currentSelectedAppName)                   # check if name exists and is executable
+            if (checkExecutable == True):
+                print('\tExecutable: '+currentSelectedAppName+' exists')
+                # https://docs.python.org/2/library/subprocess.html
+                #
+                #call([currentSelectedAppName, ""])                                 # launch external command
+                call([currentSelectedAppName])                                 # launch external command
+                print('\tExecuted: '+currentSelectedAppName)
+                self.resetUI()
+            else:
+                print ('\tERROR >> Checking the executable failed')
+        else:
+            print('\tWARNING >> currentSelectedAppName is empty, aborting')
 
-            if(len(searchResults) == 0):
-                # search field
-                self.searchInputEntry.config(background="white")           # set background color
-                self.searchInputEntry.config(foreground="gray")            # set font color
-                self.searchInputEntry.config(highlightbackground="red")    # set border color
 
-                # launch button
-                printDebugToTerminal('\tLaunch-Button: disabled')
-                self.launchButton['state'] = 'disabled'               # disabling Launch Button
 
-                # dropdown
-                optionList = (' ')
-                self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
-                self.om.grid(row=1, column=0, columnspan=2, padx=100, pady=0, sticky='EW')
-                self.v.set(optionList[0])                                   # select 1 menu-item
-                self.om['state'] = 'disabled'
+    def openAppURL(self):
+        print('\nopenAppURL')
+        print('\tOpening '+appURL+' in default browser')
+        webbrowser.open(appURL)  # Go to github
+
+
+
+    def resetUI(self):
+        print('\nresetUI')
+        # combobox
+        self.m_comboBox1.SetFocus()                                 # set focus to search
+        self.m_comboBox1.SetValue('')                               # reset dropdown with search results
+        
+        # launch button
+        self.img_application = wx.Image('gfx/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.bt_application.Enable( False )
+        self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
+        self.bt_application.SetToolTipString( 'Launch')
+        
+        # option buttons
+        self.img_options = wx.Image('gfx/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.bt_options.Enable( False )
+        self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
+        self.bt_options.SetToolTipString( 'Options')
+        
+        # result counter
+        self.txt_resultCounter.SetValue('')                               # Reset result counter
+        print('\tFinished resetting UI')
+
+
+
+    def searchApplications(self, currentSearchString):
+        print('\nsearchApplications')
+        if(currentSearchString != ''):
+        
+            # Plugin Session
+            if(currentSearchString == '!s'):
+                print('\tSession Plugin activated')
+                self.bt_options.SetFocus()
                 
-                self.searchResultCount.config(fg='red') # colorize search results count label
+                # option buttons
+                self.img_options = wx.Image('gfx/bt_optionLock_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_options.Enable( True )
+                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
+                self.bt_options.SetToolTipString( 'Lock')
+                
+                # gnome-screensaver-command', '--lock'])
+                self.m_comboBox1.SetValue('')                               # reset dropdown with search results
+                self.m_comboBox1.SetValue('gnome-screensaver-command -lock')
+                
+                return
+                
+        
+            print('\tSearching executables for the following string: '+currentSearchString)
+            searchResults = fnmatch.filter(os.listdir('/usr/bin'), '*'+currentSearchString+'*')     # search for executables matching users searchstring
+            searchResults.sort() # sort search results (from a to z)
+            
+            self.txt_resultCounter.SetValue(str(len(searchResults)))  # update result count
+        
+            if(len(searchResults) == 0):
+                print('Found 0 applications')
+                self.m_comboBox1.SetItems(searchResults)
+                
+                # update launch button icon
+                self.img_application = wx.Image('gfx/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
 
             elif(len(searchResults) == 1):     # if we got 1 search-results
-                #printDebugToTerminal('\tGot 1 search result')
-                printDebugToTerminal('\tAutocompleting search field to: '+searchResults[0])
+                print('\tFound 1 matching application')
 
-                # search field
-                self.searchInputEntry.config(background="white")           # set background color
-                self.searchInputEntry.config(highlightbackground="green")  # set border color
-                self.searchInputEntry.focus_set()
-                #self.searchInputEntryVariable.set(searchResults[0])           # bad idea - if someone wants to delete the content or parts
-                self.searchInputEntry.icursor(tk.END)                      # set cursor to end
-
-
-                # launch button
-                #
-                self.launchButton.image.blank() # reset current image
-                #
+                # update combobox
+                self.m_comboBox1.SetItems(searchResults)
+                #self.m_comboBox1.SetSelection(0)
+                
+                # update launch button
+                self.bt_application.Enable( True ) # Enable new launch button
+                self.bt_application.SetToolTipString( searchResults[0] )
+                
+                # update launch button
+                self.bt_options.Enable( True ) # Enable new launch button
+                self.bt_options.SetToolTipString( 'Launch' )
+                
                 # get app-icon for selected application from operating system
                 icon_theme = gtk.icon_theme_get_default()
                 icon_info = icon_theme.lookup_icon(searchResults[0], 16, 0)
-                print(icon_info)
                 icon_path =icon_info.get_filename()
-                if(icon_path <> ""): # found icon
-                    self.curAppIcon = tk.PhotoImage(file=icon_path)
-                    curIconSize=self.curAppIcon.width() # detect icon size
-                    printDebugToTerminal('\tFound '+str(curIconSize)+'px icon at: '+icon_path)
-                    # icon might be to large or to small - resizing could make sense
-                    if targetIconSize == curIconSize:
-                        printDebugToTerminal("\tIcon size matches - no resizing needed")
-                        self.launchButton.configure(image= self.curAppIcon) # set button-icon
+
+                if(icon_path <> ''): # found icon
+                    if('.svg' not in icon_path ):
+                        # define new image
+                        newAppIcon = wx.Image(icon_path, wx.BITMAP_TYPE_PNG)
+
+                        # get image size
+                        newAppIconSize=newAppIcon.GetSize()
+                        newAppIconWidth=newAppIcon.GetWidth()
+                        print('\tFound icon: '+icon_path+' ('+str(newAppIconWidth)+'px)')
+
+                        # icon might be to large or to small - resizing could make sense
+                        if targetIconSize == newAppIconWidth:
+                            print('\tIcon size is as expected')
+
+                        else:
+                            print('\tIcon size does not match, starting re-scaling.')
+                            newAppIcon.Rescale(128,128)                             # rescale image
+                            
+                        self.bt_application.SetBitmap(newAppIcon.ConvertToBitmap())    # set icon to button
                     else:
-                        printDebugToTerminal("\tIcon size does not match, resizing needed.")
-                        if(curIconSize > targetIconSize): # icon is to big - shrink it
-                            printDebugToTerminal("\tAdjusting icon using subsample")
-                            self.curAppIcon = self.curAppIcon.subsample(curIconSize/targetIconSize) 
-                            self.launchButton.configure(image= self.curAppIcon) # set button-icon
-                        else: # icon is too small -> zoom it
-                            printDebugToTerminal("\tAdjusting icon using zoom")
-                            scale_w = targetIconSize/curIconSize
-                            scale_h = targetIconSize/curIconSize
-                            self.curAppIcon = self.curAppIcon.zoom(scale_w, scale_h)
-                            self.launchButton.configure(image= self.curAppIcon) # set button-icon
+                        print('\tSVG icons can not be used so far')
+                        
                 else: # no icon
-                    printDebugToTerminal("\tNo icon found")
+                        print('\tFound no icon')
 
-                printDebugToTerminal('\tLaunch-Button: enabled')
-                self.launchButton['state'] = 'normal'                 # enabling Launch Button
-
-                # dropdown
-                self.om['state'] = 'disabled'
-                # Update Dropdown
-                optionList = searchResults
-                self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
-                self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
-                self.v.set(optionList[0]) # select first search-result
-
-                # change color of searchResultCount
-                self.searchResultCount.config(fg='green')    # Change color of search result count label
+                return searchResults[0] # return the 1 result - for launch
 
             else:           # got several hits
-                # search field
-                self.searchInputEntry.config(background="white")           # set background color
-                self.searchInputEntry.config(foreground="gray")            # set font color
-                self.searchInputEntry.config(highlightbackground="red")    # set border color
-
-                # dropdown
-                self.om['state'] = 'normal'
-                optionList = searchResults
-                self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
-                self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
-
-                # change color of searchResultCount
-                self.searchResultCount.config(fg='red') # adjust colors
+                print('\tFound '+str(len(searchResults))+' matching application')
+                #self.m_comboBox1.Enable( True )
+                self.m_comboBox1.SetItems(searchResults)
                 
-                # CONSTRUCTION SITE
-                #self.openSearchResultList() # open search result list
-                #self.searchInputEntry.focus_set()
-
-            # OptionMenu should be non eye-catchy
-            self.om.config(bd=0) # disable the border
-            self.om.config(highlightthickness=0)    # Specifies a non-negative value indicating the width of the highlight rectangle to draw around the outside of the widget when it has the input focus.
-
-            # Update Dropdown
-            #optionList = searchResults
-            #self.om = tk.OptionMenu(self, self.v, *optionList, command = self.OptionMenu_SelectionEvent)
-            #self.om.grid(row=1, column=0, columnspan=2, padx=10, pady=0, sticky='EW')
-            #self.v.set(optionList[0]) # select first search-result
-
-            printDebugToTerminal('\tSearch-Results:\t'+str(len(searchResults)))
-        printDebugToTerminal('Method: searchingApplication - end')
-
-
-    # On Pressing Launch button
-    def OnLaunchButtonClick(self):
-        printDebugToTerminal('Method: OnLaunchButtonClick - start')
-        self.launchExternalApp()                                          # reset the UI
-        printDebugToTerminal('Method: OnLaunchButtonClick - end')
-
-
-    # On Pressing Preferences button
-    def OnPrefButtonClick(self):
-        printDebugToTerminal('Method: OnPrefButtonClick - start')
-        printDebugToTerminal('\tOpening the preference dialog')
-        self.messageBox = tkMessageBox.showinfo("pylad Preferences", "not yet implemented")
-        printDebugToTerminal('Method: OnPrefButtonClick - end')
-
-
-    # On Pressing GitHub button
-    def OnGithubButtonClick(self):
-        printDebugToTerminal('Method: OnGithubButtonClick - start')
-        printDebugToTerminal('\tOpening project URL ('+appURL+') in default browser')
-        webbrowser.open(appURL)  # Go to github
-        printDebugToTerminal('Method: OnGithubButtonClick - end')
-
-
-    # launching external application
-    def launchExternalApp(self):
-        printDebugToTerminal('Method: launchExternalApp - start')
-        selectedApplicationName = self.v.get()          # get value of OptionMenu
-        if selectedApplicationName != "":
-            checkExecutable = cmd_exists(selectedApplicationName)                   # check if name exists and is executable
-            if (checkExecutable == True):
-                call([selectedApplicationName, ""])                                 # launch external command
-                self.initUI()
-            else:
-                print ('\tERROR >> Checking the executable failed....')
+                # update launch button icon
+                self.img_application = wx.Image('gfx/bt_result_happy_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
         else:
-            printDebugToTerminal('\tNo application selected')
-        printDebugToTerminal('Method: launchExternalApp - end')
+            print('\tEmpty search string')
 
 
-    # On Pressing ENTER
-    def onMenuPressEnter(self,event):
-        printDebugToTerminal('Method: onMenuPressEnter - start')
-        self.launchExternalApp()
-        printDebugToTerminal('Method: onMenuPressEnter - end')
+
+def create_menu_item(menu, label, func):
+    print('\ncreate_menu_item')
+    item = wx.MenuItem(menu, -1, label)
+    menu.Bind(wx.EVT_MENU, func, id=item.GetId())
+    menu.AppendItem(item)
+    return item
 
 
-    # On Search Pressing ENTER
-    def onSearchPressEnter(self,event):
-        printDebugToTerminal('Method: onSearchPressEnter - start')
-        self.launchExternalApp()
-        printDebugToTerminal('Method: onSearchPressEnter - end')
+
+class TaskBarIcon(wx.TaskBarIcon):
+    def __init__(self, frame):
+        self.frame = frame
+        super(TaskBarIcon, self).__init__()
+        self.set_icon(TRAY_ICON)
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_left_down)
 
 
-    # On ESC in Search
-    def onSearchPressESC(self, event):
-        printDebugToTerminal('Method: onSearchPressESC - start')
-        self.initUI()
-        printDebugToTerminal('Method: onSearchPressESC - end')
 
-
-    # On Menu/Dropdown press ESC (is not triggered)
-    def onMenuPressESC(self, event):
-        printDebugToTerminal('Method: onMenuPressESC - start')
-        printDebugToTerminal('Method: onMenuPressESC - end')
-
-
-    # update current search string and trigger app search
-    def getSearchString(self, event):
-        printDebugToTerminal('Method: getSearchString - start')
-        if event.char != '': # if not ARROW DOWN then
-            curString = self.searchInputEntryVariable.get()                         # get current search string
-            if(len(curString) > 0):                                                 # if current string exists
-                print(len(curString))
-                self.searchingApplication(curString)                                # start search for this string
-            else:                                                                   # if search string is empty
-                self.initUI()                                                       # reset UI
-        printDebugToTerminal('Method: getSearchString - end')
+    def CreatePopupMenu(self):
+        print('\nCreatePopupMenu')
+        menu = wx.Menu()
+        # preferences
+        create_menu_item(menu, 'Preferences', self.on_hello)
+        menu.AppendSeparator()
+        # github
+        create_menu_item(menu, 'GitHub', self.on_github)
+        menu.AppendSeparator()
+        # exit
+        create_menu_item(menu, 'Exit', self.on_exit)
         
-
-    def openSearchResultList(self):
-        printDebugToTerminal('Method: openSearchResultList - start')
-        curSearchResults = self.searchResultCountVariable.get()     # check if we got searchResults at all - otherwise do nothing
-        if(curSearchResults)==str(0):    # we got no search results - so opening the OptionMenu makes no sense at all
-            printDebugToTerminal('\tArray-Down without search results is stupid. Lets stop here')
-            printDebugToTerminal('\tSetting focus back to search')
-            self.searchInputEntry.focus_set()             # Set focus to search
-        else:
-            printDebugToTerminal('\tSetting focus to dropdown')
-            self.om.focus_set()             # Set focus to OpionMenu / Dropdown
-            printDebugToTerminal('\tSimulate space key')
-            self.om.event_generate('<space>')  # Open the OptionMenu by simulating a keypress
-            #
-            #self.searchInputEntry.focus_set()             # Set focus back to search field
-        printDebugToTerminal('Method: openSearchResultList - end')
+        # test: append items
+        fitem = menu.Append(wx.ID_EXIT, 'Qu_it', 'Quit application')
+        return menu
 
 
-    # Arrow Down in Search field should list
-    def onSearchArrowDown(self, event):
-        printDebugToTerminal('Method: onSearchArrowDown - start')
-        self.openSearchResultList()
-        printDebugToTerminal('Method: onSearchArrowDown - end')
+
+    def set_icon(self, path):
+        icon = wx.IconFromBitmap(wx.Bitmap(path))
+        self.SetIcon(icon, TRAY_TOOLTIP)
 
 
-if __name__ == "__main__":
-    app = simpleapp_tk(None)
-    app.title(appName)
-    app.mainloop()
+
+    def on_left_down(self, event):
+        print('\non_left_down')
+        print '\tTray icon was left-clicked.'
+        print '\tShould open or close main UI'
+        #WINDOW_REF.Show() 
+        #MyFrame.Show(MyFrame, self) 
+
+
+
+
+    def on_hello(self, event):
+        print 'Dummy: Open Preference Window'
+
+
+
+    def on_exit(self, event):
+        wx.CallAfter(self.Destroy)
+        self.frame.Close()
+
+
+    
+    def on_github(self, event):
+        print('Opening github in browser')
+        webbrowser.open(appURL)  # Go to github
+        #self.openAppURL()
+
+
+
+class App(wx.App):
+    def OnInit(self):
+        frame=wx.Frame(None)
+        self.SetTopWindow(frame)
+        TaskBarIcon(frame)
+        return True
+
+
+def main():
+    app = App(False)
+    
+    # Main UI window
+    frame = MyFrame(None, appName)
+    #frame = wx.Frame(None, wx.ID_ANY, appName) # A Frame is a top-level window.
+    #frame.Show(True)     # Show the frame.
+    app.MainLoop()
+
+
+
+if __name__ == '__main__':
+    main()
