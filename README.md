@@ -1,10 +1,10 @@
-![logo](https://raw.githubusercontent.com/yafp/pylad/master/doc/font-awesome_4-6-3_search_64_0_000000_none.png) pylad
+![logo](https://raw.githubusercontent.com/yafp/apparat/master/src/gfx/bt_appIcon.png) apparat
 ==========
 
 ## About
-pylad is a python based application launcher
+apparat is a python based application launcher
 
 
 ## Requirements
-- Python
-- Tkinter
+- python
+- python-wxtools
