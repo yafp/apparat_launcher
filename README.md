@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/yafp/apparat/master/src/gfx/bt_appIcon.png) apparat
+![logo](https://raw.githubusercontent.com/yafp/apparat/master/src/gfx/core/bt_appIcon_16.png) apparat
 ==========
 
 ## About
