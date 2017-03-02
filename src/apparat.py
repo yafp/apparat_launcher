@@ -1,12 +1,11 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-1 -*-
 
-
 # -----------------------------------------------------------------------------------------------
-# NAME:         pylad
+# NAME:         apparat
 # DESCRIPTION:  Python based application launcher
 # AUTHOR:       yafp
-# URL:          https://github.com/yafp/pylad
+# URL:          https://github.com/yafp/apparat
 
 
 # -----------------------------------------------------------------------------------------------
@@ -15,42 +14,36 @@
 # TrayIcon:                                 http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
 # Icons - Font Awesome - Color: #7f8c8d     http://fontawesome.io/icons/
 #                                           http://fa2png.io/
+# Ini files                                 https://wiki.python.org/moin/ConfigParserExamples
+# Frame Styles                              https://www.blog.pythonlibrary.org/2013/11/06/wxpython-101-using-frame-styles/
+# Key Events                                https://wxpython.org/docs/api/wx.KeyEvent-class.html
 
 
 # -----------------------------------------------------------------------------------------------
 # REMINDER/OPEN
 # -----------------------------------------------------------------------------------------------
 # - global hotkey to bring running app in foreground        https://wxpython.org/docs/api/wx.Window-class.html#RegisterHotKey
-# - remember last window position
-# - no window decoration 
-# - ui fade in on launch            https://www.blog.pythonlibrary.org/2008/04/14/doing-a-fade-in-with-wxpython/
-# - intelligent result sorting      http://stackoverflow.com/questions/17903706/how-to-sort-list-of-strings-by-best-match-difflib-ratio
-
-
-# -----------------------------------------------------------------------------------------------
-# CHANGES
-# -----------------------------------------------------------------------------------------------
-# - adding parameter support
-# - added working !lock function using !l
-# - added working google function using !g
-# - added working wiki function using !w
+#                                                           https://github.com/schurpf/pyhk                                                           
+# - ui fade in on launch                                    https://www.blog.pythonlibrary.org/2008/04/14/doing-a-fade-in-with-wxpython/
 
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
-import wx                           # for all the WX items
+import wx                           # for all the WX GUI items
 import os, fnmatch                  # for searching applications
 import webbrowser                   # for opening urls (example: github project page)
 import subprocess                   # for checking if cmd_exists
-from subprocess import call         # for calling external commands
 import difflib                      # for intelligent list sort
-#import sys
+import ConfigParser                 # to handle .ini/configuration files
+from subprocess import call         # for calling external commands
+from sys import platform            # to detect the platform the script is executed on
 
 import gtk                          # for app-icon handling - crashes - reason: wx?
 # helps on ubuntu - not on fedora
 gtk.remove_log_handlers()           # if this line is removed - app is crashing as long as both WX and GTK are imported.
                                     # reference: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
+gtk.disable_setlocale()
 
 
 # -----------------------------------------------------------------------------------------------
@@ -66,12 +59,19 @@ targetIconSize = 128
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-appVersion = '20170225.01'
+appVersion = '20170302.01'
 debug = True                    # True or False
 #debug = False                    # True or False
 
 windowWidth=350
-windowHeight=280
+windowHeight=310
+
+
+# -----------------------------------------------------------------------------------------------
+# CONFIG (USER)
+# -----------------------------------------------------------------------------------------------
+transparency=255                # app transparency - Values: 0-255
+
 
 
 # -----------------------------------------------------------------------------------------------
@@ -82,8 +82,8 @@ windowHeight=280
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # HELPER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def cmd_exists(cmd):
-    printDebugToTerminal('cmd_exists')
+def cmdExists(cmd):
+    printDebugToTerminal('cmdExists')
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
@@ -93,18 +93,42 @@ def printDebugToTerminal(string):
         print ("debug >> "+string)
 
 
+# used to detect the platform and exit if the platform is unsupported
+def checkPlatform():
+    printDebugToTerminal('checkPlatform')
+    if platform == "linux" or platform == "linux2": # linux
+        printDebugToTerminal('\tDetected linux')
+    elif platform == "darwin":                      # OS X
+        printDebugToTerminal('\tDetected unsupported platform (darwin)')
+        wx.MessageBox('Unsupported platform detected, aborting '+appName+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
+        exit()
+    elif platform == "win32":                       # Windows...
+        printDebugToTerminal('\tDetected unsupported platform (windows)')
+        wx.MessageBox('Unsupported platform detected, aborting '+appName+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
+        exit()
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MAIN-WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class MyFrame(wx.Frame):                # We simply derive a new class of Frame. """
     def __init__(self, parent, title):
-        #wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight))                           # Frame default
-        #wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight), style=wx.CAPTION)         # Frame without Window Buttons
-        wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight), style=wx.NO_BORDER)        # Frame without borders
 
-        self.SetSizeHintsSz( wx.Size( windowWidth,windowHeight ), wx.Size( windowWidth,windowHeight ) )   # forcing min and max size to same values - prevents resizing option
+        # Update Statistics (ini) - Apparat launched
+        printDebugToTerminal('\tUpdating statistics (apparat_started)')
+        curAppStartCount = self.readSingleINIValue('Statistics','apparat_started')          # get current value from ini
+        self.writeSingleINIValue('Statistics','apparat_started',int(curAppStartCount)+1)    # update ini +1
+        
+        # frame style
+        style = ( wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED  )
+        
+        #wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight))                          # Default frame
+        wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight), style=style)              # Custom Frame 
+        self.SetSizeHintsSz( wx.Size( windowWidth,windowHeight ), wx.Size( windowWidth,windowHeight ) )         # forcing min and max size to same values - prevents resizing option
+        self.tbicon = TaskBarIcon(self)
+        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
 
-        # set an application icon
+        ## define and set an application icon
         appIcon = wx.Icon('gfx/core/bt_appIcon_16.png', wx.BITMAP_TYPE_PNG)
         self.SetIcon(appIcon)
 
@@ -133,7 +157,6 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         # Search & Search Results as comboBox
         searchResults = []
         self.m_comboBox1 = wx.ComboBox( self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size( 265,30 ), searchResults, 0 )
-        self.m_comboBox1.SetToolTipString( u'Search' )
 
         # launchbutton
         self.img_application = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
@@ -146,26 +169,26 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         self.bt_application.Enable( False )
 
         # optionbutton
-        self.img_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+        self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
         self.bt_options = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size( 150,150 ), wx.BU_AUTODRAW )
         self.bt_options.SetBitmapFocus( wx.NullBitmap )
         self.bt_options.SetBitmapHover( wx.NullBitmap )
-        self.bt_options.SetToolTipString( u'Launch' )
+        #self.bt_options.SetToolTipString( u'Launch' )
         self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
         self.bt_options.SetLabel('Options')
         self.bt_options.Enable( False )
 
-        # label - command
-        self.txt_command = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE|wx.BORDER_NONE)
+        # label - command (hidden)
+        self.txt_command = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE)
         self.txt_command.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
         self.txt_command.SetToolTipString( u'Command' )
         self.txt_command.SetMinSize( wx.Size( 150,30 ) )
         self.txt_command.SetMaxSize( wx.Size( 150,30 ) )
         self.txt_command.SetEditable(False)
         self.txt_command.Enable( False )
-        self.txt_command.Hide()
+        #self.txt_command.Hide()
         
-        # label - parameter
+        # label - parameter (hidden)
         self.txt_commandParameter = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE )
         self.txt_commandParameter.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
         self.txt_commandParameter.SetToolTipString( u'Parameter' )
@@ -173,7 +196,7 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         self.txt_commandParameter.SetMaxSize( wx.Size( 150,30 ) )
         self.txt_commandParameter.SetEditable(False)
         self.txt_commandParameter.Enable( False )
-        self.txt_commandParameter.Hide()
+        #self.txt_commandParameter.Hide()
 
         # Version Information
         self.txt_versionInformation = wx.StaticText( self, wx.ID_ANY, ' v'+appVersion, wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -186,37 +209,27 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         # Layout
         # ------------------------------------------------
         bSizer1 = wx.BoxSizer( wx.VERTICAL )                                # define layout container
-        
         bSizer1.Add( self.bt_preferences, 0, wx.ALIGN_RIGHT, 100)           # preferences
-        
         bSizer1.AddSpacer(10)                                               # spacer
-        
         # horizontal sub-item 1
         box1 = wx.BoxSizer(wx.HORIZONTAL)
         box1.Add( self.txt_resultCounter, 0, wx.CENTRE)                     # result counter
         box1.Add( self.m_comboBox1, 0, wx.CENTRE)                           # combobox
         bSizer1.Add( box1, 0, wx.CENTRE)
-        
         bSizer1.AddSpacer(10)                                               # spacer
-        
         # horizontal sub-item 2
         box2 = wx.BoxSizer(wx.HORIZONTAL)
         box2.Add( self.bt_application, 0, wx.CENTRE)                        # launch button
         box2.Add( self.bt_options, 0, wx.CENTRE)                            # options button
         bSizer1.Add( box2, 0, wx.CENTRE)
-        
         # horizontal sub-item 3
         box3 = wx.BoxSizer(wx.HORIZONTAL)
         box3.Add( self.txt_command, 0, wx.CENTRE)                           # launch text
         box3.Add( self.txt_commandParameter, 0, wx.CENTRE)                  # option text
         bSizer1.Add( box3, 0, wx.CENTRE)
-
         bSizer1.AddSpacer(30)                                               # spacer
-
         bSizer1.Add( self.txt_versionInformation, 0, wx.CENTRE )            # version
-
         self.SetSizer( bSizer1 )
-        self.Center() # open window centered
 
 
         # ------------------------------------------------
@@ -227,8 +240,8 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         
         # combobox
         self.m_comboBox1.Bind( wx.EVT_KEY_UP, self.onKeyPressInCombobox )               # ComboBox
-        self.m_comboBox1.Bind( wx.EVT_TEXT_ENTER, self.onEnterInCombobox)               # doesnt trigger
-        self.m_comboBox1.Bind( wx.EVT_COMBOBOX, self.onSelectInCombobox)                # does trigger
+        self.m_comboBox1.Bind( wx.EVT_TEXT_ENTER, self.onEnterInCombobox)               # ComboBox - doesnt trigger
+        self.m_comboBox1.Bind( wx.EVT_COMBOBOX, self.onSelectInCombobox)                # ComboBox - does trigger
         
         # option button
         self.bt_options.Bind(wx.EVT_BUTTON, self.OnClickedOptionButton)
@@ -256,8 +269,41 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         #menuBar.Append(filemenu,'&File') # Adding the "filemenu" to the MenuBar
         #self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
         
-        self.Show(True) # show main UI
+        self.Center()                   # open window centered
+        self.Show(True)                 # show main UI
         self.m_comboBox1.SetFocus()     # set focus to search
+        self.SetTransparent(transparency)       # 0-255
+
+    #
+    def OnCloseWindow(self, event):
+        self.tbicon.RemoveIcon()
+        self.tbicon.Destroy()
+        self.Destroy()
+        wx.GetApp().ExitMainLoop()
+        event.Skip()
+
+
+    '''
+        Method to read a single value from the configuration file apparat.ini
+    '''
+    def readSingleINIValue(self, sectionName, keyName):
+        Config = ConfigParser.ConfigParser() 
+        Config.read("apparat.ini")                                              # read config file
+        #print Config.sections()                                                # get available sections
+        value = Config.get(sectionName, keyName)                                # get single value
+        return(value)                                                           # return single value
+
+
+    '''
+        Method to write a single value to the configuration file apparat.ini
+    '''
+    def writeSingleINIValue(self, sectionName, keyName, value):
+        Config = ConfigParser.ConfigParser() 
+        Config.read("apparat.ini")                                              # read config file
+        Config.set(sectionName, keyName, value )                                # write
+        with open('apparat.ini', 'wb') as configfile:
+            Config.write(configfile)                                            # save
+        
 
 
     def OnClickedOptionButton(self, event): 
@@ -266,11 +312,19 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
 
 
     def OnClicked(self, event): 
+        printDebugToTerminal('OnClicked')
         btn = event.GetEventObject().GetLabel() 
-        #print('Label of pressed button = ',btn)
         if (btn =='Preferences'):
-            printDebugToTerminal('Open Preferences')
-            self.m_comboBox1.SetFocus() # set focus back to search
+            printDebugToTerminal('\tPreferences')
+            # Open a preference window
+            self.openPreferenceWindow()
+
+
+    def openPreferenceWindow(self):
+        printDebugToTerminal('openPreferenceWindow')
+        self.new = NewWindow(parent=None, id=-1)
+        self.new.Show()
+
 
 
     def onEnterInCombobox(self, event):
@@ -280,16 +334,41 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
     def onSelectInCombobox(self, event):
         print('\n\n\nEvent Event')
 
-
+    '''
+        If content of the searchfield of the combobox changes
+    '''
     def onKeyPressInCombobox(self, event):
         printDebugToTerminal('On Key Press On Comboxbox')
+        
         kc = event.GetKeyCode()
+        #print kc
+        
+        ## Checking for key-combinations
+        #
+        if event.HasModifiers():            # either CTRL or ALT was pressed
+            # Modifiers
+            # 1 = alt
+            # 2 = ctrl
+            # 3 = alt + ctrl
+            #print event.GetModifiers()
+            
+            # ctrl+alt+a
+            if(event.GetModifiers() == 3) and (kc == 65):
+                print('magic combo was pressed')
+                # do something
+
+        
         if(kc == 13) : # Enter
             printDebugToTerminal('\tENTER')
             # should check if combobox is open or not
             # not sure if possible with combobox - or if i need to use 'ComboCtrl' - as it has 'IsPopupShown'
-            self.launchExternalApplication()
 
+            # if we got a search string and 1 result in counter -> launchExternalApplication
+            if(len(self.m_comboBox1.GetValue()) > 0) and (self.txt_resultCounter.GetValue() == '1'):
+                self.launchExternalApplication()
+            else:
+                printDebugToTerminal('\tCombobox is empty or resultcount is not 1, nothing to do here.')
+            
         elif(kc == 27) : # ESC
             printDebugToTerminal('\tESC in combobox')
             self.resetUI()
@@ -311,133 +390,120 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         if(currentSearchString != ''):
         
             if \
-            (currentSearchString.startswith('!a ') == True) or \
-            (currentSearchString.startswith('!b ') == True) or \
-            (currentSearchString.startswith('!g ') == True) or \
-            (currentSearchString.startswith('!r ') == True) or \
-            (currentSearchString.startswith('!s ') == True) or \
-            (currentSearchString.startswith('!t ') == True) or \
-            (currentSearchString.startswith('!v ') == True) or \
-            (currentSearchString.startswith('!w ') == True) or \
-            (currentSearchString.startswith('!y ') == True):
+            (currentSearchString.startswith('!a') == True) or \
+            (currentSearchString.startswith('!b') == True) or \
+            (currentSearchString.startswith('!g') == True) or \
+            (currentSearchString.startswith('!r') == True) or \
+            (currentSearchString.startswith('!s') == True) or \
+            (currentSearchString.startswith('!t') == True) or \
+            (currentSearchString.startswith('!v') == True) or \
+            (currentSearchString.startswith('!w') == True) or \
+            (currentSearchString.startswith('!y') == True):
 
                 # Amazon
-                if(currentSearchString.startswith('!a ') == True):
+                if(currentSearchString.startswith('!a') == True):
                     printDebugToTerminal('\tPlugin Amazon activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Amazon')
                     
                 # Bandcamp
-                if(currentSearchString.startswith('!b ') == True):
+                if(currentSearchString.startswith('!b') == True):
                     printDebugToTerminal('\tPlugin Bandcamp activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Bandcamp')
 
                 # Google
-                if(currentSearchString.startswith('!g ') == True):
+                if(currentSearchString.startswith('!g') == True):
                     printDebugToTerminal('\tPlugin Google activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Google')
                     
                 # Reddit
-                if(currentSearchString.startswith('!r ') == True):
+                if(currentSearchString.startswith('!r') == True):
                     printDebugToTerminal('\tPlugin Reddit activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Reddit')
                 
                 # Soundcloud
-                if(currentSearchString.startswith('!s ') == True):
+                if(currentSearchString.startswith('!s') == True):
                     printDebugToTerminal('\tPlugin Soundcloud activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Soundcloud')
                 
                 # Twitter
-                if(currentSearchString.startswith('!t ') == True):
+                if(currentSearchString.startswith('!t') == True):
                     printDebugToTerminal('\tPlugin Twitter activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Twitter')
                 
                 # Vimeo
-                if(currentSearchString.startswith('!v ') == True):
+                if(currentSearchString.startswith('!v') == True):
                     printDebugToTerminal('\tPlugin Vimeo activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Vimeo')
 
                 # Wikipedia
-                if(currentSearchString.startswith('!w ') == True):
+                if(currentSearchString.startswith('!w') == True):
                     printDebugToTerminal('\tPlugin Wikipedia activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Wikipedia')
 
                 # Youtube
-                if(currentSearchString.startswith('!y ') == True):
+                if(currentSearchString.startswith('!y') == True):
                     printDebugToTerminal('\tPlugin YouTube activated')
-                    # application buttons
                     self.img_application = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
                     self.bt_application.SetToolTipString( 'Youtube')
 
-                
-                
-                # for all search plugin cases
+
+                ## for all search plugin cases
                 #
-                # application button
+                # update application button
                 self.bt_application.Enable( True )
                 self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
                 
-                # options button
+                # update option button
                 self.img_options = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
                 self.bt_options.Enable( True )
                 self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
                 self.bt_options.SetToolTipString( 'Search')
                 
-                # command
+                # set command
                 self.txt_command.SetValue(currentSearchString)
                 
-                # set resultcount
-                self.txt_resultCounter.SetValue('1')
+                self.txt_resultCounter.SetValue('1') # set resultcount
                 return
 
             # Plugin: Lock
             if(currentSearchString == '!l'):
                 printDebugToTerminal('\tPlugin lock activated')
-                #self.bt_options.SetFocus()
                 
                 # application buttons
                 self.img_application = wx.Image('gfx/plugins/lock/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
                 self.bt_application.Enable( True )
                 self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-                self.bt_application.SetToolTipString( 'Lock')
+                self.bt_application.SetToolTipString( 'Lock Session')
                 
                 # option buttons
-                self.bt_options.Enable( True )
-                #self.bt_options.SetToolTipString( 'Do lock now')
+                self.bt_options.SetToolTipString( 'Launch')
+                self.img_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
+                self.bt_options.Enable( True )                                  # Enable option button
                 
-                # set labels
+                # set command and parameter
                 self.txt_command.SetValue('gnome-screensaver-command')
                 self.txt_commandParameter.SetValue('--lock')
                 
-                # set resultcount
-                self.txt_resultCounter.SetValue('1')
+                self.txt_resultCounter.SetValue('1')        # set resultcount
                 return
 
-            # Default case
+            ## Default case
             printDebugToTerminal('\tSearching executables for the following string: '+currentSearchString)
             searchResults = fnmatch.filter(os.listdir('/usr/bin'), '*'+currentSearchString+'*')     # search for executables matching users searchstring
             
-            # Sort results
-            #
-            # 1: from a to z
+            ## Sort results
+            ## 1: from a to z
             #searchResults.sort() # sort search results (from a to z)
-            #
-            # 2: using difflib
+            ## 2: using difflib
             #print sorted(searchResults, key=lambda x: difflib.SequenceMatcher(None, x, currentSearchString).ratio(),reverse=True)
             searchResults=sorted(searchResults, key=lambda x: difflib.SequenceMatcher(None, x, currentSearchString).ratio(),reverse=True)
 
@@ -450,6 +516,15 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
                 # update launch button icon
                 self.img_application = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
                 self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
+                
+                # update option button
+                self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
+                
+                # set command and parameter
+                self.txt_command.SetValue('')
+                self.txt_commandParameter.SetValue('')
+                
 
             elif(len(searchResults) == 1):     # if we got 1 search-results
                 printDebugToTerminal('\tFound 1 matching application')
@@ -459,6 +534,8 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
                 self.bt_application.SetToolTipString( searchResults[0] )        # set tooltip
                 
                 # options buttons
+                self.img_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
                 self.bt_options.Enable( True )                                  # Enable option button
                 self.bt_options.SetToolTipString( 'Launch' )                    # set tooltip
                 
@@ -466,18 +543,31 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
                 self.txt_command.SetValue(searchResults[0])
                 self.txt_commandParameter.SetValue('')
                 
+                # Icon search - http://www.pygtk.org/pygtk2reference/class-gtkicontheme.html
+                #
                 # get app-icon for selected application from operating system
                 icon_theme = gtk.icon_theme_get_default()
-                icon_info = icon_theme.lookup_icon(searchResults[0], 16, 0)
+                # check what icon sizes are available and choose best size
+                availableIconSizes = icon_theme.get_icon_sizes(searchResults[0])
+                if not availableIconSizes: # if we got no list of available icon sizes - Fallback: try to get a defined size
+                    icon_info = icon_theme.lookup_icon(searchResults[0], 64, 0)
+                    maxIconSize=64
+                else:
+                    printDebugToTerminal('\tFound several icon sizes: '+str(availableIconSizes))
+                    # pick the biggest
+                    maxIconSize=max(availableIconSizes)
+                    printDebugToTerminal('\tPicking the following icon size: '+str(maxIconSize))
+                    icon_info = icon_theme.lookup_icon(searchResults[0], maxIconSize, 0)
+                    
                 icon_path =icon_info.get_filename()
 
                 if(icon_path <> ''):                                            # found icon
                     if('.svg' not in icon_path ):
                         
                         newAppIcon = wx.Image(icon_path, wx.BITMAP_TYPE_PNG)    # define new image
-                        newAppIconWidth=newAppIcon.GetWidth()                   # get icon width
-                        printDebugToTerminal('\tFound icon: '+icon_path+' ('+str(newAppIconWidth)+'px)')
-                        if targetIconSize == newAppIconWidth:                   # if icon has expected size
+                        #newAppIconWidth=newAppIcon.GetWidth()                   # get icon width
+                        printDebugToTerminal('\tFound icon: '+icon_path+' ('+str(maxIconSize)+'px)')
+                        if targetIconSize == maxIconSize:                   # if icon has expected size
                             printDebugToTerminal('\tIcon size is as expected')
                         else:                                                   # resize icon
                             printDebugToTerminal('\tIcon size does not match, starting re-scaling.')
@@ -497,8 +587,12 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
                 self.img_application = wx.Image('gfx/core/bt_result_happy_128.png', wx.BITMAP_TYPE_PNG)
                 self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
                 self.bt_application.Enable( False )
+                self.bt_application.SetToolTipString( u'' )
                 
+                self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
+                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
                 self.bt_options.Enable( False )                                  # Enable option button
+                self.bt_options.SetToolTipString( u'' )
                 
                 # update labels
                 self.txt_command.SetValue('')
@@ -507,7 +601,9 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         else:                                                                                       # search string is empty
             printDebugToTerminal('\tEmpty search string')
 
-
+    '''
+        Launches the actual external process
+    '''
     def launchExternalApplication(self):
         printDebugToTerminal('launchExternalApplication')
         currentSelectedAppName = self.txt_command.GetValue()
@@ -561,25 +657,38 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
             if(currentSelectedAppName.startswith('!y ') == True):
                 remoteURL='https://www.youtube.com/results?search_query='+searchPhrase      # https://www.youtube.com/results?search_query=foobar
             
-            # for all 3 plugins:
+            # for all  plugins:
             webbrowser.open(remoteURL)  # search youtube
+            
+            # update usage-statistics
+            printDebugToTerminal('\tUpdating statistics (plugin_executed)')
+            curPluginExecutedCount = self.readSingleINIValue('Statistics','plugin_executed')          # get current value from ini
+            self.writeSingleINIValue('Statistics','plugin_executed',int(curPluginExecutedCount)+1)    # update ini +1
+            
             self.resetUI()
             return
 
         #if currentSelectedAppName != '' or currentSelectedAppName != 'None':
         if(currentSelectedAppName is not None): # Check if the dropdown contains something at all or not
             printDebugToTerminal('\tShould execute: "'+currentSelectedAppName+'" with parameter: "'+currentSelectedAppNameParameter+'"')
-            checkExecutable = cmd_exists(currentSelectedAppName)                   # check if name exists and is executable
+            checkExecutable = cmdExists(currentSelectedAppName)                   # check if name exists and is executable
             if (checkExecutable == True):
-                printDebugToTerminal('\tExecutable: '+currentSelectedAppName+' exists')
+                
+                # update usage-statistics
+                printDebugToTerminal('\tUpdating statistics (command_executed)')
+                curCommandsExecutedCount = self.readSingleINIValue('Statistics','command_executed')          # get current value from ini
+                self.writeSingleINIValue('Statistics','command_executed',int(curCommandsExecutedCount)+1)    # update ini +1
+                
+                printDebugToTerminal('\tExecutable: "'+currentSelectedAppName+'" exists')
                 # https://docs.python.org/2/library/subprocess.html
                 if(currentSelectedAppNameParameter == ''):
-                    call([currentSelectedAppName])                                  # launch external command
+                    #subprocess.Popen(["rm","-r","some.file"])
+                    subprocess.Popen([currentSelectedAppName])
                     printDebugToTerminal('\tExecuted: '+currentSelectedAppName)
                 else:
-                    call([currentSelectedAppName, currentSelectedAppNameParameter]) # launch external command with parameter
+                    subprocess.Popen([currentSelectedAppName,currentSelectedAppNameParameter,""])
                     printDebugToTerminal('\tExecuted: '+currentSelectedAppName+' '+currentSelectedAppNameParameter)
-                
+
                 self.resetUI()
             else:
                 printDebugToTerminal ('\tERROR >> Checking the executable failed')
@@ -593,38 +702,56 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         webbrowser.open(appURL)  # Go to github
 
 
+    '''
+        Reset the User-Interface of the Apps main-window
+    '''
     def resetUI(self):
         printDebugToTerminal('resetUI')
-        # combobox
+        # reset the combobox
         self.m_comboBox1.SetFocus()                                 # set focus to search
-        self.m_comboBox1.SetValue('')                               # reset dropdown with search results
+        self.m_comboBox1.Clear()                                    # clear all list values
+        self.m_comboBox1.SetValue('')                               # clear search field
 
-        # launch button
+        # reset the applications button
         self.img_application = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
         self.bt_application.Enable( False )
         self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
         self.bt_application.SetToolTipString( 'Search')
 
-        # option buttons
-        self.img_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+        # reset the option buttons
+        self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
         self.bt_options.Enable( False )
         self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
         self.bt_options.SetToolTipString( 'Launch')
 
-        # update labels
+        # reset the command and parameter elements
         self.txt_command.SetValue('')
         self.txt_commandParameter.SetValue('')
 
-        # result counter
+        # reset the result counter
         self.txt_resultCounter.SetValue('')                               # Reset result counter
         printDebugToTerminal('\tFinished resetting UI')
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PREFERENCE WINDOW
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class NewWindow(wx.Frame):
+    def __init__(self,parent,id):
+        prefWindowStyle = ( wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR )
+        
+        wx.Frame.__init__(self, parent, id, 'Preferences', size=(500,300), style=prefWindowStyle)
+        wx.Frame.CenterOnScreen(self)
+        #self.new.Show(False)
+
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # TRAY-MENU
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def create_menu_item(menu, label, func):
-    printDebugToTerminal('create_menu_item')
+    printDebugToTerminal('create_menu_item: '+label)
     item = wx.MenuItem(menu, -1, label)
     menu.Bind(wx.EVT_MENU, func, id=item.GetId())
     menu.AppendItem(item)
@@ -640,23 +767,16 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         self.frame = frame
         super(TaskBarIcon, self).__init__()
         self.set_icon(TRAY_ICON)
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_left_down)
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.onTrayMenuLeftClick)
 
 
     def CreatePopupMenu(self):
         printDebugToTerminal('CreatePopupMenu')
-        
         menu = wx.Menu()
-        
-        # preferences
-        create_menu_item(menu, 'Preferences', self.on_hello)
-        
-        # github
-        create_menu_item(menu, 'GitHub', self.on_github)
-        menu.AppendSeparator()
-        
-        # exit
-        create_menu_item(menu, 'Exit', self.on_exit)
+        create_menu_item(menu, 'Preferences', self.onTrayMenuRightClickPreferences)     # preferences
+        create_menu_item(menu, 'GitHub', self.onTrayMenuRightClickGitHub)               # github
+        menu.AppendSeparator()                                                          # separator
+        create_menu_item(menu, 'Exit', self.onTrayMenuRightClickExit)                   # exit
         return menu
 
 
@@ -665,34 +785,32 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         self.SetIcon(icon, TRAY_TOOLTIP)
 
 
-    def on_left_down(self, event):
-        printDebugToTerminal('on_left_down')
-        printDebugToTerminal('\tTray icon was left-clicked, should open or close main UI now...')
-        #
-        #self.frame.Hide()
-        #self.frame.Show()
-        #self.frame.Restore()
+    def onTrayMenuLeftClick(self, event):
+        printDebugToTerminal('onTrayMenuLeftClick')
+        # check if main window is minimized
+        if self.frame.IsIconized():
+            printDebugToTerminal('\tMainWindows was minimized - should show it now')
+            self.frame.Raise()
+            
+        else:
+            printDebugToTerminal('\tMainWindows was shown - should minimize it now')
+            self.frame.Iconize(True)
+            #self.frame.HideWithEffect(wx.SHOW_EFFECT_SLIDE_TO_RIGHT, timeout=3000)
 
 
-
-    def on_hello(self, event):
-        printDebugToTerminal('Dummy: Open Preference Window')
-
-
-    def on_exit(self, event):
-        wx.CallAfter(self.Destroy)              # close the tray icon
-        self.frame.Close()                      # ??
-        #
-        #
-        #sys.exit() # needs: import sys
-        #raise SystemExit, 0
-        exit()
+    def onTrayMenuRightClickPreferences(self, event):
+        printDebugToTerminal('onTrayMenuRightClickPreferences')
+        self.openPreferenceWindow()
 
 
-    def on_github(self, event):
-        printDebugToTerminal('Opening github in browser')
+    def onTrayMenuRightClickExit(self, event):
+        printDebugToTerminal('onTrayMenuRightClickExit')
+        wx.CallAfter(self.frame.Close)
+
+
+    def onTrayMenuRightClickGitHub(self, event):
+        printDebugToTerminal('onTrayMenuRightClickGitHub')
         webbrowser.open(appURL)  # Go to github
-
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -700,9 +818,22 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class App(wx.App):
     def OnInit(self):
+        
+        # allow only 1 instance of apparat
+        self.name = appName
+        self.instance = wx.SingleInstanceChecker(self.name)
+        if self.instance.IsAnotherRunning():
+            wx.MessageBox(
+                "An instance of the application is already running", 
+                "Error", 
+                 wx.OK | wx.ICON_WARNING
+            )
+            return False
+        return True
+        
         frame=wx.Frame(None)
         self.SetTopWindow(frame)
-        TaskBarIcon(frame)
+        #TaskBarIcon(frame)
         return True
 
 
@@ -711,12 +842,11 @@ class App(wx.App):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def main():
     app = App(False)
-    
-    # Main UI window
-    frame = MyFrame(None, appName)
-    #frame = wx.Frame(None, wx.ID_ANY, appName) # A Frame is a top-level window.
+    checkPlatform()                 # Check if platform is supported at all, otherwise abort
+    frame = MyFrame(None, appName)  # Main UI window
     app.MainLoop()
 
 
 if __name__ == '__main__':
+    printDebugToTerminal('__main__')
     main()
