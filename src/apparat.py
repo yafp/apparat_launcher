@@ -25,6 +25,9 @@
 # Code Lint:
 #   pylint apparat.py (for python 2)
 #   pylint3 apparat.py (for python 3)
+#   pylint --rcfile /path/to/pylintrc apparat.py
+# PyLint Messages
+#   http://pylint-messages.wikidot.com/all-codes
 
 
 # -----------------------------------------------------------------------------------------------
@@ -41,7 +44,7 @@
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
-import sys
+import sys                          # to show python version used
 import os                           # for searching applications
 import fnmatch                      # for searching applications
 import webbrowser                   # for opening urls (example: github project page)
@@ -51,14 +54,13 @@ from sys import platform            # to detect the platform the script is execu
 import ConfigParser                 # to handle .ini/configuration files
 import wx                           # for all the WX GUI items
 
-#import gtk                          # for app-icon handling - crashes - reason: wx?
+import gtk                          # for app-icon handling - crashes - reason: wx?
 #gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
 #
 # ref: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
 #gtk.disable_setlocale()
 
 
-print ("Python version used: "+sys.version)                 # show python version
 
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS (DEVELOPER)
@@ -73,7 +75,7 @@ TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170303.02'
+APP_VERSION = '20170303.03'
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
 
@@ -112,6 +114,7 @@ def print_debug_to_terminal(string):
 def check_platform():
     """ Method to checkthe platform (supported or not) """
     print_debug_to_terminal('check_platform')
+    print_debug_to_terminal('\tPython version used: '+sys.version)                 # show python version
     if platform == "linux" or platform == "linux2": # linux
         print_debug_to_terminal('\tDetected linux')
     elif platform == "darwin":                      # OS X
@@ -128,10 +131,10 @@ def check_platform():
 # MAIN-WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class MyFrame(wx.Frame):
-    """ foo """
+    """ Class for MainWindow """
     def __init__(self, parent, title):
     #def __init__(self):
-        """ foo """
+        """ Initialize the MainWindow """
 
         # Update Statistics (ini) - Apparat launched
         print_debug_to_terminal('\tUpdating statistics (apparat_started)')
@@ -351,7 +354,7 @@ class MyFrame(wx.Frame):
     def open_preference_window(self):
         """ Opens the preference window """
         print_debug_to_terminal('open_preference_window')
-        self.new = NewWindow(parent=None, id=-1)
+        self.new = PreferenceWindow(parent=None, id=-1)
         self.new.Show()
 
 
@@ -385,7 +388,7 @@ class MyFrame(wx.Frame):
                 global combobox_open
                 combobox_open = 0
 
-                self.search_applications(self.search_and_result_combobox.GetValue()) # run search again after selecting the desired search string from dropdown
+                self.parse_user_search_input(self.search_and_result_combobox.GetValue()) # run search again after selecting the desired search string from dropdown
         else:
             print_debug_to_terminal('\tCombobox is empty, nothing to do here.')
 
@@ -445,14 +448,118 @@ class MyFrame(wx.Frame):
                 #self.reset_ui()
             else:
                 print_debug_to_terminal('\tSearching: '+current_search_string)
-                self.search_applications(current_search_string)
+                self.parse_user_search_input(current_search_string)
 
 
-    def search_applications(self, current_search_string):
+
+
+
+    def process_search_plugins(self, current_search_string):
+        ## Amazon
+        if current_search_string.startswith('!a') is True:
+            print_debug_to_terminal('\tPlugin Amazon activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Amazon')
+
+        ## Bandcamp
+        if current_search_string.startswith('!b') is True:
+            print_debug_to_terminal('\tPlugin Bandcamp activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Bandcamp')
+
+        ## Google
+        if current_search_string.startswith('!g') is True:
+            print_debug_to_terminal('\tPlugin Google activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Google')
+
+        ## Reddit
+        if current_search_string.startswith('!r') is True:
+            print_debug_to_terminal('\tPlugin Reddit activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Reddit')
+
+        ## Soundcloud
+        if current_search_string.startswith('!s') is True:
+            print_debug_to_terminal('\tPlugin Soundcloud activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Soundcloud')
+
+        ## Twitter
+        if current_search_string.startswith('!t') is True:
+            print_debug_to_terminal('\tPlugin Twitter activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Twitter')
+
+        ## Vimeo
+        if current_search_string.startswith('!v') is True:
+            print_debug_to_terminal('\tPlugin Vimeo activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Vimeo')
+
+        ## Wikipedia
+        if current_search_string.startswith('!w') is True:
+            print_debug_to_terminal('\tPlugin Wikipedia activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Wikipedia')
+
+        ## Youtube
+        if current_search_string.startswith('!y') is True:
+            print_debug_to_terminal('\tPlugin YouTube activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('Youtube')
+
+
+        ## for all search plugin cases
+        #
+        # update application button
+        self.ui__bt_selected_result.Enable(True)
+        self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+
+        # update option button
+        self.ui__img_launch_options = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_launch_options.Enable(True)
+        self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+        self.ui__bt_launch_options.SetToolTipString('Search')
+
+        self.ui__txt_selected_result.SetValue(current_search_string)  # set command
+
+        self.ui__txt_result_counter.SetValue('1') # set result-count
+
+
+
+
+
+    def process_lock_plugin(self):
+        """ Lock plugin """
+        print_debug_to_terminal('\tPlugin lock activated')
+
+        # application buttons
+        self.ui__img_selected_result = wx.Image('gfx/plugins/lock/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_result.Enable(True)
+        self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+        self.ui__bt_selected_result.SetToolTipString('Lock Session')
+
+        # option buttons
+        self.ui__bt_launch_options.SetToolTipString('Launch')
+        self.ui__img_launch_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+        self.ui__bt_launch_options.Enable(True)                                   # Enable option button
+
+        # set command and parameter
+        self.ui__txt_selected_result.SetValue('gnome-screensaver-command')
+        self.ui__txt_launch_options_parameter.SetValue('--lock')
+
+        self.ui__txt_result_counter.SetValue('1')        # set result-count
+
+
+
+    def parse_user_search_input(self, current_search_string):
         """ Method to search applications and/or plugin commands to fill the results """
-        print_debug_to_terminal('search_applications')
+        print_debug_to_terminal('parse_user_search_input')
         if current_search_string != '':
 
+            # Search-Plugins
             if \
             (current_search_string.startswith('!a') is True) or \
             (current_search_string.startswith('!b') is True) or \
@@ -464,99 +571,12 @@ class MyFrame(wx.Frame):
             (current_search_string.startswith('!w') is True) or \
             (current_search_string.startswith('!y') is True):
 
-                ## Amazon
-                if current_search_string.startswith('!a') is True:
-                    print_debug_to_terminal('\tPlugin Amazon activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Amazon')
-
-                ## Bandcamp
-                if current_search_string.startswith('!b') is True:
-                    print_debug_to_terminal('\tPlugin Bandcamp activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Bandcamp')
-
-                ## Google
-                if current_search_string.startswith('!g') is True:
-                    print_debug_to_terminal('\tPlugin Google activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Google')
-
-                ## Reddit
-                if current_search_string.startswith('!r') is True:
-                    print_debug_to_terminal('\tPlugin Reddit activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Reddit')
-
-                ## Soundcloud
-                if current_search_string.startswith('!s') is True:
-                    print_debug_to_terminal('\tPlugin Soundcloud activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Soundcloud')
-
-                ## Twitter
-                if current_search_string.startswith('!t') is True:
-                    print_debug_to_terminal('\tPlugin Twitter activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Twitter')
-
-                ## Vimeo
-                if current_search_string.startswith('!v') is True:
-                    print_debug_to_terminal('\tPlugin Vimeo activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Vimeo')
-
-                ## Wikipedia
-                if current_search_string.startswith('!w') is True:
-                    print_debug_to_terminal('\tPlugin Wikipedia activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Wikipedia')
-
-                ## Youtube
-                if current_search_string.startswith('!y') is True:
-                    print_debug_to_terminal('\tPlugin YouTube activated')
-                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
-                    self.ui__bt_selected_result.SetToolTipString('Youtube')
-
-
-                ## for all search plugin cases
-                #
-                # update application button
-                self.ui__bt_selected_result.Enable(True)
-                self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
-
-                # update option button
-                self.ui__img_launch_options = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_launch_options.Enable(True)
-                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
-                self.ui__bt_launch_options.SetToolTipString('Search')
-
-                self.ui__txt_selected_result.SetValue(current_search_string)  # set command
-
-                self.ui__txt_result_counter.SetValue('1') # set result-count
+                self.process_search_plugins(current_search_string)
                 return
 
-            ## Plugin: Lock
+            ## Lock-Plugin
             if current_search_string == '!l':
-                print_debug_to_terminal('\tPlugin lock activated')
-
-                # application buttons
-                self.ui__img_selected_result = wx.Image('gfx/plugins/lock/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_selected_result.Enable(True)
-                self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
-                self.ui__bt_selected_result.SetToolTipString('Lock Session')
-
-                # option buttons
-                self.ui__bt_launch_options.SetToolTipString('Launch')
-                self.ui__img_launch_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
-                self.ui__bt_launch_options.Enable(True)                                   # Enable option button
-
-                # set command and parameter
-                self.ui__txt_selected_result.SetValue('gnome-screensaver-command')
-                self.ui__txt_launch_options_parameter.SetValue('--lock')
-
-                self.ui__txt_result_counter.SetValue('1')        # set result-count
+                self.process_lock_plugin()
                 return
 
             ## Default case
@@ -793,9 +813,10 @@ class MyFrame(wx.Frame):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PREFERENCE WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class NewWindow(wx.Frame):
+class PreferenceWindow(wx.Frame):
+    """ foo """
     def __init__(self, parent, id):
-        """ foo """
+        """ Initialize the preference window """
         pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR) # define style of preference window
 
         wx.Frame.__init__(self, parent, id, 'Preferences', size=(500, 300), style=pref_window_style)
