@@ -41,7 +41,7 @@
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
-
+import sys
 import os                           # for searching applications
 import fnmatch                      # for searching applications
 import webbrowser                   # for opening urls (example: github project page)
@@ -51,11 +51,14 @@ from sys import platform            # to detect the platform the script is execu
 import ConfigParser                 # to handle .ini/configuration files
 import wx                           # for all the WX GUI items
 
-import gtk                          # for app-icon handling - crashes - reason: wx?
-gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+#import gtk                          # for app-icon handling - crashes - reason: wx?
+#gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+#
 # ref: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
 #gtk.disable_setlocale()
 
+
+print ("Python version used: "+sys.version)                 # show python version
 
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS (DEVELOPER)
@@ -70,7 +73,7 @@ TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170303.01'
+APP_VERSION = '20170303.02'
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
 
@@ -294,6 +297,7 @@ class MyFrame(wx.Frame):
     def on_close_window(self, event):
         """ Method to close the app """
         print_debug_to_terminal('on_close_window')
+        print_debug_to_terminal('\tEvent: '+str(event))
         self.tbicon.RemoveIcon()
         self.tbicon.Destroy()
         self.Destroy()
@@ -304,10 +308,10 @@ class MyFrame(wx.Frame):
     def read_single_ini_value(self, section_name, key_name):
         """ Method to read a single value from the configuration file apparat.ini """
         print_debug_to_terminal('read_single_ini_value')
-        Config = ConfigParser.ConfigParser()
-        Config.read("apparat.ini")                                              # read config file
-        #print Config.sections()                                                # get available sections
-        value = Config.get(section_name, key_name)                                # get single value
+        config = ConfigParser.ConfigParser()
+        config.read("apparat.ini")                                              # read config file
+        #print config.sections()                                                # get available sections
+        value = config.get(section_name, key_name)                                # get single value
         print_debug_to_terminal('\tSection:\t'+section_name)
         print_debug_to_terminal('\tKey:\t\t'+key_name)
         print_debug_to_terminal('\tValue:\t\t'+value)
@@ -317,25 +321,27 @@ class MyFrame(wx.Frame):
     def write_single_ini_value(self, section_name, key_name, value):
         """ Method to write a single value to the configuration file apparat.ini """
         print_debug_to_terminal('write_single_ini_value')
-        Config = ConfigParser.ConfigParser()
-        Config.read("apparat.ini")                                              # read config file
-        Config.set(section_name, key_name, value)                                # write
+        config = ConfigParser.ConfigParser()
+        config.read("apparat.ini")                                              # read config file
+        config.set(section_name, key_name, value)                                # write
         print_debug_to_terminal('\tSection:\t'+section_name)
         print_debug_to_terminal('\tKey:\t\t'+key_name)
         print_debug_to_terminal('\tValue:\t\t'+str(value))
         with open('apparat.ini', 'wb') as configfile:
-            Config.write(configfile)                                            # save
+            config.write(configfile)                                            # save
 
 
     def on_clicked_option_button(self, event):
         """ If the launch option button was clicked """
         print_debug_to_terminal('Clicked launch option button')
+        print_debug_to_terminal('\tEvent: '+str(event))
         self.launch_external_application()
 
 
     def on_clicked(self, event):
         """ General click handler - using label to find source """
         print_debug_to_terminal('on_clicked')
+        print_debug_to_terminal('\tEvent: '+str(event))
         btn = event.GetEventObject().GetLabel()
         if btn == 'Preferences':
             print_debug_to_terminal('\tPreferences')
@@ -354,7 +360,8 @@ class MyFrame(wx.Frame):
     def on_combobox_text_changed(self, event):
         """ Triggered if the combobox text changes """
         print_debug_to_terminal('on_combobox_text_changed')
-        
+        print_debug_to_terminal('\tEvent: '+str(event))
+
         if(self.search_and_result_combobox.GetValue() == ''):
             print_debug_to_terminal('\tSearch string is empty - could reset UI at that point - but cant so far because of endless loop')
             #self.reset_ui()
@@ -364,6 +371,7 @@ class MyFrame(wx.Frame):
     def on_combobox_enter(self, event):
         """ Triggered if Enter was pressed in combobox """
         print_debug_to_terminal('on_combobox_enter')
+        print_debug_to_terminal('\tEvent: '+str(event))
 
         ## if we got a search string and 1 result in counter -> launch_external_application
         #if len(self.search_and_result_combobox.GetValue()) > 0 and self.ui__txt_result_counter.GetValue() == '1':
@@ -385,6 +393,7 @@ class MyFrame(wx.Frame):
     def on_combobox_select_item(self, event):
         """ If an item of the result-list was selected """
         print_debug_to_terminal('\n\non_combobox_select_item')
+        print_debug_to_terminal('\tEvent: '+str(event))
         self.ui__txt_selected_result.SetValue(self.search_and_result_combobox.GetValue())   # write command to command text field
         self.search_and_result_combobox.SetInsertionPointEnd()
 
@@ -392,6 +401,7 @@ class MyFrame(wx.Frame):
     def on_combobox_close(self, event):
         """ If the popup of the combobox is closed """
         print_debug_to_terminal('on_combobox_close')
+        print_debug_to_terminal('\tEvent: '+str(event))
         print_debug_to_terminal('\tcombobox just got closed')
 
 
@@ -399,6 +409,7 @@ class MyFrame(wx.Frame):
     def on_combobox_key_press(self, event):
         """ If content of the searchfield of the combobox changes """
         print_debug_to_terminal('on_combobox_key_press')
+        print_debug_to_terminal('\tEvent: '+str(event))
 
         kc = event.GetKeyCode()
         #print kc
@@ -422,12 +433,11 @@ class MyFrame(wx.Frame):
         elif kc == 317:    # Arrow Down
             print_debug_to_terminal('\tARROW DOWN')
             self.search_and_result_combobox.Popup()
-            
+
             # global var to keep track if dropdown is open or closed
             global combobox_open
             combobox_open = 1
 
-            
         else:
             current_search_string = self.search_and_result_combobox.GetValue()
             if len(current_search_string) == 0:
@@ -842,6 +852,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
     def on_tray_menu_left_click(self, event):
         """ Method to handle left click on the tray icon - toggles visibility of the Main Window """
         print_debug_to_terminal('on_tray_menu_left_click')
+        print_debug_to_terminal('\tEvent: '+str(event))
         if self.frame.IsIconized():             # if main window is minimized
             print_debug_to_terminal('\tMainWindows was minimized - should show it now')
             self.frame.Raise()
@@ -853,18 +864,21 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
     def on_tray_menu_right_click_preferences(self, event):
         """ Method to handle click in the Preferences tray menu item """
         print_debug_to_terminal('on_tray_menu_right_click_preferences')
+        print_debug_to_terminal('\tEvent: '+str(event))
         self.open_preference_window()
 
 
     def on_tray_menu_right_click_exit(self, event):
         """ Method to handle click in the Exit tray menu item """
         print_debug_to_terminal('on_tray_menu_right_click_exit')
+        print_debug_to_terminal('\tEvent: '+str(event))
         wx.CallAfter(self.frame.Close)
 
 
     def on_tray_menu_right_click_github(self, event):
         """ Method to handle click on the GitHub tray menu item """
         print_debug_to_terminal('on_tray_menu_right_click_github')
+        print_debug_to_terminal('\tEvent: '+str(event))
         print_debug_to_terminal('\tOpening: '+APP_URL)
         webbrowser.open(APP_URL)  # Go to github
 
