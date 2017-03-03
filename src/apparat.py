@@ -11,68 +11,79 @@
 # -----------------------------------------------------------------------------------------------
 # RESOURCES
 # -----------------------------------------------------------------------------------------------
-# TrayIcon:                                 http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
-# Icons - Font Awesome - Color: #7f8c8d     http://fontawesome.io/icons/
-#                                           http://fa2png.io/
-# Ini files                                 https://wiki.python.org/moin/ConfigParserExamples
-# Frame Styles                              https://www.blog.pythonlibrary.org/2013/11/06/wxpython-101-using-frame-styles/
-# Key Events                                https://wxpython.org/docs/api/wx.KeyEvent-class.html
+# TrayIcon:
+#   http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
+# Icons - Font Awesome - Color: #7f8c8d
+#   http://fontawesome.io/icons/
+#   http://fa2png.io/
+# Ini files:
+#   https://wiki.python.org/moin/ConfigParserExamples
+# Frame Styles:
+#   https://www.blog.pythonlibrary.org/2013/11/06/wxpython-101-using-frame-styles/
+# Key Events:
+#   https://wxpython.org/docs/api/wx.KeyEvent-class.html
+# Code Lint:
+#   pylint apparat.py (for python 2)
+#   pylint3 apparat.py (for python 3)
 
 
 # -----------------------------------------------------------------------------------------------
 # REMINDER/OPEN
 # -----------------------------------------------------------------------------------------------
-# - global hotkey to bring running app in foreground        https://wxpython.org/docs/api/wx.Window-class.html#RegisterHotKey
-#                                                           https://github.com/schurpf/pyhk                                                           
-# - ui fade in on launch                                    https://www.blog.pythonlibrary.org/2008/04/14/doing-a-fade-in-with-wxpython/
+# global hotkey to bring running app in foreground:
+#   https://wxpython.org/docs/api/wx.Window-class.html#RegisterHotKey
+#   https://github.com/schurpf/pyhk
+#
+# ui fade in on launch:
+#   https://www.blog.pythonlibrary.org/2008/04/14/doing-a-fade-in-with-wxpython/
 
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
-import wx                           # for all the WX GUI items
-import os, fnmatch                  # for searching applications
+
+import os                           # for searching applications
+import fnmatch                      # for searching applications
 import webbrowser                   # for opening urls (example: github project page)
 import subprocess                   # for checking if cmd_exists
 import difflib                      # for intelligent list sort
-import ConfigParser                 # to handle .ini/configuration files
-from subprocess import call         # for calling external commands
 from sys import platform            # to detect the platform the script is executed on
+import ConfigParser                 # to handle .ini/configuration files
+import wx                           # for all the WX GUI items
 
 import gtk                          # for app-icon handling - crashes - reason: wx?
-# helps on ubuntu - not on fedora
-gtk.remove_log_handlers()           # if this line is removed - app is crashing as long as both WX and GTK are imported.
-                                    # reference: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
-gtk.disable_setlocale()
+gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+# ref: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
+#gtk.disable_setlocale()
 
 
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
+APP_NAME = 'apparat'
+APP_URL = 'https://github.com/yafp/apparat'
+TARGET_ICON_SIZE = 128
 TRAY_TOOLTIP = 'apparat'
 TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
-appName = 'apparat'
-appURL = 'https://github.com/yafp/apparat'
-targetIconSize = 128
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-appVersion = '20170302.01'
-debug = True                    # True or False
-#debug = False                    # True or False
+APP_VERSION = '20170303.01'
+DEBUG = True                    # True or False
+#DEBUG = False                    # True or False
 
-windowWidth=350
-windowHeight=310
+WINDOW_WIDTH = 350
+WINDOW_HEIGHT = 310
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG (USER)
 # -----------------------------------------------------------------------------------------------
-transparency=255                # app transparency - Values: 0-255
+TRANSPARENCY_VALUE = 255                # app TRANSPARENCY_VALUE - Values: 0-255
 
-
+combobox_open = 0
 
 # -----------------------------------------------------------------------------------------------
 # CODE
@@ -82,55 +93,59 @@ transparency=255                # app transparency - Values: 0-255
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # HELPER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def cmdExists(cmd):
-    printDebugToTerminal('cmdExists')
+def cmd_exists(cmd):
+    """ Method to check if a command exists """
+    print_debug_to_terminal('cmd_exists')
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
-# used to print debug-output if debug = TRUE
-def printDebugToTerminal(string):
-    if(debug == True):
-        print ("debug >> "+string)
+
+def print_debug_to_terminal(string):
+    """ Method to print debug messages (if debug = True) """
+    if DEBUG is True:
+        print("debug >> "+string)
 
 
-# used to detect the platform and exit if the platform is unsupported
-def checkPlatform():
-    printDebugToTerminal('checkPlatform')
+def check_platform():
+    """ Method to checkthe platform (supported or not) """
+    print_debug_to_terminal('check_platform')
     if platform == "linux" or platform == "linux2": # linux
-        printDebugToTerminal('\tDetected linux')
+        print_debug_to_terminal('\tDetected linux')
     elif platform == "darwin":                      # OS X
-        printDebugToTerminal('\tDetected unsupported platform (darwin)')
-        wx.MessageBox('Unsupported platform detected, aborting '+appName+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
+        print_debug_to_terminal('\tDetected unsupported platform (darwin)')
+        wx.MessageBox('Unsupported platform detected, aborting '+APP_NAME+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
         exit()
     elif platform == "win32":                       # Windows...
-        printDebugToTerminal('\tDetected unsupported platform (windows)')
-        wx.MessageBox('Unsupported platform detected, aborting '+appName+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
+        print_debug_to_terminal('\tDetected unsupported platform (windows)')
+        wx.MessageBox('Unsupported platform detected, aborting '+APP_NAME+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
         exit()
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MAIN-WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class MyFrame(wx.Frame):                # We simply derive a new class of Frame. """
+class MyFrame(wx.Frame):
+    """ foo """
     def __init__(self, parent, title):
+    #def __init__(self):
+        """ foo """
 
         # Update Statistics (ini) - Apparat launched
-        printDebugToTerminal('\tUpdating statistics (apparat_started)')
-        curAppStartCount = self.readSingleINIValue('Statistics','apparat_started')          # get current value from ini
-        self.writeSingleINIValue('Statistics','apparat_started',int(curAppStartCount)+1)    # update ini +1
-        
-        # frame style
-        style = ( wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED  )
-        
-        #wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight))                          # Default frame
-        wx.Frame.__init__(self, parent, title=title, size=(windowWidth,windowHeight), style=style)              # Custom Frame 
-        self.SetSizeHintsSz( wx.Size( windowWidth,windowHeight ), wx.Size( windowWidth,windowHeight ) )         # forcing min and max size to same values - prevents resizing option
+        print_debug_to_terminal('\tUpdating statistics (apparat_started)')
+        cur_app_start_count = self.read_single_ini_value('Statistics', 'apparat_started')          # get current value from ini
+        self.write_single_ini_value('Statistics', 'apparat_started', int(cur_app_start_count)+1)    # update ini +1
+
+        style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED)    # Define the style of the frame
+
+        #wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH,WINDOW_HEIGHT))                          # Default frame
+        wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH, WINDOW_HEIGHT), style=style)              # Custom Frame
+        self.SetSizeHintsSz(wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT), wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT))         # forcing min and max size to same values - prevents resizing option
         self.tbicon = TaskBarIcon(self)
-        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
+        self.Bind(wx.EVT_CLOSE, self.on_close_window)
 
         ## define and set an application icon
-        appIcon = wx.Icon('gfx/core/bt_appIcon_16.png', wx.BITMAP_TYPE_PNG)
-        self.SetIcon(appIcon)
+        app_icon = wx.Icon('gfx/core/bt_appIcon_16.png', wx.BITMAP_TYPE_PNG)
+        self.SetIcon(app_icon)
 
 
         # ------------------------------------------------
@@ -138,113 +153,114 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         # ------------------------------------------------
 
         # Preference button
-        img_preferences = wx.Bitmap('gfx/core/bt_prefs_16.png', wx.BITMAP_TYPE_BMP)
-        #self.bt_preferences = wx.BitmapButton(self, id = wx.ID_ANY, bitmap = img_preferences, size = (img_preferences.GetWidth()+10, img_preferences.GetHeight()+10))
-        self.bt_preferences = wx.BitmapButton(self, id = wx.ID_ANY, style=wx.NO_BORDER, bitmap = img_preferences, size = (img_preferences.GetWidth()+10, img_preferences.GetHeight()+10))
-        self.bt_preferences.SetLabel('Preferences')
-        self.bt_preferences.SetToolTipString( u'Open Preferences' )
+        self.ui__img_prefs = wx.Bitmap('gfx/core/bt_prefs_16.png', wx.BITMAP_TYPE_BMP)
+        self.ui__bt_prefs = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__img_prefs, size=(self.ui__img_prefs.GetWidth()+10, self.ui__img_prefs.GetHeight()+10))
+        self.ui__bt_prefs.SetLabel('Preferences')
+        self.ui__bt_prefs.SetToolTipString(u'Open Preferences')
 
         #  result counter
-        #self.txt_resultCounter = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.txt_resultCounter = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE )
-        self.txt_resultCounter.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
-        self.txt_resultCounter.SetToolTipString( u'Result count' )
-        self.txt_resultCounter.SetMinSize( wx.Size( 35,30 ) )
-        self.txt_resultCounter.SetMaxSize( wx.Size( 35,30 ) )
-        self.txt_resultCounter.SetEditable(False)
-        self.txt_resultCounter.Enable( False )
+        #self.ui__txt_result_counter = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.ui__txt_result_counter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE)
+        self.ui__txt_result_counter.SetFont(wx.Font(10, 74, 90, 92, False, 'Sans'))
+        self.ui__txt_result_counter.SetToolTipString(u'Result count')
+        self.ui__txt_result_counter.SetMinSize(wx.Size(35, 30))
+        self.ui__txt_result_counter.SetMaxSize(wx.Size(35, 30))
+        self.ui__txt_result_counter.SetEditable(False)
+        self.ui__txt_result_counter.Enable(False)
 
         # Search & Search Results as comboBox
-        searchResults = []
-        self.m_comboBox1 = wx.ComboBox( self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size( 265,30 ), searchResults, 0 )
+        search_results = []
+        combo_box_style = wx.TE_PROCESS_ENTER
+        #self.search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size(265, 30), search_results, 0)
+        self.search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size(265, 30), search_results, style=combo_box_style)
 
-        # launchbutton
-        self.img_application = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
-        self.bt_application = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size( 150,150 ), wx.BU_AUTODRAW )
-        self.bt_application.SetBitmapFocus( wx.NullBitmap )
-        self.bt_application.SetBitmapHover( wx.NullBitmap )
-        self.bt_application.SetToolTipString( u'Search' )
-        self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-        self.bt_application.SetLabel('Applications')
-        self.bt_application.Enable( False )
+        # selected result button
+        self.ui__img_selected_result = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_result = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(150, 150), wx.BU_AUTODRAW)
+        self.ui__bt_selected_result.SetBitmapFocus(wx.NullBitmap)
+        self.ui__bt_selected_result.SetBitmapHover(wx.NullBitmap)
+        #self.ui__bt_selected_result.SetToolTipString(u'Search')
+        self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+        self.ui__bt_selected_result.SetLabel('Applications')
+        self.ui__bt_selected_result.Enable(False)
 
-        # optionbutton
-        self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
-        self.bt_options = wx.BitmapButton( self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size( 150,150 ), wx.BU_AUTODRAW )
-        self.bt_options.SetBitmapFocus( wx.NullBitmap )
-        self.bt_options.SetBitmapHover( wx.NullBitmap )
-        #self.bt_options.SetToolTipString( u'Launch' )
-        self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-        self.bt_options.SetLabel('Options')
-        self.bt_options.Enable( False )
+        # launch options button
+        self.ui__img_launch_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_launch_options = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(150, 150), wx.BU_AUTODRAW)
+        self.ui__bt_launch_options.SetBitmapFocus(wx.NullBitmap)
+        self.ui__bt_launch_options.SetBitmapHover(wx.NullBitmap)
+        self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+        self.ui__bt_launch_options.SetLabel('Options')
+        self.ui__bt_launch_options.Enable(False)
 
-        # label - command (hidden)
-        self.txt_command = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE)
-        self.txt_command.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
-        self.txt_command.SetToolTipString( u'Command' )
-        self.txt_command.SetMinSize( wx.Size( 150,30 ) )
-        self.txt_command.SetMaxSize( wx.Size( 150,30 ) )
-        self.txt_command.SetEditable(False)
-        self.txt_command.Enable( False )
-        #self.txt_command.Hide()
-        
-        # label - parameter (hidden)
-        self.txt_commandParameter = wx.TextCtrl( self, wx.ID_ANY, style=wx.TE_CENTRE )
-        self.txt_commandParameter.SetFont( wx.Font( 10, 74, 90, 92, False, 'Sans' ) )
-        self.txt_commandParameter.SetToolTipString( u'Parameter' )
-        self.txt_commandParameter.SetMinSize( wx.Size( 150,30 ) )
-        self.txt_commandParameter.SetMaxSize( wx.Size( 150,30 ) )
-        self.txt_commandParameter.SetEditable(False)
-        self.txt_commandParameter.Enable( False )
-        #self.txt_commandParameter.Hide()
+        # command (hidden)
+        self.ui__txt_selected_result = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE)
+        self.ui__txt_selected_result.SetFont(wx.Font(10, 74, 90, 92, False, 'Sans'))
+        #self.ui__txt_selected_result.SetToolTipString(u'Command')
+        self.ui__txt_selected_result.SetMinSize(wx.Size(150, 30))
+        self.ui__txt_selected_result.SetMaxSize(wx.Size(150, 30))
+        self.ui__txt_selected_result.SetEditable(False)
+        self.ui__txt_selected_result.Enable(False)
+        #self.ui__txt_selected_result.Hide()
+
+        # parameter (hidden)
+        self.ui__txt_launch_options_parameter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE)
+        self.ui__txt_launch_options_parameter.SetFont(wx.Font(10, 74, 90, 92, False, 'Sans'))
+        #self.ui__txt_launch_options_parameter.SetToolTipString(u'Parameter')
+        self.ui__txt_launch_options_parameter.SetMinSize(wx.Size(150, 30))
+        self.ui__txt_launch_options_parameter.SetMaxSize(wx.Size(150, 30))
+        self.ui__txt_launch_options_parameter.SetEditable(False)
+        self.ui__txt_launch_options_parameter.Enable(False)
+        #self.ui__txt_launch_options_parameter.Hide()
 
         # Version Information
-        self.txt_versionInformation = wx.StaticText( self, wx.ID_ANY, ' v'+appVersion, wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.txt_versionInformation.Wrap( -1 )
-        self.txt_versionInformation.SetFont( wx.Font( 8, 74, 90, 90, False, 'Sans' ) )
-        self.txt_versionInformation.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_GRAYTEXT ) )
+        self.txt_version_information = wx.StaticText(self, wx.ID_ANY, ' v'+APP_VERSION, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.txt_version_information.Wrap(-1)
+        self.txt_version_information.SetFont(wx.Font(8, 74, 90, 90, False, 'Sans'))
+        self.txt_version_information.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
 
 
         # ------------------------------------------------
         # Layout
         # ------------------------------------------------
-        bSizer1 = wx.BoxSizer( wx.VERTICAL )                                # define layout container
-        bSizer1.Add( self.bt_preferences, 0, wx.ALIGN_RIGHT, 100)           # preferences
-        bSizer1.AddSpacer(10)                                               # spacer
+        b_sizer = wx.BoxSizer(wx.VERTICAL)                                # define layout container
+        b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100)           # preferences
+        b_sizer.AddSpacer(10)                                               # spacer
         # horizontal sub-item 1
         box1 = wx.BoxSizer(wx.HORIZONTAL)
-        box1.Add( self.txt_resultCounter, 0, wx.CENTRE)                     # result counter
-        box1.Add( self.m_comboBox1, 0, wx.CENTRE)                           # combobox
-        bSizer1.Add( box1, 0, wx.CENTRE)
-        bSizer1.AddSpacer(10)                                               # spacer
+        box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE)                     # result counter
+        box1.Add(self.search_and_result_combobox, 0, wx.CENTRE)                           # combobox
+        b_sizer.Add(box1, 0, wx.CENTRE)
+        b_sizer.AddSpacer(10)                                               # spacer
         # horizontal sub-item 2
         box2 = wx.BoxSizer(wx.HORIZONTAL)
-        box2.Add( self.bt_application, 0, wx.CENTRE)                        # launch button
-        box2.Add( self.bt_options, 0, wx.CENTRE)                            # options button
-        bSizer1.Add( box2, 0, wx.CENTRE)
+        box2.Add(self.ui__bt_selected_result, 0, wx.CENTRE)                        # launch button
+        box2.Add(self.ui__bt_launch_options, 0, wx.CENTRE)                            # options button
+        b_sizer.Add(box2, 0, wx.CENTRE)
         # horizontal sub-item 3
         box3 = wx.BoxSizer(wx.HORIZONTAL)
-        box3.Add( self.txt_command, 0, wx.CENTRE)                           # launch text
-        box3.Add( self.txt_commandParameter, 0, wx.CENTRE)                  # option text
-        bSizer1.Add( box3, 0, wx.CENTRE)
-        bSizer1.AddSpacer(30)                                               # spacer
-        bSizer1.Add( self.txt_versionInformation, 0, wx.CENTRE )            # version
-        self.SetSizer( bSizer1 )
+        box3.Add(self.ui__txt_selected_result, 0, wx.CENTRE)                           # launch text
+        box3.Add(self.ui__txt_launch_options_parameter, 0, wx.CENTRE)                  # option text
+        b_sizer.Add(box3, 0, wx.CENTRE)
+        b_sizer.AddSpacer(30)                                               # spacer
+        b_sizer.Add(self.txt_version_information, 0, wx.CENTRE)             # version
+        self.SetSizer(b_sizer)
 
 
         # ------------------------------------------------
         # Bind/Connect Events
         # ------------------------------------------------
-        # image buttons - https://www.tutorialspoint.com/wxpython/wxpython_buttons.htm
-        self.bt_preferences.Bind(wx.EVT_BUTTON, self.OnClicked) 
-        
+        self.ui__bt_prefs.Bind(wx.EVT_BUTTON, self.on_clicked)
+
         # combobox
-        self.m_comboBox1.Bind( wx.EVT_KEY_UP, self.onKeyPressInCombobox )               # ComboBox
-        self.m_comboBox1.Bind( wx.EVT_TEXT_ENTER, self.onEnterInCombobox)               # ComboBox - doesnt trigger
-        self.m_comboBox1.Bind( wx.EVT_COMBOBOX, self.onSelectInCombobox)                # ComboBox - does trigger
-        
+        self.search_and_result_combobox.Bind(wx.EVT_KEY_UP, self.on_combobox_key_press)                 # Pressed any key
+        self.search_and_result_combobox.Bind(wx.EVT_TEXT, self.on_combobox_text_changed)                # NEW: combobox text changes.
+        self.search_and_result_combobox.Bind(wx.EVT_TEXT_ENTER, self.on_combobox_enter)                 # Pressed Enter
+        self.search_and_result_combobox.Bind(wx.EVT_COMBOBOX, self.on_combobox_select_item)             # Item selected
+        self.search_and_result_combobox.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combobox_close)           # Popup closed
+
         # option button
-        self.bt_options.Bind(wx.EVT_BUTTON, self.OnClickedOptionButton)
+        self.ui__bt_launch_options.Bind(wx.EVT_BUTTON, self.on_clicked_option_button)
 
 
         # ------------------------------------------------
@@ -258,7 +274,7 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         # ------------------------------------------------
         ## Setting up the menu.
         #filemenu= wx.Menu()
-        
+
         ## wx.ID_ABOUT and wx.ID_EXIT are standard IDs provided by wxWidgets.
         #filemenu.Append(wx.ID_ABOUT, '&About',' Information about this program')
         #filemenu.AppendSeparator()
@@ -268,14 +284,16 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         #menuBar = wx.MenuBar()
         #menuBar.Append(filemenu,'&File') # Adding the "filemenu" to the MenuBar
         #self.SetMenuBar(menuBar)  # Adding the MenuBar to the Frame content.
-        
+
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
-        self.m_comboBox1.SetFocus()     # set focus to search
-        self.SetTransparent(transparency)       # 0-255
+        self.search_and_result_combobox.SetFocus()     # set focus to search
+        self.SetTransparent(TRANSPARENCY_VALUE)       # 0-255
 
-    #
-    def OnCloseWindow(self, event):
+
+    def on_close_window(self, event):
+        """ Method to close the app """
+        print_debug_to_terminal('on_close_window')
         self.tbicon.RemoveIcon()
         self.tbicon.Destroy()
         self.Destroy()
@@ -283,454 +301,482 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
         event.Skip()
 
 
-    '''
-        Method to read a single value from the configuration file apparat.ini
-    '''
-    def readSingleINIValue(self, sectionName, keyName):
-        Config = ConfigParser.ConfigParser() 
+    def read_single_ini_value(self, section_name, key_name):
+        """ Method to read a single value from the configuration file apparat.ini """
+        print_debug_to_terminal('read_single_ini_value')
+        Config = ConfigParser.ConfigParser()
         Config.read("apparat.ini")                                              # read config file
         #print Config.sections()                                                # get available sections
-        value = Config.get(sectionName, keyName)                                # get single value
-        return(value)                                                           # return single value
+        value = Config.get(section_name, key_name)                                # get single value
+        print_debug_to_terminal('\tSection:\t'+section_name)
+        print_debug_to_terminal('\tKey:\t\t'+key_name)
+        print_debug_to_terminal('\tValue:\t\t'+value)
+        return value                                                           # return single value
 
 
-    '''
-        Method to write a single value to the configuration file apparat.ini
-    '''
-    def writeSingleINIValue(self, sectionName, keyName, value):
-        Config = ConfigParser.ConfigParser() 
+    def write_single_ini_value(self, section_name, key_name, value):
+        """ Method to write a single value to the configuration file apparat.ini """
+        print_debug_to_terminal('write_single_ini_value')
+        Config = ConfigParser.ConfigParser()
         Config.read("apparat.ini")                                              # read config file
-        Config.set(sectionName, keyName, value )                                # write
+        Config.set(section_name, key_name, value)                                # write
+        print_debug_to_terminal('\tSection:\t'+section_name)
+        print_debug_to_terminal('\tKey:\t\t'+key_name)
+        print_debug_to_terminal('\tValue:\t\t'+str(value))
         with open('apparat.ini', 'wb') as configfile:
             Config.write(configfile)                                            # save
-        
 
 
-    def OnClickedOptionButton(self, event): 
-        printDebugToTerminal('Clicked Applications button')
-        self.launchExternalApplication()
+    def on_clicked_option_button(self, event):
+        """ If the launch option button was clicked """
+        print_debug_to_terminal('Clicked launch option button')
+        self.launch_external_application()
 
 
-    def OnClicked(self, event): 
-        printDebugToTerminal('OnClicked')
-        btn = event.GetEventObject().GetLabel() 
-        if (btn =='Preferences'):
-            printDebugToTerminal('\tPreferences')
-            # Open a preference window
-            self.openPreferenceWindow()
+    def on_clicked(self, event):
+        """ General click handler - using label to find source """
+        print_debug_to_terminal('on_clicked')
+        btn = event.GetEventObject().GetLabel()
+        if btn == 'Preferences':
+            print_debug_to_terminal('\tPreferences')
+            self.open_preference_window()       # Open a preference window
 
 
-    def openPreferenceWindow(self):
-        printDebugToTerminal('openPreferenceWindow')
+    def open_preference_window(self):
+        """ Opens the preference window """
+        print_debug_to_terminal('open_preference_window')
         self.new = NewWindow(parent=None, id=-1)
         self.new.Show()
 
 
 
-    def onEnterInCombobox(self, event):
-        print('\n\n\nEvent: enter in combobox')
 
-
-    def onSelectInCombobox(self, event):
-        print('\n\n\nEvent Event')
-
-    '''
-        If content of the searchfield of the combobox changes
-    '''
-    def onKeyPressInCombobox(self, event):
-        printDebugToTerminal('On Key Press On Comboxbox')
+    def on_combobox_text_changed(self, event):
+        """ Triggered if the combobox text changes """
+        print_debug_to_terminal('on_combobox_text_changed')
         
+        if(self.search_and_result_combobox.GetValue() == ''):
+            print_debug_to_terminal('\tSearch string is empty - could reset UI at that point - but cant so far because of endless loop')
+            #self.reset_ui()
+
+
+
+    def on_combobox_enter(self, event):
+        """ Triggered if Enter was pressed in combobox """
+        print_debug_to_terminal('on_combobox_enter')
+
+        ## if we got a search string and 1 result in counter -> launch_external_application
+        #if len(self.search_and_result_combobox.GetValue()) > 0 and self.ui__txt_result_counter.GetValue() == '1':
+        if len(self.search_and_result_combobox.GetValue()) > 0:
+            if combobox_open == 0:
+                self.launch_external_application()
+            else: # enter was pressed to close the combobox ....
+                print('\tcould launch app now ...combobox is still open')
+
+                # global var to keep track if dropdown is open or closed
+                global combobox_open
+                combobox_open = 0
+
+                self.search_applications(self.search_and_result_combobox.GetValue()) # run search again after selecting the desired search string from dropdown
+        else:
+            print_debug_to_terminal('\tCombobox is empty, nothing to do here.')
+
+
+    def on_combobox_select_item(self, event):
+        """ If an item of the result-list was selected """
+        print_debug_to_terminal('\n\non_combobox_select_item')
+        self.ui__txt_selected_result.SetValue(self.search_and_result_combobox.GetValue())   # write command to command text field
+        self.search_and_result_combobox.SetInsertionPointEnd()
+
+
+    def on_combobox_close(self, event):
+        """ If the popup of the combobox is closed """
+        print_debug_to_terminal('on_combobox_close')
+        print_debug_to_terminal('\tcombobox just got closed')
+
+
+
+    def on_combobox_key_press(self, event):
+        """ If content of the searchfield of the combobox changes """
+        print_debug_to_terminal('on_combobox_key_press')
+
         kc = event.GetKeyCode()
         #print kc
-        
+
         ## Checking for key-combinations
         #
-        if event.HasModifiers():            # either CTRL or ALT was pressed
-            # Modifiers
+        # Modifiers
             # 1 = alt
             # 2 = ctrl
             # 3 = alt + ctrl
             #print event.GetModifiers()
-            
+        if event.HasModifiers():            # either CTRL or ALT was pressed
             # ctrl+alt+a
-            if(event.GetModifiers() == 3) and (kc == 65):
-                print('magic combo was pressed')
-                # do something
+            if event.GetModifiers() == 3 and kc == 65:
+                print('magic combo: "CTRL + ALT + a" was pressed')
 
-        
-        if(kc == 13) : # Enter
-            printDebugToTerminal('\tENTER')
-            # should check if combobox is open or not
-            # not sure if possible with combobox - or if i need to use 'ComboCtrl' - as it has 'IsPopupShown'
+        if kc == 27: # ESC
+            print_debug_to_terminal('\tESC in combobox')
+            self.reset_ui()
 
-            # if we got a search string and 1 result in counter -> launchExternalApplication
-            if(len(self.m_comboBox1.GetValue()) > 0) and (self.txt_resultCounter.GetValue() == '1'):
-                self.launchExternalApplication()
-            else:
-                printDebugToTerminal('\tCombobox is empty or resultcount is not 1, nothing to do here.')
+        elif kc == 317:    # Arrow Down
+            print_debug_to_terminal('\tARROW DOWN')
+            self.search_and_result_combobox.Popup()
             
-        elif(kc == 27) : # ESC
-            printDebugToTerminal('\tESC in combobox')
-            self.resetUI()
+            # global var to keep track if dropdown is open or closed
+            global combobox_open
+            combobox_open = 1
+
             
-        elif(kc == 317):    # Arrow Down
-            printDebugToTerminal('\tARROW DOWN')
-            self.m_comboBox1.Popup()
         else:
-            currentSearchString=self.m_comboBox1.GetValue()
-            if(len(currentSearchString) == 0):
-                self.resetUI()
+            current_search_string = self.search_and_result_combobox.GetValue()
+            if len(current_search_string) == 0:
+                print_debug_to_terminal("foo")
+                #self.reset_ui()
             else:
-                printDebugToTerminal('\tSearching: '+currentSearchString)
-                self.searchApplications(currentSearchString)
+                print_debug_to_terminal('\tSearching: '+current_search_string)
+                self.search_applications(current_search_string)
 
 
-    def searchApplications(self, currentSearchString):
-        printDebugToTerminal('searchApplications')
-        if(currentSearchString != ''):
-        
+    def search_applications(self, current_search_string):
+        """ Method to search applications and/or plugin commands to fill the results """
+        print_debug_to_terminal('search_applications')
+        if current_search_string != '':
+
             if \
-            (currentSearchString.startswith('!a') == True) or \
-            (currentSearchString.startswith('!b') == True) or \
-            (currentSearchString.startswith('!g') == True) or \
-            (currentSearchString.startswith('!r') == True) or \
-            (currentSearchString.startswith('!s') == True) or \
-            (currentSearchString.startswith('!t') == True) or \
-            (currentSearchString.startswith('!v') == True) or \
-            (currentSearchString.startswith('!w') == True) or \
-            (currentSearchString.startswith('!y') == True):
+            (current_search_string.startswith('!a') is True) or \
+            (current_search_string.startswith('!b') is True) or \
+            (current_search_string.startswith('!g') is True) or \
+            (current_search_string.startswith('!r') is True) or \
+            (current_search_string.startswith('!s') is True) or \
+            (current_search_string.startswith('!t') is True) or \
+            (current_search_string.startswith('!v') is True) or \
+            (current_search_string.startswith('!w') is True) or \
+            (current_search_string.startswith('!y') is True):
 
-                # Amazon
-                if(currentSearchString.startswith('!a') == True):
-                    printDebugToTerminal('\tPlugin Amazon activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Amazon')
-                    
-                # Bandcamp
-                if(currentSearchString.startswith('!b') == True):
-                    printDebugToTerminal('\tPlugin Bandcamp activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Bandcamp')
+                ## Amazon
+                if current_search_string.startswith('!a') is True:
+                    print_debug_to_terminal('\tPlugin Amazon activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Amazon')
 
-                # Google
-                if(currentSearchString.startswith('!g') == True):
-                    printDebugToTerminal('\tPlugin Google activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Google')
-                    
-                # Reddit
-                if(currentSearchString.startswith('!r') == True):
-                    printDebugToTerminal('\tPlugin Reddit activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Reddit')
-                
-                # Soundcloud
-                if(currentSearchString.startswith('!s') == True):
-                    printDebugToTerminal('\tPlugin Soundcloud activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Soundcloud')
-                
-                # Twitter
-                if(currentSearchString.startswith('!t') == True):
-                    printDebugToTerminal('\tPlugin Twitter activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Twitter')
-                
-                # Vimeo
-                if(currentSearchString.startswith('!v') == True):
-                    printDebugToTerminal('\tPlugin Vimeo activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Vimeo')
+                ## Bandcamp
+                if current_search_string.startswith('!b') is True:
+                    print_debug_to_terminal('\tPlugin Bandcamp activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Bandcamp')
 
-                # Wikipedia
-                if(currentSearchString.startswith('!w') == True):
-                    printDebugToTerminal('\tPlugin Wikipedia activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Wikipedia')
+                ## Google
+                if current_search_string.startswith('!g') is True:
+                    print_debug_to_terminal('\tPlugin Google activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Google')
 
-                # Youtube
-                if(currentSearchString.startswith('!y') == True):
-                    printDebugToTerminal('\tPlugin YouTube activated')
-                    self.img_application = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
-                    self.bt_application.SetToolTipString( 'Youtube')
+                ## Reddit
+                if current_search_string.startswith('!r') is True:
+                    print_debug_to_terminal('\tPlugin Reddit activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Reddit')
+
+                ## Soundcloud
+                if current_search_string.startswith('!s') is True:
+                    print_debug_to_terminal('\tPlugin Soundcloud activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Soundcloud')
+
+                ## Twitter
+                if current_search_string.startswith('!t') is True:
+                    print_debug_to_terminal('\tPlugin Twitter activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Twitter')
+
+                ## Vimeo
+                if current_search_string.startswith('!v') is True:
+                    print_debug_to_terminal('\tPlugin Vimeo activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Vimeo')
+
+                ## Wikipedia
+                if current_search_string.startswith('!w') is True:
+                    print_debug_to_terminal('\tPlugin Wikipedia activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Wikipedia')
+
+                ## Youtube
+                if current_search_string.startswith('!y') is True:
+                    print_debug_to_terminal('\tPlugin YouTube activated')
+                    self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_result.SetToolTipString('Youtube')
 
 
                 ## for all search plugin cases
                 #
                 # update application button
-                self.bt_application.Enable( True )
-                self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-                
+                self.ui__bt_selected_result.Enable(True)
+                self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+
                 # update option button
-                self.img_options = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_options.Enable( True )
-                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-                self.bt_options.SetToolTipString( 'Search')
-                
-                # set command
-                self.txt_command.SetValue(currentSearchString)
-                
-                self.txt_resultCounter.SetValue('1') # set resultcount
+                self.ui__img_launch_options = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_launch_options.Enable(True)
+                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+                self.ui__bt_launch_options.SetToolTipString('Search')
+
+                self.ui__txt_selected_result.SetValue(current_search_string)  # set command
+
+                self.ui__txt_result_counter.SetValue('1') # set result-count
                 return
 
-            # Plugin: Lock
-            if(currentSearchString == '!l'):
-                printDebugToTerminal('\tPlugin lock activated')
-                
+            ## Plugin: Lock
+            if current_search_string == '!l':
+                print_debug_to_terminal('\tPlugin lock activated')
+
                 # application buttons
-                self.img_application = wx.Image('gfx/plugins/lock/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_application.Enable( True )
-                self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-                self.bt_application.SetToolTipString( 'Lock Session')
-                
+                self.ui__img_selected_result = wx.Image('gfx/plugins/lock/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_selected_result.Enable(True)
+                self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+                self.ui__bt_selected_result.SetToolTipString('Lock Session')
+
                 # option buttons
-                self.bt_options.SetToolTipString( 'Launch')
-                self.img_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-                self.bt_options.Enable( True )                                  # Enable option button
-                
+                self.ui__bt_launch_options.SetToolTipString('Launch')
+                self.ui__img_launch_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+                self.ui__bt_launch_options.Enable(True)                                   # Enable option button
+
                 # set command and parameter
-                self.txt_command.SetValue('gnome-screensaver-command')
-                self.txt_commandParameter.SetValue('--lock')
-                
-                self.txt_resultCounter.SetValue('1')        # set resultcount
+                self.ui__txt_selected_result.SetValue('gnome-screensaver-command')
+                self.ui__txt_launch_options_parameter.SetValue('--lock')
+
+                self.ui__txt_result_counter.SetValue('1')        # set result-count
                 return
 
             ## Default case
-            printDebugToTerminal('\tSearching executables for the following string: '+currentSearchString)
-            searchResults = fnmatch.filter(os.listdir('/usr/bin'), '*'+currentSearchString+'*')     # search for executables matching users searchstring
-            
+            print_debug_to_terminal('\tSearching executables for the following string: '+current_search_string)
+            search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
+
             ## Sort results
-            ## 1: from a to z
-            #searchResults.sort() # sort search results (from a to z)
-            ## 2: using difflib
-            #print sorted(searchResults, key=lambda x: difflib.SequenceMatcher(None, x, currentSearchString).ratio(),reverse=True)
-            searchResults=sorted(searchResults, key=lambda x: difflib.SequenceMatcher(None, x, currentSearchString).ratio(),reverse=True)
+            #search_results.sort() # sort search results (from a to z)
+            search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
 
-            self.txt_resultCounter.SetValue(str(len(searchResults)))            # update result count
-            self.m_comboBox1.SetItems(searchResults)                            # update combobox
+            self.ui__txt_result_counter.SetValue(str(len(search_results)))            # update result count
+            self.search_and_result_combobox.SetItems(search_results)                            # update combobox
 
-            if(len(searchResults) == 0):
-                printDebugToTerminal('Found 0 applications')
-                
+            if len(search_results) == 0:
+                print_debug_to_terminal('Found 0 applications')
+
                 # update launch button icon
-                self.img_application = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-                
-                # update option button
-                self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-                
-                # set command and parameter
-                self.txt_command.SetValue('')
-                self.txt_commandParameter.SetValue('')
-                
+                self.ui__img_selected_result = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
 
-            elif(len(searchResults) == 1):     # if we got 1 search-results
-                printDebugToTerminal('\tFound 1 matching application')
+                # update option button
+                self.ui__img_launch_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+
+                # set command and parameter
+                self.ui__txt_selected_result.SetValue('')
+                self.ui__txt_launch_options_parameter.SetValue('')
+
+            elif len(search_results) == 1:     # if we got 1 search-results
+                print_debug_to_terminal('\tFound 1 matching application')
 
                 # application buttons
-                self.bt_application.Enable( True )                              # Enable application button
-                self.bt_application.SetToolTipString( searchResults[0] )        # set tooltip
-                
+                self.ui__bt_selected_result.Enable(True)                              # Enable application button
+                self.ui__bt_selected_result.SetToolTipString(search_results[0])        # set tooltip
+
                 # options buttons
-                self.img_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-                self.bt_options.Enable( True )                                  # Enable option button
-                self.bt_options.SetToolTipString( 'Launch' )                    # set tooltip
-                
+                self.ui__img_launch_options = wx.Image('gfx/core/bt_right_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+                self.ui__bt_launch_options.Enable(True)                                  # Enable option button
+                self.ui__bt_launch_options.SetToolTipString('Launch')                    # set tooltip
+
                 # update labels
-                self.txt_command.SetValue(searchResults[0])
-                self.txt_commandParameter.SetValue('')
-                
+                self.ui__txt_selected_result.SetValue(search_results[0])
+                self.ui__txt_launch_options_parameter.SetValue('')
+
                 # Icon search - http://www.pygtk.org/pygtk2reference/class-gtkicontheme.html
                 #
                 # get app-icon for selected application from operating system
                 icon_theme = gtk.icon_theme_get_default()
                 # check what icon sizes are available and choose best size
-                availableIconSizes = icon_theme.get_icon_sizes(searchResults[0])
-                if not availableIconSizes: # if we got no list of available icon sizes - Fallback: try to get a defined size
-                    icon_info = icon_theme.lookup_icon(searchResults[0], 64, 0)
-                    maxIconSize=64
+                available_icon_sizes = icon_theme.get_icon_sizes(search_results[0])
+                if not available_icon_sizes: # if we got no list of available icon sizes - Fallback: try to get a defined size
+                    max_icon_size = 64
+                    icon_info = icon_theme.lookup_icon(search_results[0], max_icon_size, 0)
                 else:
-                    printDebugToTerminal('\tFound several icon sizes: '+str(availableIconSizes))
+                    print_debug_to_terminal('\tFound several icon sizes: '+str(available_icon_sizes))
                     # pick the biggest
-                    maxIconSize=max(availableIconSizes)
-                    printDebugToTerminal('\tPicking the following icon size: '+str(maxIconSize))
-                    icon_info = icon_theme.lookup_icon(searchResults[0], maxIconSize, 0)
-                    
-                icon_path =icon_info.get_filename()
+                    max_icon_size = max(available_icon_sizes)
+                    print_debug_to_terminal('\tPicking the following icon size: '+str(max_icon_size))
+                    icon_info = icon_theme.lookup_icon(search_results[0], max_icon_size, 0)
 
-                if(icon_path <> ''):                                            # found icon
-                    if('.svg' not in icon_path ):
-                        
-                        newAppIcon = wx.Image(icon_path, wx.BITMAP_TYPE_PNG)    # define new image
-                        #newAppIconWidth=newAppIcon.GetWidth()                   # get icon width
-                        printDebugToTerminal('\tFound icon: '+icon_path+' ('+str(maxIconSize)+'px)')
-                        if targetIconSize == maxIconSize:                   # if icon has expected size
-                            printDebugToTerminal('\tIcon size is as expected')
+                icon_path = icon_info.get_filename()
+
+
+                if icon_path != '':                                            # found icon
+                    if '.svg' not in icon_path:
+                        new_app_icon = wx.Image(icon_path, wx.BITMAP_TYPE_PNG)    # define new image
+                        #new_app_iconWidth=new_app_icon.GetWidth()                   # get icon width
+                        print_debug_to_terminal('\tFound icon: '+icon_path+' ('+str(max_icon_size)+'px)')
+                        if TARGET_ICON_SIZE == max_icon_size:                   # if icon has expected size
+                            print_debug_to_terminal('\tIcon size is as expected')
                         else:                                                   # resize icon
-                            printDebugToTerminal('\tIcon size does not match, starting re-scaling.')
-                            newAppIcon.Rescale(128,128)                             # rescale image
+                            print_debug_to_terminal('\tIcon size does not match, starting re-scaling.')
+                            new_app_icon.Rescale(128, 128)                             # rescale image
                     else:                                                       # found unsupported icon format
-                        printDebugToTerminal('\tSVG icons can not be used so far')
-                        newAppIcon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)      # use dummy icon
+                        print_debug_to_terminal('\tSVG icons can not be used so far')
+                        new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)      # use dummy icon
                 else: # no icon
-                        printDebugToTerminal('\tFound no icon')
-                        newAppIcon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)      # use dummy icon
-                self.bt_application.SetBitmap(newAppIcon.ConvertToBitmap())    # set icon to button
-                return searchResults[0] # return the 1 result - for launch
+                        print_debug_to_terminal('\tFound no icon')
+                        new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)      # use dummy icon
+                self.ui__bt_selected_result.SetBitmap(new_app_icon.ConvertToBitmap())    # set icon to button
+                return search_results[0] # return the 1 result - for launch
             else:           # got several hits
-                printDebugToTerminal('\tFound '+str(len(searchResults))+' matching application')
+                print_debug_to_terminal('\tFound '+str(len(search_results))+' matching application')
 
                 # update launch button icon
-                self.img_application = wx.Image('gfx/core/bt_result_happy_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-                self.bt_application.Enable( False )
-                self.bt_application.SetToolTipString( u'' )
-                
-                self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
-                self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-                self.bt_options.Enable( False )                                  # Enable option button
-                self.bt_options.SetToolTipString( u'' )
-                
-                # update labels
-                self.txt_command.SetValue('')
-                self.txt_commandParameter.SetValue('')
-                
-        else:                                                                                       # search string is empty
-            printDebugToTerminal('\tEmpty search string')
+                self.ui__img_selected_result = wx.Image('gfx/core/bt_result_happy_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+                self.ui__bt_selected_result.Enable(False)
+                self.ui__bt_selected_result.SetToolTipString(u'')
 
-    '''
-        Launches the actual external process
-    '''
-    def launchExternalApplication(self):
-        printDebugToTerminal('launchExternalApplication')
-        currentSelectedAppName = self.txt_command.GetValue()
-        currentSelectedAppNameParameter = self.txt_commandParameter.GetValue()
+                self.ui__img_launch_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+                self.ui__bt_launch_options.Enable(False)                                  # Enable option button
+                self.ui__bt_launch_options.SetToolTipString(u'')
+
+                # update labels
+                self.ui__txt_selected_result.SetValue('')
+                self.ui__txt_launch_options_parameter.SetValue('')
+
+        else:                                                                                       # search string is empty
+            print_debug_to_terminal('\tEmpty search string')
+
+
+    def launch_external_application(self):
+        """ Launches the actual external process """
+        print_debug_to_terminal('launch_external_application')
+        current_selected_app_name = self.ui__txt_selected_result.GetValue()
+        current_selected_app_name_parameter = self.ui__txt_launch_options_parameter.GetValue()
 
         if \
-        (currentSelectedAppName.startswith('!a ') == True) or \
-        (currentSelectedAppName.startswith('!b ') == True) or \
-        (currentSelectedAppName.startswith('!g ') == True) or \
-        (currentSelectedAppName.startswith('!r ') == True) or \
-        (currentSelectedAppName.startswith('!s ') == True) or \
-        (currentSelectedAppName.startswith('!t ') == True) or \
-        (currentSelectedAppName.startswith('!v ') == True) or \
-        (currentSelectedAppName.startswith('!w ') == True) or \
-        (currentSelectedAppName.startswith('!y ') == True):
-            searchPhrase=currentSelectedAppName[3:] # remove '!y ' or '!g ' or '!w '
-            
+        (current_selected_app_name.startswith('!a ') is True) or \
+        (current_selected_app_name.startswith('!b ') is True) or \
+        (current_selected_app_name.startswith('!g ') is True) or \
+        (current_selected_app_name.startswith('!r ') is True) or \
+        (current_selected_app_name.startswith('!s ') is True) or \
+        (current_selected_app_name.startswith('!t ') is True) or \
+        (current_selected_app_name.startswith('!v ') is True) or \
+        (current_selected_app_name.startswith('!w ') is True) or \
+        (current_selected_app_name.startswith('!y ') is True):
+            search_phrase = current_selected_app_name[3:] # remove '!y ' or '!g ' or '!w '
+
             # Plugin: Amazon
-            if(currentSelectedAppName.startswith('!a ') == True):                           # https://www.amazon.de/s/field-keywords=foobar
-                remoteURL='https://www.amazon.de/s/field-keywords='+searchPhrase
-            
+            if current_selected_app_name.startswith('!a ') is True:                           # https://www.amazon.de/s/field-keywords=foobar
+                remote_url = 'https://www.amazon.de/s/field-keywords='+search_phrase
+
             # Plugin: Bandcamp
-            if(currentSelectedAppName.startswith('!b ') == True):                           # https://bandcamp.com/search?q=foobar
-                remoteURL='https://bandcamp.com/search?q='+searchPhrase
-            
+            if current_selected_app_name.startswith('!b ') is True:                           # https://bandcamp.com/search?q=foobar
+                remote_url = 'https://bandcamp.com/search?q='+search_phrase
+
             # Plugin: Google
-            if(currentSelectedAppName.startswith('!g ') == True):                           # https://www.google.com/search?q=foobar
-                remoteURL='https://www.google.com/search?q='+searchPhrase
-                
+            if current_selected_app_name.startswith('!g ') is True:                           # https://www.google.com/search?q=foobar
+                remote_url = 'https://www.google.com/search?q='+search_phrase
+
             # Plugin: Reddit
-            if(currentSelectedAppName.startswith('!r ') == True):                           # https://www.reddit.com/search?q=foobar
-                remoteURL='https://www.reddit.com/search?q='+searchPhrase
+            if current_selected_app_name.startswith('!r ') is True:                           # https://www.reddit.com/search?q=foobar
+                remote_url = 'https://www.reddit.com/search?q='+search_phrase
 
             # Plugin: Soundcloud
-            if(currentSelectedAppName.startswith('!s ') == True):                           # https://soundcloud.com/search?q=foobar
-                remoteURL='https://soundcloud.com/search?q='+searchPhrase
-            
+            if current_selected_app_name.startswith('!s ') is True:                           # https://soundcloud.com/search?q=foobar
+                remote_url = 'https://soundcloud.com/search?q='+search_phrase
+
             # Plugin: Twitter
-            if(currentSelectedAppName.startswith('!t ') == True):                           # https://twitter.com/search?q=foobar
-                remoteURL='https://twitter.com/search?q='+searchPhrase
-            
+            if current_selected_app_name.startswith('!t ') is True:                           # https://twitter.com/search?q=foobar
+                remote_url = 'https://twitter.com/search?q='+search_phrase
+
             # Plugin: Vimeo
-            if(currentSelectedAppName.startswith('!v ') == True):                           # https://vimeo.com/search?q=foobar
-                remoteURL='https://vimeo.com/search?q='+searchPhrase
-            
+            if current_selected_app_name.startswith('!v ') is True:                           # https://vimeo.com/search?q=foobar
+                remote_url = 'https://vimeo.com/search?q='+search_phrase
+
             # Plugin: Wikipedia
-            if(currentSelectedAppName.startswith('!w ') == True):                           # https://en.wikipedia.org/w/index.php?search=foobar
-                remoteURL='https://en.wikipedia.org/w/index.php?search='+searchPhrase
-                
+            if current_selected_app_name.startswith('!w ') is True:                           # https://en.wikipedia.org/w/index.php?search=foobar
+                remote_url = 'https://en.wikipedia.org/w/index.php?search='+search_phrase
+
             # Plugin: Youtube
-            if(currentSelectedAppName.startswith('!y ') == True):
-                remoteURL='https://www.youtube.com/results?search_query='+searchPhrase      # https://www.youtube.com/results?search_query=foobar
-            
+            if current_selected_app_name.startswith('!y ') is True:
+                remote_url = 'https://www.youtube.com/results?search_query='+search_phrase      # https://www.youtube.com/results?search_query=foobar
+
             # for all  plugins:
-            webbrowser.open(remoteURL)  # search youtube
-            
+            webbrowser.open(remote_url)  # search youtube
+
             # update usage-statistics
-            printDebugToTerminal('\tUpdating statistics (plugin_executed)')
-            curPluginExecutedCount = self.readSingleINIValue('Statistics','plugin_executed')          # get current value from ini
-            self.writeSingleINIValue('Statistics','plugin_executed',int(curPluginExecutedCount)+1)    # update ini +1
-            
-            self.resetUI()
+            print_debug_to_terminal('\tUpdating statistics (plugin_executed)')
+            current_plugin_executed_count = self.read_single_ini_value('Statistics', 'plugin_executed')          # get current value from ini
+            self.write_single_ini_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1)    # update ini +1
+
+            self.reset_ui()
             return
 
-        #if currentSelectedAppName != '' or currentSelectedAppName != 'None':
-        if(currentSelectedAppName is not None): # Check if the dropdown contains something at all or not
-            printDebugToTerminal('\tShould execute: "'+currentSelectedAppName+'" with parameter: "'+currentSelectedAppNameParameter+'"')
-            checkExecutable = cmdExists(currentSelectedAppName)                   # check if name exists and is executable
-            if (checkExecutable == True):
-                
+        #if current_selected_app_name != '' or current_selected_app_name != 'None':
+        if current_selected_app_name is not None: # Check if the dropdown contains something at all or not
+            print_debug_to_terminal('\tShould execute: "'+current_selected_app_name+'" with parameter: "'+current_selected_app_name_parameter+'"')
+            executable_exists = cmd_exists(current_selected_app_name)                   # check if name exists and is executable
+            if executable_exists is True:
                 # update usage-statistics
-                printDebugToTerminal('\tUpdating statistics (command_executed)')
-                curCommandsExecutedCount = self.readSingleINIValue('Statistics','command_executed')          # get current value from ini
-                self.writeSingleINIValue('Statistics','command_executed',int(curCommandsExecutedCount)+1)    # update ini +1
-                
-                printDebugToTerminal('\tExecutable: "'+currentSelectedAppName+'" exists')
+                print_debug_to_terminal('\tUpdating statistics (command_executed)')
+                current_commands_executed_count = self.read_single_ini_value('Statistics', 'command_executed')          # get current value from ini
+                self.write_single_ini_value('Statistics', 'command_executed', int(current_commands_executed_count)+1)    # update ini +1
+
+                print_debug_to_terminal('\tExecutable: "'+current_selected_app_name+'" exists')
                 # https://docs.python.org/2/library/subprocess.html
-                if(currentSelectedAppNameParameter == ''):
+                if current_selected_app_name_parameter == '':
                     #subprocess.Popen(["rm","-r","some.file"])
-                    subprocess.Popen([currentSelectedAppName])
-                    printDebugToTerminal('\tExecuted: '+currentSelectedAppName)
+                    subprocess.Popen([current_selected_app_name])
+                    print_debug_to_terminal('\tExecuted: '+current_selected_app_name)
                 else:
-                    subprocess.Popen([currentSelectedAppName,currentSelectedAppNameParameter,""])
-                    printDebugToTerminal('\tExecuted: '+currentSelectedAppName+' '+currentSelectedAppNameParameter)
+                    subprocess.Popen([current_selected_app_name, current_selected_app_name_parameter, ""])
+                    print_debug_to_terminal('\tExecuted: '+current_selected_app_name+' '+current_selected_app_name_parameter)
 
-                self.resetUI()
+                self.reset_ui()
             else:
-                printDebugToTerminal ('\tERROR >> Checking the executable failed')
+                print_debug_to_terminal('\tERROR >> Checking the executable failed')
         else:
-            printDebugToTerminal('\tWARNING >> currentSelectedAppName is empty, aborting')
+            print_debug_to_terminal('\tWARNING >> current_selected_app_name is empty, aborting')
 
 
-    def openAppURL(self):
-        printDebugToTerminal('openAppURL')
-        printDebugToTerminal('\tOpening '+appURL+' in default browser')
-        webbrowser.open(appURL)  # Go to github
+    def open_app_url(self):
+        """ Method to open the application URL  (GitHub project) """
+        print_debug_to_terminal('open_app_url')
+        print_debug_to_terminal('\tOpening '+APP_URL+' in default browser')
+        webbrowser.open(APP_URL)  # Go to github
 
 
-    '''
-        Reset the User-Interface of the Apps main-window
-    '''
-    def resetUI(self):
-        printDebugToTerminal('resetUI')
+    def reset_ui(self):
+        """ Method to reset the User-Interface of the Apps main-window """
+        print_debug_to_terminal('reset_ui')
         # reset the combobox
-        self.m_comboBox1.SetFocus()                                 # set focus to search
-        self.m_comboBox1.Clear()                                    # clear all list values
-        self.m_comboBox1.SetValue('')                               # clear search field
+        self.search_and_result_combobox.SetFocus()                                 # set focus to search
+        self.search_and_result_combobox.Clear()                                    # clear all list values
+        self.search_and_result_combobox.SetValue('')                               # clear search field
 
         # reset the applications button
-        self.img_application = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
-        self.bt_application.Enable( False )
-        self.bt_application.SetBitmap(self.img_application.ConvertToBitmap())
-        self.bt_application.SetToolTipString( 'Search')
+        self.ui__img_selected_result = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_result.Enable(False)
+        self.ui__bt_selected_result.SetBitmap(self.ui__img_selected_result.ConvertToBitmap())
+        self.ui__bt_selected_result.SetToolTipString('Search')
 
         # reset the option buttons
-        self.img_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
-        self.bt_options.Enable( False )
-        self.bt_options.SetBitmap(self.img_options.ConvertToBitmap())
-        self.bt_options.SetToolTipString( 'Launch')
+        self.ui__img_launch_options = wx.Image('gfx/core/bt_question_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_launch_options.Enable(False)
+        self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
+        self.ui__bt_launch_options.SetToolTipString('Launch')
 
         # reset the command and parameter elements
-        self.txt_command.SetValue('')
-        self.txt_commandParameter.SetValue('')
+        self.ui__txt_selected_result.SetValue('')
+        self.ui__txt_launch_options_parameter.SetValue('')
 
         # reset the result counter
-        self.txt_resultCounter.SetValue('')                               # Reset result counter
-        printDebugToTerminal('\tFinished resetting UI')
+        self.ui__txt_result_counter.SetValue('')                               # Reset result counter
+        print_debug_to_terminal('\tFinished resetting UI')
 
 
 
@@ -738,10 +784,11 @@ class MyFrame(wx.Frame):                # We simply derive a new class of Frame.
 # PREFERENCE WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class NewWindow(wx.Frame):
-    def __init__(self,parent,id):
-        prefWindowStyle = ( wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR )
-        
-        wx.Frame.__init__(self, parent, id, 'Preferences', size=(500,300), style=prefWindowStyle)
+    def __init__(self, parent, id):
+        """ foo """
+        pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR) # define style of preference window
+
+        wx.Frame.__init__(self, parent, id, 'Preferences', size=(500, 300), style=pref_window_style)
         wx.Frame.CenterOnScreen(self)
         #self.new.Show(False)
 
@@ -751,7 +798,8 @@ class NewWindow(wx.Frame):
 # TRAY-MENU
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def create_menu_item(menu, label, func):
-    printDebugToTerminal('create_menu_item: '+label)
+    """ foo """
+    print_debug_to_terminal('create_menu_item: '+label)
     item = wx.MenuItem(menu, -1, label)
     menu.Bind(wx.EVT_MENU, func, id=item.GetId())
     menu.AppendItem(item)
@@ -763,77 +811,75 @@ def create_menu_item(menu, label, func):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #class TaskBarIcon(wx.TaskBarIcon):
 class TaskBarIcon(wx.TaskBarIcon, MyFrame):
+    """ foo """
     def __init__(self, frame):
+        """ Method to initialize the tray icon """
+        print_debug_to_terminal('init (TaskBarIcon)')
         self.frame = frame
         super(TaskBarIcon, self).__init__()
         self.set_icon(TRAY_ICON)
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.onTrayMenuLeftClick)
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_tray_menu_left_click)
+        print_debug_to_terminal('\tTask icon is ready now')
 
 
     def CreatePopupMenu(self):
-        printDebugToTerminal('CreatePopupMenu')
+        """ Method to generate a Popupmenu for the TrayIcon """
+        print_debug_to_terminal('CreatePopupMenu')
         menu = wx.Menu()
-        create_menu_item(menu, 'Preferences', self.onTrayMenuRightClickPreferences)     # preferences
-        create_menu_item(menu, 'GitHub', self.onTrayMenuRightClickGitHub)               # github
+        create_menu_item(menu, 'Preferences', self.on_tray_menu_right_click_preferences)     # preferences
+        create_menu_item(menu, 'GitHub', self.on_tray_menu_right_click_github)               # github
         menu.AppendSeparator()                                                          # separator
-        create_menu_item(menu, 'Exit', self.onTrayMenuRightClickExit)                   # exit
+        create_menu_item(menu, 'Exit', self.on_tray_menu_right_click_exit)                   # exit
         return menu
 
 
     def set_icon(self, path):
+        """ Method to set the icon for the TrayIconMenu item """
         icon = wx.IconFromBitmap(wx.Bitmap(path))
         self.SetIcon(icon, TRAY_TOOLTIP)
 
 
-    def onTrayMenuLeftClick(self, event):
-        printDebugToTerminal('onTrayMenuLeftClick')
-        # check if main window is minimized
-        if self.frame.IsIconized():
-            printDebugToTerminal('\tMainWindows was minimized - should show it now')
+    def on_tray_menu_left_click(self, event):
+        """ Method to handle left click on the tray icon - toggles visibility of the Main Window """
+        print_debug_to_terminal('on_tray_menu_left_click')
+        if self.frame.IsIconized():             # if main window is minimized
+            print_debug_to_terminal('\tMainWindows was minimized - should show it now')
             self.frame.Raise()
-            
-        else:
-            printDebugToTerminal('\tMainWindows was shown - should minimize it now')
+        else:                                   # if main window is shown
+            print_debug_to_terminal('\tMainWindows was shown - should minimize it now')
             self.frame.Iconize(True)
-            #self.frame.HideWithEffect(wx.SHOW_EFFECT_SLIDE_TO_RIGHT, timeout=3000)
 
 
-    def onTrayMenuRightClickPreferences(self, event):
-        printDebugToTerminal('onTrayMenuRightClickPreferences')
-        self.openPreferenceWindow()
+    def on_tray_menu_right_click_preferences(self, event):
+        """ Method to handle click in the Preferences tray menu item """
+        print_debug_to_terminal('on_tray_menu_right_click_preferences')
+        self.open_preference_window()
 
 
-    def onTrayMenuRightClickExit(self, event):
-        printDebugToTerminal('onTrayMenuRightClickExit')
+    def on_tray_menu_right_click_exit(self, event):
+        """ Method to handle click in the Exit tray menu item """
+        print_debug_to_terminal('on_tray_menu_right_click_exit')
         wx.CallAfter(self.frame.Close)
 
 
-    def onTrayMenuRightClickGitHub(self, event):
-        printDebugToTerminal('onTrayMenuRightClickGitHub')
-        webbrowser.open(appURL)  # Go to github
+    def on_tray_menu_right_click_github(self, event):
+        """ Method to handle click on the GitHub tray menu item """
+        print_debug_to_terminal('on_tray_menu_right_click_github')
+        print_debug_to_terminal('\tOpening: '+APP_URL)
+        webbrowser.open(APP_URL)  # Go to github
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# 
+#
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class App(wx.App):
     def OnInit(self):
-        
-        # allow only 1 instance of apparat
-        self.name = appName
+        """ foo """
+        self.name = APP_NAME
         self.instance = wx.SingleInstanceChecker(self.name)
-        if self.instance.IsAnotherRunning():
-            wx.MessageBox(
-                "An instance of the application is already running", 
-                "Error", 
-                 wx.OK | wx.ICON_WARNING
-            )
+        if self.instance.IsAnotherRunning():                    # allow only 1 instance of apparat
+            wx.MessageBox("An instance of "+APP_NAME+" is already running. Aborting", "Error", wx.OK | wx.ICON_WARNING)
             return False
-        return True
-        
-        frame=wx.Frame(None)
-        self.SetTopWindow(frame)
-        #TaskBarIcon(frame)
         return True
 
 
@@ -841,12 +887,13 @@ class App(wx.App):
 # MAIN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def main():
+    """ foo """
     app = App(False)
-    checkPlatform()                 # Check if platform is supported at all, otherwise abort
-    frame = MyFrame(None, appName)  # Main UI window
+    check_platform()                 # Check if platform is supported at all, otherwise abort
+    frame = MyFrame(None, APP_NAME)  # Main UI window
     app.MainLoop()
 
 
 if __name__ == '__main__':
-    printDebugToTerminal('__main__')
+    print_debug_to_terminal('__main__')
     main()
