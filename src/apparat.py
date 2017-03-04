@@ -1,7 +1,5 @@
 #!/usr/bin/python
-# -*- coding: iso-8859-1 -*-
 
-# -----------------------------------------------------------------------------------------------
 # NAME:         apparat
 # DESCRIPTION:  Python based application launcher
 # AUTHOR:       yafp
@@ -11,23 +9,18 @@
 # -----------------------------------------------------------------------------------------------
 # RESOURCES
 # -----------------------------------------------------------------------------------------------
-# TrayIcon:
-#   http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
-# Icons - Font Awesome - Color: #7f8c8d
-#   http://fontawesome.io/icons/
-#   http://fa2png.io/
-# Ini files:
-#   https://wiki.python.org/moin/ConfigParserExamples
-# Frame Styles:
-#   https://www.blog.pythonlibrary.org/2013/11/06/wxpython-101-using-frame-styles/
-# Key Events:
-#   https://wxpython.org/docs/api/wx.KeyEvent-class.html
+# TrayIcon:                             http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
+# Icons Font Awesome - Color: #7f8c8d
+#                                       http://fontawesome.io/icons/
+#                                       http://fa2png.io/
+# Ini files:                            https://wiki.python.org/moin/ConfigParserExamples
+# Frame Styles:                         https://www.blog.pythonlibrary.org/2013/11/06/wxpython-101-using-frame-styles/
+# Key Events:                           https://wxpython.org/docs/api/wx.KeyEvent-class.html
 # Code Lint:
 #   pylint apparat.py (for python 2)
 #   pylint3 apparat.py (for python 3)
 #   pylint --rcfile /path/to/pylintrc apparat.py
-# PyLint Messages
-#   http://pylint-messages.wikidot.com/all-codes
+# PyLint Messages:                      http://pylint-messages.wikidot.com/all-codes
 
 
 # -----------------------------------------------------------------------------------------------
@@ -44,21 +37,17 @@
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
-import sys                          # to show python version used
-import os                           # for searching applications
-import fnmatch                      # for searching applications
-import webbrowser                   # for opening urls (example: github project page)
-import subprocess                   # for checking if cmd_exists
-import difflib                      # for intelligent list sort
-from sys import platform            # to detect the platform the script is executed on
 import ConfigParser                 # to handle .ini/configuration files
-import wx                           # for all the WX GUI items
-
+import difflib                      # for intelligent list sort
+import fnmatch                      # for searching applications
 import gtk                          # for app-icon handling - crashes - reason: wx?
 gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
-
-# ref: https://groups.google.com/forum/#!topic/wxpython-users/KO_hmLxeDKA
-#gtk.disable_setlocale()
+import os                           # for searching applications
+import subprocess                   # for checking if cmd_exists
+import sys                          # to show python version used
+from sys import platform            # to detect the platform the script is executed on
+import webbrowser                   # for opening urls (example: github project page)
+import wx                           # for all the WX GUI items
 
 
 
@@ -76,7 +65,7 @@ TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170303.04'
+APP_VERSION = '20170304.01'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
@@ -118,18 +107,20 @@ def print_debug_to_terminal(string):
 
 
 def check_platform():
-    """ Method to checkthe platform (supported or not) """
+    """ Method to check the platform (supported or not) """
     print_debug_to_terminal('check_platform')
-    
+
     # show python version
     print_debug_to_terminal('\tPython version used: '+sys.version)
-    
+
     if platform == "linux" or platform == "linux2": # linux
         print_debug_to_terminal('\tDetected linux')
+
     elif platform == "darwin":                      # OS X
         print_debug_to_terminal('\tDetected unsupported platform (darwin)')
         wx.MessageBox('Unsupported platform detected, aborting '+APP_NAME+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
         exit()
+
     elif platform == "win32":                       # Windows...
         print_debug_to_terminal('\tDetected unsupported platform (windows)')
         wx.MessageBox('Unsupported platform detected, aborting '+APP_NAME+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
@@ -153,7 +144,6 @@ class MyFrame(wx.Frame):
 
         style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED)    # Define the style of the frame
 
-        #wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH,WINDOW_HEIGHT))                          # Default frame
         wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH, WINDOW_HEIGHT), style=style)              # Custom Frame
         self.SetSizeHintsSz(wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT), wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT))         # forcing min and max size to same values - prevents resizing option
         self.tbicon = TaskBarIcon(self)
@@ -186,7 +176,6 @@ class MyFrame(wx.Frame):
         # Search & Search Results as comboBox
         search_results = []
         combo_box_style = wx.TE_PROCESS_ENTER
-        #self.search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size(265, 30), search_results, 0)
         self.search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size(265, 30), search_results, style=combo_box_style)
 
         # selected result button
@@ -320,26 +309,26 @@ class MyFrame(wx.Frame):
         """ Method to read a single value from the configuration file apparat.ini """
         print_debug_to_terminal('read_single_ini_value')
         config = ConfigParser.ConfigParser()
-        config.read("apparat.ini")                                              # read config file
-        #print config.sections()                                                # get available sections
-        value = config.get(section_name, key_name)                                # get single value
+        config.read("apparat.ini")
+        #print config.sections()
+        value = config.get(section_name, key_name)
         print_debug_to_terminal('\tSection:\t'+section_name)
         print_debug_to_terminal('\tKey:\t\t'+key_name)
         print_debug_to_terminal('\tValue:\t\t'+value)
-        return value                                                           # return single value
+        return value
 
 
     def write_single_ini_value(self, section_name, key_name, value):
         """ Method to write a single value to the configuration file apparat.ini """
         print_debug_to_terminal('write_single_ini_value')
         config = ConfigParser.ConfigParser()
-        config.read("apparat.ini")                                              # read config file
-        config.set(section_name, key_name, value)                                # write
+        config.read("apparat.ini")
+        config.set(section_name, key_name, value)
         print_debug_to_terminal('\tSection:\t'+section_name)
         print_debug_to_terminal('\tKey:\t\t'+key_name)
         print_debug_to_terminal('\tValue:\t\t'+str(value))
         with open('apparat.ini', 'wb') as configfile:
-            config.write(configfile)                                            # save
+            config.write(configfile)
 
 
     def on_clicked_option_button(self, event):
@@ -356,7 +345,7 @@ class MyFrame(wx.Frame):
         btn = event.GetEventObject().GetLabel()
         if btn == 'Preferences':
             print_debug_to_terminal('\tPreferences')
-            self.open_preference_window()       # Open a preference window
+            self.open_preference_window()
 
 
     def open_preference_window(self):
@@ -364,7 +353,6 @@ class MyFrame(wx.Frame):
         print_debug_to_terminal('open_preference_window')
         self.new = PreferenceWindow(parent=None, id=-1)
         self.new.Show()
-
 
 
 
@@ -387,11 +375,11 @@ class MyFrame(wx.Frame):
         ## if we got a search string and 1 result in counter -> launch_external_application
         #if len(self.search_and_result_combobox.GetValue()) > 0 and self.ui__txt_result_counter.GetValue() == '1':
         if len(self.search_and_result_combobox.GetValue()) > 0:
-        
+
             global is_combobox_open
             if is_combobox_open == 0:
                 self.launch_external_application()
-                
+
             else: # enter was pressed to close the combobox ....
                 print('\tcould launch app now ...combobox is still open')
                 is_combobox_open = 0    # global var to keep track if dropdown is open or closed
@@ -455,8 +443,8 @@ class MyFrame(wx.Frame):
         else:
             current_search_string = self.search_and_result_combobox.GetValue()
             if len(current_search_string) == 0:
-                print_debug_to_terminal("foo")
-                #self.reset_ui()
+                print_debug_to_terminal("Search string is empty - doing nothing")
+                self.reset_ui()
             else:
                 print_debug_to_terminal('\tSearching: '+current_search_string)
                 self.parse_user_search_input(current_search_string)
@@ -466,7 +454,7 @@ class MyFrame(wx.Frame):
     def plugin__internet_search_prepare(self, current_search_string):
         """ Plugin: Internet-Search """
         print_debug_to_terminal('plugin__internet_search_prepare')
-        
+
         ## Amazon
         if current_search_string.startswith('!a') is True:
             print_debug_to_terminal('\tPlugin Amazon activated')
@@ -534,10 +522,63 @@ class MyFrame(wx.Frame):
         self.ui__bt_launch_options.SetBitmap(self.ui__img_launch_options.ConvertToBitmap())
         self.ui__bt_launch_options.SetToolTipString('Search')
 
-        self.ui__txt_selected_result.SetValue(current_search_string)  # set command
+        # set command
+        self.ui__txt_selected_result.SetValue(current_search_string)
 
-        self.ui__txt_result_counter.SetValue('1') # set result-count
+        # set result-count
+        self.ui__txt_result_counter.SetValue('1')
 
+
+
+    def plugin__internet_search_execute(self, search_phrase, cur_searchphrase):
+        """ foo """
+        print_debug_to_terminal('plugin__internet_search_execute')
+
+        # Amazon
+        if cur_searchphrase.startswith('!a ') is True:                           # https://www.amazon.de/s/field-keywords=foobar
+            remote_url = 'https://www.amazon.de/s/field-keywords='+search_phrase
+
+        # Bandcamp
+        if cur_searchphrase.startswith('!b ') is True:                           # https://bandcamp.com/search?q=foobar
+            remote_url = 'https://bandcamp.com/search?q='+search_phrase
+
+        # Google
+        if cur_searchphrase.startswith('!g ') is True:                           # https://www.google.com/search?q=foobar
+            remote_url = 'https://www.google.com/search?q='+search_phrase
+
+        # Reddit
+        if cur_searchphrase.startswith('!r ') is True:                           # https://www.reddit.com/search?q=foobar
+            remote_url = 'https://www.reddit.com/search?q='+search_phrase
+
+        # Soundcloud
+        if cur_searchphrase.startswith('!s ') is True:                           # https://soundcloud.com/search?q=foobar
+            remote_url = 'https://soundcloud.com/search?q='+search_phrase
+
+        # Twitter
+        if cur_searchphrase.startswith('!t ') is True:                           # https://twitter.com/search?q=foobar
+            remote_url = 'https://twitter.com/search?q='+search_phrase
+
+        # Vimeo
+        if cur_searchphrase.startswith('!v ') is True:                           # https://vimeo.com/search?q=foobar
+            remote_url = 'https://vimeo.com/search?q='+search_phrase
+
+        # Wikipedia
+        if cur_searchphrase.startswith('!w ') is True:                           # https://en.wikipedia.org/w/index.php?search=foobar
+            remote_url = 'https://en.wikipedia.org/w/index.php?search='+search_phrase
+
+        # Youtube
+        if cur_searchphrase.startswith('!y ') is True:
+            remote_url = 'https://www.youtube.com/results?search_query='+search_phrase      # https://www.youtube.com/results?search_query=foobar
+
+        # for all:
+        webbrowser.open(remote_url)  # open url
+
+        # update usage-statistics
+        print_debug_to_terminal('\tUpdating statistics (plugin_executed)')
+        current_plugin_executed_count = self.read_single_ini_value('Statistics', 'plugin_executed')          # get current value from ini
+        self.write_single_ini_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1)    # update ini +1
+
+        self.reset_ui()
 
 
     def process_lock_plugin(self):
@@ -687,58 +728,6 @@ class MyFrame(wx.Frame):
 
         else: # search string is empty
             print_debug_to_terminal('\tEmpty search string')
-
-
-
-    def plugin__internet_search_execute(self, search_phrase, cur_searchphrase):
-        """ foo """
-        print_debug_to_terminal('plugin__internet_search_execute')
-
-        # Amazon
-        if cur_searchphrase.startswith('!a ') is True:                           # https://www.amazon.de/s/field-keywords=foobar
-            remote_url = 'https://www.amazon.de/s/field-keywords='+search_phrase
-
-        # Bandcamp
-        if cur_searchphrase.startswith('!b ') is True:                           # https://bandcamp.com/search?q=foobar
-            remote_url = 'https://bandcamp.com/search?q='+search_phrase
-
-        # Google
-        if cur_searchphrase.startswith('!g ') is True:                           # https://www.google.com/search?q=foobar
-            remote_url = 'https://www.google.com/search?q='+search_phrase
-
-        # Reddit
-        if cur_searchphrase.startswith('!r ') is True:                           # https://www.reddit.com/search?q=foobar
-            remote_url = 'https://www.reddit.com/search?q='+search_phrase
-
-        # Soundcloud
-        if cur_searchphrase.startswith('!s ') is True:                           # https://soundcloud.com/search?q=foobar
-            remote_url = 'https://soundcloud.com/search?q='+search_phrase
-
-        # Twitter
-        if cur_searchphrase.startswith('!t ') is True:                           # https://twitter.com/search?q=foobar
-            remote_url = 'https://twitter.com/search?q='+search_phrase
-
-        # Vimeo
-        if cur_searchphrase.startswith('!v ') is True:                           # https://vimeo.com/search?q=foobar
-            remote_url = 'https://vimeo.com/search?q='+search_phrase
-
-        # Wikipedia
-        if cur_searchphrase.startswith('!w ') is True:                           # https://en.wikipedia.org/w/index.php?search=foobar
-            remote_url = 'https://en.wikipedia.org/w/index.php?search='+search_phrase
-
-        # Youtube
-        if cur_searchphrase.startswith('!y ') is True:
-            remote_url = 'https://www.youtube.com/results?search_query='+search_phrase      # https://www.youtube.com/results?search_query=foobar
-
-        # for all:
-        webbrowser.open(remote_url)  # open url
-
-        # update usage-statistics
-        print_debug_to_terminal('\tUpdating statistics (plugin_executed)')
-        current_plugin_executed_count = self.read_single_ini_value('Statistics', 'plugin_executed')          # get current value from ini
-        self.write_single_ini_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1)    # update ini +1
-
-        self.reset_ui()
 
 
 
