@@ -34,7 +34,6 @@ indent-string='    '
 
 
 [DESIGN]
-
 # We are capable to follow that many, yes!
 max-branchs = 20
 
@@ -49,20 +48,18 @@ max-attributes = 14
 #lots of locals
 max-locals = 35
 
+
 [MESSAGES CONTROL]
 # Disable the following PyLint messages:
-# R0903 - Not enough public methods
-# W0105 - String statement has no effect # often used for after-line doc
-# W0142 - Used * or ** magic
-# W0232 - Class has no __init__ method
-# W0212 - Access to a protected member ... of a client class
-# W0613 - Unused argument
-# E1101 - Has no member (countless false-positives)
+#
 # C0301 - Line too long
-disable-msg=R0903,W0142,W0105,W0212,W0613,E1101,C0301
+# R0201 - No-self-use
+# C0325 - Unnecessary parens after %r keyword
+#
+disable=C0301,R0201,C0325
+
 
 [REPORTS]
-
 # set the output format. Available formats are text, parseable, colorized and
 # html
 output-format=colorized
@@ -71,10 +68,10 @@ output-format=colorized
 include-ids=yes
 
 # Tells wether to display a full report or only the messages
-reports=no
+reports=yes
+
 
 [MISCELLANEOUS]
-
 # List of note tags to take in consideration, separated by a comma.
 # FIXME -- something which needs fixing
 # TODO  -- future plan
