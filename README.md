@@ -11,7 +11,7 @@ apparat is a python based application launcher for linux
 
 
 ## Requirements
-- python
+- python2
 - python-wxtools
 
 
