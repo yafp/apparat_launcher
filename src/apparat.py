@@ -37,6 +37,12 @@
 # -----------------------------------------------------------------------------------------------
 # IMPORTING
 # -----------------------------------------------------------------------------------------------
+import sys                          # to show python version used
+
+if sys.version_info >= (3, 0):
+    sys.stdout.write("Sorry, requires Python 2.x, not Python 3.x\n")
+    sys.exit(1)
+
 import ConfigParser                 # to handle .ini/configuration files
 import difflib                      # for intelligent list sort
 import fnmatch                      # for searching applications
@@ -44,7 +50,7 @@ import gtk                          # for app-icon handling - crashes - reason: 
 gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
 import os                           # for searching applications
 import subprocess                   # for checking if cmd_exists
-import sys                          # to show python version used
+
 from sys import platform            # to detect the platform the script is executed on
 import webbrowser                   # for opening urls (example: github project page)
 import wx                           # for all the WX GUI items
@@ -65,7 +71,7 @@ TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170304.01'
+APP_VERSION = '20170304.02'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
@@ -147,7 +153,7 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH, WINDOW_HEIGHT), style=style)              # Custom Frame
         self.SetSizeHintsSz(wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT), wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT))         # forcing min and max size to same values - prevents resizing option
         self.tbicon = TaskBarIcon(self)
-        self.Bind(wx.EVT_CLOSE, self.on_close_window)
+        self.Bind(wx.EVT_CLOSE, self.on_close_application)
 
         ## define and set an application icon
         app_icon = wx.Icon('gfx/core/bt_appIcon_16.png', wx.BITMAP_TYPE_PNG)
@@ -226,27 +232,27 @@ class MyFrame(wx.Frame):
         # ------------------------------------------------
         # Layout
         # ------------------------------------------------
-        b_sizer = wx.BoxSizer(wx.VERTICAL)                                # define layout container
-        b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100)           # preferences
-        b_sizer.AddSpacer(10)                                               # spacer
+        b_sizer = wx.BoxSizer(wx.VERTICAL)                              # define layout container
+        b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100)          # preferences
+        b_sizer.AddSpacer(10)                                           # spacer
         # horizontal sub-item 1
         box1 = wx.BoxSizer(wx.HORIZONTAL)
-        box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE)                     # result counter
-        box1.Add(self.search_and_result_combobox, 0, wx.CENTRE)                           # combobox
+        box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE)             # result counter
+        box1.Add(self.search_and_result_combobox, 0, wx.CENTRE)         # combobox
         b_sizer.Add(box1, 0, wx.CENTRE)
-        b_sizer.AddSpacer(10)                                               # spacer
+        b_sizer.AddSpacer(10)                                           # spacer
         # horizontal sub-item 2
         box2 = wx.BoxSizer(wx.HORIZONTAL)
-        box2.Add(self.ui__bt_selected_result, 0, wx.CENTRE)                        # launch button
-        box2.Add(self.ui__bt_launch_options, 0, wx.CENTRE)                            # options button
+        box2.Add(self.ui__bt_selected_result, 0, wx.CENTRE)             # launch button
+        box2.Add(self.ui__bt_launch_options, 0, wx.CENTRE)              # options button
         b_sizer.Add(box2, 0, wx.CENTRE)
         # horizontal sub-item 3
         box3 = wx.BoxSizer(wx.HORIZONTAL)
-        box3.Add(self.ui__txt_selected_result, 0, wx.CENTRE)                           # launch text
-        box3.Add(self.ui__txt_launch_options_parameter, 0, wx.CENTRE)                  # option text
+        box3.Add(self.ui__txt_selected_result, 0, wx.CENTRE)            # launch text
+        box3.Add(self.ui__txt_launch_options_parameter, 0, wx.CENTRE)   # option text
         b_sizer.Add(box3, 0, wx.CENTRE)
-        b_sizer.AddSpacer(30)                                               # spacer
-        b_sizer.Add(self.txt_version_information, 0, wx.CENTRE)             # version
+        b_sizer.AddSpacer(30)                                           # spacer
+        b_sizer.Add(self.txt_version_information, 0, wx.CENTRE)         # version
         self.SetSizer(b_sizer)
 
 
@@ -294,9 +300,9 @@ class MyFrame(wx.Frame):
         self.SetTransparent(TRANSPARENCY_VALUE)       # 0-255
 
 
-    def on_close_window(self, event):
+    def on_close_application(self, event):
         """ Method to close the app """
-        print_debug_to_terminal('on_close_window')
+        print_debug_to_terminal('on_close_application')
         print_debug_to_terminal('\tEvent: '+str(event))
         self.tbicon.RemoveIcon()
         self.tbicon.Destroy()
@@ -346,6 +352,7 @@ class MyFrame(wx.Frame):
         if btn == 'Preferences':
             print_debug_to_terminal('\tPreferences')
             self.open_preference_window()
+
 
 
     def open_preference_window(self):
@@ -452,7 +459,7 @@ class MyFrame(wx.Frame):
 
 
     def plugin__internet_search_prepare(self, current_search_string):
-        """ Plugin: Internet-Search """
+        """ Plugin: Internet-Search - Updates the UI on trigger input """
         print_debug_to_terminal('plugin__internet_search_prepare')
 
         ## Amazon
@@ -531,7 +538,7 @@ class MyFrame(wx.Frame):
 
 
     def plugin__internet_search_execute(self, search_phrase, cur_searchphrase):
-        """ foo """
+        """ Plugin: Internet-Search - Execute the actual internet search call """
         print_debug_to_terminal('plugin__internet_search_execute')
 
         # Amazon
@@ -601,7 +608,8 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_result.SetValue('gnome-screensaver-command')
         self.ui__txt_launch_options_parameter.SetValue('--lock')
 
-        self.ui__txt_result_counter.SetValue('1') # set result-count
+        # set result-count
+        self.ui__txt_result_counter.SetValue('1')
 
 
 
@@ -704,8 +712,9 @@ class MyFrame(wx.Frame):
                         print_debug_to_terminal('\tSVG icons can not be used so far')
                         new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
                 else: # no icon
-                        print_debug_to_terminal('\tFound no icon')
-                        new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
+                    print_debug_to_terminal('\tFound no icon')
+                    new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
+
                 self.ui__bt_selected_result.SetBitmap(new_app_icon.ConvertToBitmap())    # set icon to button
                 return search_results[0] # return the 1 result - for launch
             else: # got several hits
@@ -827,8 +836,7 @@ class PreferenceWindow(wx.Frame):
     def __init__(self, parent, id):
         """ Initialize the preference window """
         # define style of preference window
-        pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | \
-                             wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
+        pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
 
         wx.Frame.__init__(self, parent, id, 'Preferences', size=(500, 300), style=pref_window_style)
         wx.Frame.CenterOnScreen(self)
@@ -851,7 +859,6 @@ def create_menu_item(menu, label, func):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # TRAY_ICON
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#class TaskBarIcon(wx.TaskBarIcon):
 class TaskBarIcon(wx.TaskBarIcon, MyFrame):
     """ Class for the Task Bar Icon """
 
@@ -860,34 +867,34 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         print_debug_to_terminal('init (TaskBarIcon)')
         self.frame = frame
         super(TaskBarIcon, self).__init__()
-        self.set_icon(TRAY_ICON)
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_tray_menu_left_click)
+        self.set_tray_icon(TRAY_ICON)
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_tray_icon_left_click)
         print_debug_to_terminal('\tTask icon is ready now')
 
 
 
-    def create_popup_menu(self):
-        """ Method to generate a Popupmenu for the TrayIcon """
-        print_debug_to_terminal('create_popup_menu')
+    def CreatePopupMenu(self):
+        """ Method to generate a Popupmenu for the TrayIcon (do NOT rename) """
+        print_debug_to_terminal('CreatePopupMenu')
         menu = wx.Menu()
-        create_menu_item(menu, 'Preferences', self.on_tray_menu_right_click_preferences)
-        create_menu_item(menu, 'GitHub', self.on_tray_menu_right_click_github)
+        create_menu_item(menu, 'Preferences', self.on_tray_popup_select_preferences)
+        create_menu_item(menu, 'GitHub', self.on_tray_popup_select_github)
         menu.AppendSeparator()
-        create_menu_item(menu, 'Exit', self.on_tray_menu_right_click_exit)
+        create_menu_item(menu, 'Exit', self.on_tray_popup_select_exit)
         return menu
 
 
 
-    def set_icon(self, path):
+    def set_tray_icon(self, path):
         """ Method to set the icon for the TrayIconMenu item """
         icon = wx.IconFromBitmap(wx.Bitmap(path))
         self.SetIcon(icon, TRAY_TOOLTIP)
 
 
 
-    def on_tray_menu_left_click(self, event):
+    def on_tray_icon_left_click(self, event):
         """ Method to handle left click on the tray icon - toggles visibility of the Main Window """
-        print_debug_to_terminal('on_tray_menu_left_click')
+        print_debug_to_terminal('on_tray_icon_left_click')
         print_debug_to_terminal('\tEvent: '+str(event))
         if self.frame.IsIconized():             # if main window is minimized
             print_debug_to_terminal('\tMainWindows was minimized - should show it now')
@@ -898,25 +905,25 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 
 
 
-    def on_tray_menu_right_click_preferences(self, event):
+    def on_tray_popup_select_preferences(self, event):
         """ Method to handle click in the Preferences tray menu item """
-        print_debug_to_terminal('on_tray_menu_right_click_preferences')
+        print_debug_to_terminal('on_tray_popup_select_preferences')
         print_debug_to_terminal('\tEvent: '+str(event))
         self.open_preference_window()
 
 
 
-    def on_tray_menu_right_click_exit(self, event):
+    def on_tray_popup_select_exit(self, event):
         """ Method to handle click in the Exit tray menu item """
-        print_debug_to_terminal('on_tray_menu_right_click_exit')
+        print_debug_to_terminal('on_tray_popup_select_exit')
         print_debug_to_terminal('\tEvent: '+str(event))
         wx.CallAfter(self.frame.Close)
 
 
 
-    def on_tray_menu_right_click_github(self, event):
+    def on_tray_popup_select_github(self, event):
         """ Method to handle click on the GitHub tray menu item """
-        print_debug_to_terminal('on_tray_menu_right_click_github')
+        print_debug_to_terminal('on_tray_popup_select_github')
         print_debug_to_terminal('\tEvent: '+str(event))
         print_debug_to_terminal('\tOpening: '+APP_URL)
         webbrowser.open(APP_URL)  # Go to github
