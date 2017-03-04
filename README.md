@@ -16,7 +16,11 @@ apparat is a python based application launcher for linux
 
 
 ## Plugins
-### Search
+### Internet-Search
+
+Usage: 
+```trigger + searchphrase```
+
 - !a (amazon)
 - !b (bandcamp)
 - !g (google)
@@ -27,8 +31,7 @@ apparat is a python based application launcher for linux
 - !w (wikipedia)
 - !y (youtube)
 
-Usage: 
-```trigger + searchphrase```
 
-### Other
+
+### Session-Lock
 - !l (locks the user session)
