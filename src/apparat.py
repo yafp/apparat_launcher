@@ -19,7 +19,6 @@
 # Code Lint:
 #   pylint apparat.py (for python 2)
 #   pylint3 apparat.py (for python 3)
-#   pylint --rcfile /path/to/pylintrc apparat.py
 # PyLint Messages:                      http://pylint-messages.wikidot.com/all-codes
 
 
@@ -29,9 +28,7 @@
 # global hotkey to bring running app in foreground:
 #   https://wxpython.org/docs/api/wx.Window-class.html#RegisterHotKey
 #   https://github.com/schurpf/pyhk
-#
-# ui fade in on launch:
-#   https://www.blog.pythonlibrary.org/2008/04/14/doing-a-fade-in-with-wxpython/
+
 
 
 # -----------------------------------------------------------------------------------------------
@@ -42,18 +39,17 @@ import sys                          # to show python version used
 if sys.version_info >= (3, 0):
     sys.stdout.write("Sorry, requires Python 2.x, not Python 3.x\n")
     sys.exit(1)
-
-import ConfigParser                 # to handle .ini/configuration files
-import difflib                      # for intelligent list sort
-import fnmatch                      # for searching applications
-import gtk                          # for app-icon handling - crashes - reason: wx?
-gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
-import os                           # for searching applications
-import subprocess                   # for checking if cmd_exists
-
-from sys import platform            # to detect the platform the script is executed on
-import webbrowser                   # for opening urls (example: github project page)
-import wx                           # for all the WX GUI items
+else:
+    import ConfigParser                 # to handle .ini/configuration files
+    import difflib                      # for intelligent list sort
+    import fnmatch                      # for searching applications
+    import os                           # for searching applications
+    import subprocess                   # for checking if cmd_exists
+    from sys import platform            # to detect the platform the script is executed on
+    import webbrowser                   # for opening urls (example: github project page)
+    import gtk                          # for app-icon handling - crashes - reason: wx?
+    gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+    import wx                           # for all the WX GUI items
 
 
 
@@ -62,22 +58,24 @@ import wx                           # for all the WX GUI items
 # -----------------------------------------------------------------------------------------------
 APP_NAME = 'apparat'
 APP_URL = 'https://github.com/yafp/apparat'
-TARGET_ICON_SIZE = 128
-TRAY_TOOLTIP = 'apparat'
-TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
+APP_LICENSE = 'GPL3'
+APP_TRAY_TOOLTIP = 'apparat'
+APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170304.02'
+APP_VERSION = '20170306.01'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
 
 WINDOW_WIDTH = 350
 WINDOW_HEIGHT = 310
+
+TARGET_ICON_SIZE = 128
 
 is_combobox_open = 0
 
@@ -100,8 +98,7 @@ TRANSPARENCY_VALUE = 255                # app TRANSPARENCY_VALUE - Values: 0-255
 def cmd_exists(cmd):
     """ Method to check if a command exists """
     print_debug_to_terminal('cmd_exists')
-    return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, \
-                            stderr=subprocess.PIPE) == 0
+    return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
 
@@ -122,12 +119,12 @@ def check_platform():
     if platform == "linux" or platform == "linux2": # linux
         print_debug_to_terminal('\tDetected linux')
 
-    elif platform == "darwin":                      # OS X
+    elif platform == "darwin": # OS X
         print_debug_to_terminal('\tDetected unsupported platform (darwin)')
         wx.MessageBox('Unsupported platform detected, aborting '+APP_NAME+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
         exit()
 
-    elif platform == "win32":                       # Windows...
+    elif platform == "win32": # Windows
         print_debug_to_terminal('\tDetected unsupported platform (windows)')
         wx.MessageBox('Unsupported platform detected, aborting '+APP_NAME+' startup now.', 'Error', wx.OK | wx.ICON_ERROR)           # error dialog
         exit()
@@ -148,7 +145,14 @@ class MyFrame(wx.Frame):
         cur_app_start_count = self.read_single_ini_value('Statistics', 'apparat_started')          # get current value from ini
         self.write_single_ini_value('Statistics', 'apparat_started', int(cur_app_start_count)+1)    # update ini +1
 
-        style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED)    # Define the style of the frame
+        #style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED )    # Define the style of the frame
+        style = (\
+            wx.MINIMIZE_BOX | \
+            wx.CLIP_CHILDREN | \
+            wx.NO_BORDER | \
+            wx.FRAME_SHAPED | \
+            wx.FRAME_NO_TASKBAR \
+            )
 
         wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH, WINDOW_HEIGHT), style=style)              # Custom Frame
         self.SetSizeHintsSz(wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT), wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT))         # forcing min and max size to same values - prevents resizing option
@@ -826,6 +830,43 @@ class MyFrame(wx.Frame):
         print_debug_to_terminal('\tFinished resetting UI')
 
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PREFERENCE WINDOW - TABS - # https://pythonspot.com/wxpython-tabs/
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Define the tab content as class
+class TabOne(wx.Panel):
+    """ foo """
+    def __init__(self, parent):
+        """ foo """
+        wx.Panel.__init__(self, parent)
+        t = wx.StaticText(self, -1, "This is the first tab", (20, 20))
+
+        # show language
+
+class TabTwo(wx.Panel):
+    """ foo """
+    def __init__(self, parent):
+        """ foo """
+        wx.Panel.__init__(self, parent)
+        t = wx.StaticText(self, -1, "This is the second tab", (20, 20))
+
+        # show app start counter
+        # show execute counter
+        # show plugin trigger count
+
+class TabThree(wx.Panel):
+    """ foo """
+    def __init__(self, parent):
+        """ foo """
+        wx.Panel.__init__(self, parent)
+        about_app_name = wx.StaticText(self, -1, APP_NAME+" is an application launcher for linux", (20, 20))
+        about_app_version = wx.StaticText(self, -1, "You are currently using the version "+APP_VERSION, (20, 60))
+        about_app_license = wx.StaticText(self, -1, "Licensed under "+APP_LICENSE, (20, 80))
+        about_app_url = wx.HyperlinkCtrl(self, id=-1, label='GitHub', url=APP_URL, pos=(20, 140))
+
+
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # PREFERENCE WINDOW
@@ -839,7 +880,27 @@ class PreferenceWindow(wx.Frame):
         pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
 
         wx.Frame.__init__(self, parent, id, 'Preferences', size=(500, 300), style=pref_window_style)
-        wx.Frame.CenterOnScreen(self)
+
+        # Create a panel and notebook (tabs holder)
+        p = wx.Panel(self)
+        nb = wx.Notebook(p)
+
+        # Create the tab windows
+        tab1 = TabOne(nb)
+        tab2 = TabTwo(nb)
+        tab3 = TabThree(nb)
+
+        # Add the windows to tabs and name them.
+        nb.AddPage(tab1, "General ")
+        nb.AddPage(tab2, "Statistics ")
+        nb.AddPage(tab3, "About ")
+
+        # Set noteboook in a sizer to create the layout
+        sizer = wx.BoxSizer()
+        sizer.Add(nb, 1, wx.EXPAND)
+        p.SetSizer(sizer)
+
+        wx.Frame.CenterOnScreen(self) # center the pref window
 
 
 
@@ -857,7 +918,7 @@ def create_menu_item(menu, label, func):
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# TRAY_ICON
+# APP_TRAY_ICON
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TaskBarIcon(wx.TaskBarIcon, MyFrame):
     """ Class for the Task Bar Icon """
@@ -867,8 +928,8 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         print_debug_to_terminal('init (TaskBarIcon)')
         self.frame = frame
         super(TaskBarIcon, self).__init__()
-        self.set_tray_icon(TRAY_ICON)
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_tray_icon_left_click)
+        self.set_tray_icon(APP_TRAY_ICON)
+        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_app_tray_icon_left_click)
         print_debug_to_terminal('\tTask icon is ready now')
 
 
@@ -888,13 +949,13 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
     def set_tray_icon(self, path):
         """ Method to set the icon for the TrayIconMenu item """
         icon = wx.IconFromBitmap(wx.Bitmap(path))
-        self.SetIcon(icon, TRAY_TOOLTIP)
+        self.SetIcon(icon, APP_TRAY_TOOLTIP)
 
 
 
-    def on_tray_icon_left_click(self, event):
+    def on_app_tray_icon_left_click(self, event):
         """ Method to handle left click on the tray icon - toggles visibility of the Main Window """
-        print_debug_to_terminal('on_tray_icon_left_click')
+        print_debug_to_terminal('on_app_tray_icon_left_click')
         print_debug_to_terminal('\tEvent: '+str(event))
         if self.frame.IsIconized():             # if main window is minimized
             print_debug_to_terminal('\tMainWindows was minimized - should show it now')
