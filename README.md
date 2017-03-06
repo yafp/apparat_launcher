@@ -13,6 +13,7 @@ apparat is a python based application launcher for linux
 ## Requirements
 - python2
 - python-wxtools
+- gtk
 
 
 ## Plugins
@@ -35,3 +36,8 @@ Usage:
 
 ### Session-Lock
 - !l (locks the user session)
+
+
+
+## Development
+Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
