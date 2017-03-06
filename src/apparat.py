@@ -67,7 +67,7 @@ APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170306.01'
+APP_VERSION = '20170306.02'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
@@ -96,21 +96,21 @@ TRANSPARENCY_VALUE = 255                # app TRANSPARENCY_VALUE - Values: 0-255
 # HELPER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def cmd_exists(cmd):
-    """ Method to check if a command exists """
+    """Method to check if a command exists"""
     print_debug_to_terminal('cmd_exists')
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
 
 def print_debug_to_terminal(string):
-    """ Method to print debug messages (if debug = True) """
+    """Method to print debug messages (if debug = True)"""
     if DEBUG is True:
         print("debug >> "+string)
 
 
 
 def check_platform():
-    """ Method to check the platform (supported or not) """
+    """Method to check the platform (supported or not)"""
     print_debug_to_terminal('check_platform')
 
     # show python version
@@ -135,10 +135,11 @@ def check_platform():
 # MAIN-WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class MyFrame(wx.Frame):
-    """ Class for MainWindow """
+
+    """Class for MainWindow"""
 
     def __init__(self, parent, title):
-        """ Initialize the MainWindow """
+        """Initialize the MainWindow"""
 
         # Update Statistics (ini) - Apparat launched
         print_debug_to_terminal('\tUpdating statistics (apparat_started)')
@@ -305,7 +306,7 @@ class MyFrame(wx.Frame):
 
 
     def on_close_application(self, event):
-        """ Method to close the app """
+        """Method to close the app"""
         print_debug_to_terminal('on_close_application')
         print_debug_to_terminal('\tEvent: '+str(event))
         self.tbicon.RemoveIcon()
@@ -316,7 +317,7 @@ class MyFrame(wx.Frame):
 
 
     def read_single_ini_value(self, section_name, key_name):
-        """ Method to read a single value from the configuration file apparat.ini """
+        """Method to read a single value from the configuration file apparat.ini"""
         print_debug_to_terminal('read_single_ini_value')
         config = ConfigParser.ConfigParser()
         config.read("apparat.ini")
@@ -329,7 +330,7 @@ class MyFrame(wx.Frame):
 
 
     def write_single_ini_value(self, section_name, key_name, value):
-        """ Method to write a single value to the configuration file apparat.ini """
+        """Method to write a single value to the configuration file apparat.ini"""
         print_debug_to_terminal('write_single_ini_value')
         config = ConfigParser.ConfigParser()
         config.read("apparat.ini")
@@ -342,14 +343,14 @@ class MyFrame(wx.Frame):
 
 
     def on_clicked_option_button(self, event):
-        """ If the launch option button was clicked """
+        """If the launch option button was clicked"""
         print_debug_to_terminal('Clicked launch option button')
         print_debug_to_terminal('\tEvent: '+str(event))
         self.launch_external_application()
 
 
     def on_clicked(self, event):
-        """ General click handler - using label to find source """
+        """General click handler - using label to find source"""
         print_debug_to_terminal('on_clicked')
         print_debug_to_terminal('\tEvent: '+str(event))
         btn = event.GetEventObject().GetLabel()
@@ -360,7 +361,7 @@ class MyFrame(wx.Frame):
 
 
     def open_preference_window(self):
-        """ Opens the preference window """
+        """Opens the preference window"""
         print_debug_to_terminal('open_preference_window')
         self.new = PreferenceWindow(parent=None, id=-1)
         self.new.Show()
@@ -368,7 +369,7 @@ class MyFrame(wx.Frame):
 
 
     def on_combobox_text_changed(self, event):
-        """ Triggered if the combobox text changes """
+        """Triggered if the combobox text changes"""
         print_debug_to_terminal('on_combobox_text_changed')
         print_debug_to_terminal('\tEvent: '+str(event))
 
@@ -379,7 +380,7 @@ class MyFrame(wx.Frame):
 
 
     def on_combobox_enter(self, event):
-        """ Triggered if Enter was pressed in combobox """
+        """Triggered if Enter was pressed in combobox"""
         print_debug_to_terminal('on_combobox_enter')
         print_debug_to_terminal('\tEvent: '+str(event))
 
@@ -403,7 +404,7 @@ class MyFrame(wx.Frame):
 
 
     def on_combobox_select_item(self, event):
-        """ If an item of the result-list was selected """
+        """If an item of the result-list was selected"""
         print_debug_to_terminal('\n\non_combobox_select_item')
         print_debug_to_terminal('\tEvent: '+str(event))
         self.ui__txt_selected_result.SetValue(self.search_and_result_combobox.GetValue())   # write command to command text field
@@ -412,7 +413,7 @@ class MyFrame(wx.Frame):
 
 
     def on_combobox_close(self, event):
-        """ If the popup of the combobox is closed """
+        """If the popup of the combobox is closed"""
         print_debug_to_terminal('on_combobox_close')
         print_debug_to_terminal('\tEvent: '+str(event))
         print_debug_to_terminal('\tcombobox just got closed')
@@ -420,12 +421,12 @@ class MyFrame(wx.Frame):
 
 
     def on_combobox_key_press(self, event):
-        """ If content of the searchfield of the combobox changes """
+        """If content of the searchfield of the combobox changes"""
         print_debug_to_terminal('on_combobox_key_press')
         print_debug_to_terminal('\tEvent: '+str(event))
 
-        kc = event.GetKeyCode()
-        #print kc
+        current_keycode = event.GetKeyCode()
+        #print current_keycode
 
         ## Checking for key-combinations
         #
@@ -436,14 +437,14 @@ class MyFrame(wx.Frame):
             #print event.GetModifiers()
         if event.HasModifiers():            # either CTRL or ALT was pressed
             # ctrl+alt+a
-            if event.GetModifiers() == 3 and kc == 65:
+            if event.GetModifiers() == 3 and current_keycode == 65:
                 print('magic combo: "CTRL + ALT + a" was pressed')
 
-        if kc == 27: # ESC
+        if current_keycode == 27: # ESC
             print_debug_to_terminal('\tESC in combobox')
             self.reset_ui()
 
-        elif kc == 317:    # Arrow Down
+        elif current_keycode == 317:    # Arrow Down
             print_debug_to_terminal('\tARROW DOWN')
             self.search_and_result_combobox.Popup()
 
@@ -463,7 +464,7 @@ class MyFrame(wx.Frame):
 
 
     def plugin__internet_search_prepare(self, current_search_string):
-        """ Plugin: Internet-Search - Updates the UI on trigger input """
+        """Plugin: Internet-Search - Updates the UI on trigger input"""
         print_debug_to_terminal('plugin__internet_search_prepare')
 
         ## Amazon
@@ -542,7 +543,7 @@ class MyFrame(wx.Frame):
 
 
     def plugin__internet_search_execute(self, search_phrase, cur_searchphrase):
-        """ Plugin: Internet-Search - Execute the actual internet search call """
+        """Plugin: Internet-Search - Execute the actual internet search call"""
         print_debug_to_terminal('plugin__internet_search_execute')
 
         # Amazon
@@ -593,7 +594,7 @@ class MyFrame(wx.Frame):
 
 
     def process_lock_plugin(self):
-        """ Plugin Lock """
+        """Plugin Lock"""
         print_debug_to_terminal('\tPlugin lock activated')
 
         # application buttons
@@ -745,7 +746,7 @@ class MyFrame(wx.Frame):
 
 
     def launch_external_application(self):
-        """ Launches the actual external process """
+        """Launches the actual external process"""
         print_debug_to_terminal('launch_external_application')
         cur_searchphrase = self.ui__txt_selected_result.GetValue()
         cur_searchphrase_parameter = self.ui__txt_launch_options_parameter.GetValue()
@@ -797,14 +798,14 @@ class MyFrame(wx.Frame):
 
 
     def open_app_url(self):
-        """ Method to open the application URL  (GitHub project) """
+        """Method to open the application URL  (GitHub project)"""
         print_debug_to_terminal('open_app_url')
         print_debug_to_terminal('\tOpening '+APP_URL+' in default browser')
         webbrowser.open(APP_URL)  # Go to github
 
 
     def reset_ui(self):
-        """ Method to reset the User-Interface of the Apps main-window """
+        """Method to reset the User-Interface of the Apps main-window"""
         print_debug_to_terminal('reset_ui')
         # reset the combobox
         self.search_and_result_combobox.SetFocus() # set focus to search
@@ -836,18 +837,21 @@ class MyFrame(wx.Frame):
 
 # Define the tab content as class
 class TabOne(wx.Panel):
-    """ foo """
+
+    """foo"""
+
     def __init__(self, parent):
         """ foo """
         wx.Panel.__init__(self, parent)
         t = wx.StaticText(self, -1, "This is the first tab", (20, 20))
-
         # show language
 
 class TabTwo(wx.Panel):
-    """ foo """
+
+    """foo"""
+
     def __init__(self, parent):
-        """ foo """
+        """foo"""
         wx.Panel.__init__(self, parent)
         t = wx.StaticText(self, -1, "This is the second tab", (20, 20))
 
@@ -856,9 +860,11 @@ class TabTwo(wx.Panel):
         # show plugin trigger count
 
 class TabThree(wx.Panel):
-    """ foo """
+
+    """foo"""
+
     def __init__(self, parent):
-        """ foo """
+        """foo"""
         wx.Panel.__init__(self, parent)
         about_app_name = wx.StaticText(self, -1, APP_NAME+" is an application launcher for linux", (20, 20))
         about_app_version = wx.StaticText(self, -1, "You are currently using the version "+APP_VERSION, (20, 60))
@@ -872,10 +878,11 @@ class TabThree(wx.Panel):
 # PREFERENCE WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class PreferenceWindow(wx.Frame):
-    """ Class for Preference Window """
+
+    """Class for Preference Window"""
 
     def __init__(self, parent, id):
-        """ Initialize the preference window """
+        """Initialize the preference window"""
         # define style of preference window
         pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
 
@@ -908,7 +915,7 @@ class PreferenceWindow(wx.Frame):
 # TRAY-MENU
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def create_menu_item(menu, label, func):
-    """ Generates single menu items for the tray icon popup menu """
+    """Generates single menu items for the tray icon popup menu"""
     print_debug_to_terminal('create_menu_item: '+label)
     item = wx.MenuItem(menu, -1, label)
     menu.Bind(wx.EVT_MENU, func, id=item.GetId())
@@ -921,10 +928,11 @@ def create_menu_item(menu, label, func):
 # APP_TRAY_ICON
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class TaskBarIcon(wx.TaskBarIcon, MyFrame):
-    """ Class for the Task Bar Icon """
+
+    """Class for the Task Bar Icon"""
 
     def __init__(self, frame):
-        """ Method to initialize the tray icon """
+        """Method to initialize the tray icon"""
         print_debug_to_terminal('init (TaskBarIcon)')
         self.frame = frame
         super(TaskBarIcon, self).__init__()
@@ -935,7 +943,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 
 
     def CreatePopupMenu(self):
-        """ Method to generate a Popupmenu for the TrayIcon (do NOT rename) """
+        """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
         print_debug_to_terminal('CreatePopupMenu')
         menu = wx.Menu()
         create_menu_item(menu, 'Preferences', self.on_tray_popup_select_preferences)
@@ -947,14 +955,14 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 
 
     def set_tray_icon(self, path):
-        """ Method to set the icon for the TrayIconMenu item """
+        """Method to set the icon for the TrayIconMenu item"""
         icon = wx.IconFromBitmap(wx.Bitmap(path))
         self.SetIcon(icon, APP_TRAY_TOOLTIP)
 
 
 
     def on_app_tray_icon_left_click(self, event):
-        """ Method to handle left click on the tray icon - toggles visibility of the Main Window """
+        """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
         print_debug_to_terminal('on_app_tray_icon_left_click')
         print_debug_to_terminal('\tEvent: '+str(event))
         if self.frame.IsIconized():             # if main window is minimized
@@ -967,7 +975,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 
 
     def on_tray_popup_select_preferences(self, event):
-        """ Method to handle click in the Preferences tray menu item """
+        """Method to handle click in the Preferences tray menu item"""
         print_debug_to_terminal('on_tray_popup_select_preferences')
         print_debug_to_terminal('\tEvent: '+str(event))
         self.open_preference_window()
@@ -975,7 +983,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 
 
     def on_tray_popup_select_exit(self, event):
-        """ Method to handle click in the Exit tray menu item """
+        """Method to handle click in the Exit tray menu item"""
         print_debug_to_terminal('on_tray_popup_select_exit')
         print_debug_to_terminal('\tEvent: '+str(event))
         wx.CallAfter(self.frame.Close)
@@ -983,7 +991,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 
 
     def on_tray_popup_select_github(self, event):
-        """ Method to handle click on the GitHub tray menu item """
+        """Method to handle click on the GitHub tray menu item"""
         print_debug_to_terminal('on_tray_popup_select_github')
         print_debug_to_terminal('\tEvent: '+str(event))
         print_debug_to_terminal('\tOpening: '+APP_URL)
@@ -995,10 +1003,11 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
 #
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 class App(wx.App):
-    """ Class App """
+
+    """Class App"""
 
     def OnInit(self):
-        """ While starting the app (checks for already running instances) """
+        """While starting the app (checks for already running instances)"""
         self.name = APP_NAME
         self.instance = wx.SingleInstanceChecker(self.name)
         if self.instance.IsAnotherRunning():                    # allow only 1 instance of apparat
@@ -1013,7 +1022,7 @@ class App(wx.App):
 # MAIN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def main():
-    """ Main """
+    """Main"""
     app = App(False)
     check_platform()                 # Check if platform is supported at all, otherwise abort
     frame = MyFrame(None, APP_NAME)  # Main UI window
