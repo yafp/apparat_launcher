@@ -1,4 +1,5 @@
 #!/usr/bin/python
+"""apparat - an application launcher for linux"""
 
 # NAME:         apparat
 # DESCRIPTION:  Python based application launcher
@@ -14,7 +15,6 @@
 #                                       http://fontawesome.io/icons/
 #                                       http://fa2png.io/
 # Ini files:                            https://wiki.python.org/moin/ConfigParserExamples
-# Frame Styles:                         https://www.blog.pythonlibrary.org/2013/11/06/wxpython-101-using-frame-styles/
 # Key Events:                           https://wxpython.org/docs/api/wx.KeyEvent-class.html
 # Code Lint:
 #   pylint apparat.py (for python 2)
@@ -47,8 +47,8 @@ else:
     import subprocess                   # for checking if cmd_exists
     from sys import platform            # to detect the platform the script is executed on
     import webbrowser                   # for opening urls (example: github project page)
-    import gtk                          # for app-icon handling - crashes - reason: wx?
-    gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+    #import gtk                          # for app-icon handling - crashes - reason: wx?
+    #gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
     import wx                           # for all the WX GUI items
 
 
@@ -67,7 +67,7 @@ APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170306.02'
+APP_VERSION = '20170306.03'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
@@ -96,14 +96,14 @@ TRANSPARENCY_VALUE = 255                # app TRANSPARENCY_VALUE - Values: 0-255
 # HELPER
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def cmd_exists(cmd):
-    """Method to check if a command exists"""
+    """Method to check if a command exists."""
     print_debug_to_terminal('cmd_exists')
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
 
 def print_debug_to_terminal(string):
-    """Method to print debug messages (if debug = True)"""
+    """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         print("debug >> "+string)
 
@@ -836,41 +836,44 @@ class MyFrame(wx.Frame):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Define the tab content as class
-class TabOne(wx.Panel):
+class ui__tab_general(wx.Panel):
 
-    """foo"""
+    """Preference Window - Tab: General"""
 
     def __init__(self, parent):
-        """ foo """
+        """Inits the general tab"""
         wx.Panel.__init__(self, parent)
-        t = wx.StaticText(self, -1, "This is the first tab", (20, 20))
+        t = wx.StaticText(self, -1, "This tab should show some general things", (20, 20))
         # show language
+        # show key-combo
 
-class TabTwo(wx.Panel):
 
-    """foo"""
+
+class ui__tab_statistics(wx.Panel):
+
+    """Preference Window - Tab: Statistics - Shows usage stats"""
 
     def __init__(self, parent):
-        """foo"""
+        """Inits the statistics tab"""
         wx.Panel.__init__(self, parent)
-        t = wx.StaticText(self, -1, "This is the second tab", (20, 20))
-
+        t = wx.StaticText(self, -1, "This tab should show the usage statistics", (20, 20))
         # show app start counter
         # show execute counter
         # show plugin trigger count
 
-class TabThree(wx.Panel):
 
-    """foo"""
+
+class ui__tab_about(wx.Panel):
+
+    """Preference Window - Tab: About"""
 
     def __init__(self, parent):
-        """foo"""
+        """Inits the About Tab"""
         wx.Panel.__init__(self, parent)
         about_app_name = wx.StaticText(self, -1, APP_NAME+" is an application launcher for linux", (20, 20))
         about_app_version = wx.StaticText(self, -1, "You are currently using the version "+APP_VERSION, (20, 60))
         about_app_license = wx.StaticText(self, -1, "Licensed under "+APP_LICENSE, (20, 80))
         about_app_url = wx.HyperlinkCtrl(self, id=-1, label='GitHub', url=APP_URL, pos=(20, 140))
-
 
 
 
@@ -885,7 +888,6 @@ class PreferenceWindow(wx.Frame):
         """Initialize the preference window"""
         # define style of preference window
         pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
-
         wx.Frame.__init__(self, parent, id, 'Preferences', size=(500, 300), style=pref_window_style)
 
         # Create a panel and notebook (tabs holder)
@@ -893,9 +895,9 @@ class PreferenceWindow(wx.Frame):
         nb = wx.Notebook(p)
 
         # Create the tab windows
-        tab1 = TabOne(nb)
-        tab2 = TabTwo(nb)
-        tab3 = TabThree(nb)
+        tab1 = ui__tab_general(nb)
+        tab2 = ui__tab_statistics(nb)
+        tab3 = ui__tab_about(nb)
 
         # Add the windows to tabs and name them.
         nb.AddPage(tab1, "General ")
@@ -965,11 +967,11 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
         print_debug_to_terminal('on_app_tray_icon_left_click')
         print_debug_to_terminal('\tEvent: '+str(event))
-        if self.frame.IsIconized():             # if main window is minimized
-            print_debug_to_terminal('\tMainWindows was minimized - should show it now')
+        if self.frame.IsIconized(): # if main window is minimized
+            print_debug_to_terminal('\tMainWindow was minimized - should show it now')
             self.frame.Raise()
-        else:                                   # if main window is shown
-            print_debug_to_terminal('\tMainWindows was shown - should minimize it now')
+        else: # if main window is shown
+            print_debug_to_terminal('\tMainWindow was shown - should minimize it now')
             self.frame.Iconize(True)
 
 
@@ -995,7 +997,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         print_debug_to_terminal('on_tray_popup_select_github')
         print_debug_to_terminal('\tEvent: '+str(event))
         print_debug_to_terminal('\tOpening: '+APP_URL)
-        webbrowser.open(APP_URL)  # Go to github
+        webbrowser.open(APP_URL) # Go to github
 
 
 
@@ -1010,9 +1012,8 @@ class App(wx.App):
         """While starting the app (checks for already running instances)"""
         self.name = APP_NAME
         self.instance = wx.SingleInstanceChecker(self.name)
-        if self.instance.IsAnotherRunning():                    # allow only 1 instance of apparat
-            wx.MessageBox("An instance of "+APP_NAME+" is already running. \
-                           Aborting", "Error", wx.OK | wx.ICON_WARNING)
+        if self.instance.IsAnotherRunning(): # allow only 1 instance of apparat
+            wx.MessageBox("An instance of "+APP_NAME+" is already running. Aborting", "Error", wx.OK | wx.ICON_WARNING)
             return False
         return True
 
@@ -1024,8 +1025,8 @@ class App(wx.App):
 def main():
     """Main"""
     app = App(False)
-    check_platform()                 # Check if platform is supported at all, otherwise abort
-    frame = MyFrame(None, APP_NAME)  # Main UI window
+    check_platform() # Check if platform is supported at all, otherwise abort
+    frame = MyFrame(None, APP_NAME) # Main UI window
     app.MainLoop()
 
 
