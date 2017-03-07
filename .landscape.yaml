@@ -1,7 +1,7 @@
 doc-warnings: true
 test-warnings: false
-strictness: veryhigh
-max-line-length: 120
+strictness: high
+max-line-length: 160
 uses:
   - django
   - celery
