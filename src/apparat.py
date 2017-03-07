@@ -47,8 +47,8 @@ else:
     import subprocess                   # for checking if cmd_exists
     from sys import platform            # to detect the platform the script is executed on
     import webbrowser                   # for opening urls (example: github project page)
-    #import gtk                          # for app-icon handling - crashes - reason: wx?
-    #gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+    import gtk                          # for app-icon handling - crashes - reason: wx?
+    gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
     import wx                           # for all the WX GUI items
 
 
@@ -67,7 +67,7 @@ APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170306.03'
+APP_VERSION = '20170307.01'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
