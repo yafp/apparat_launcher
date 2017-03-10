@@ -47,8 +47,8 @@ else:
     import subprocess                   # for checking if cmd_exists
     from sys import platform            # to detect the platform the script is executed on
     import webbrowser                   # for opening urls (example: github project page)
-    import gtk                          # for app-icon handling - crashes - reason: wx?
-    gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+    #import gtk                          # for app-icon handling - crashes - reason: wx?
+    #gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
     import wx                           # for all the WX GUI items
 
 
@@ -61,13 +61,16 @@ APP_URL = 'https://github.com/yafp/apparat'
 APP_LICENSE = 'GPL3'
 APP_TRAY_TOOLTIP = 'apparat'
 APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
+#APP_INI_PATH = '/home/fpoeck/.config/apparat/apparat.ini'
+APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat/'
+APP_INI_PATH = os.environ['HOME']+'/.config/apparat/apparat.ini'
 
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170307.01'
+APP_VERSION = '20170310.01'
 
 DEBUG = True                    # True or False
 #DEBUG = False                    # True or False
@@ -78,7 +81,7 @@ WINDOW_HEIGHT = 310
 TARGET_ICON_SIZE = 128
 
 is_combobox_open = 0
-
+is_resetted = False
 
 
 # -----------------------------------------------------------------------------------------------
@@ -86,6 +89,8 @@ is_combobox_open = 0
 # -----------------------------------------------------------------------------------------------
 TRANSPARENCY_VALUE = 255                # app TRANSPARENCY_VALUE - Values: 0-255
 
+
+print APP_INI_PATH
 
 
 # -----------------------------------------------------------------------------------------------
@@ -318,9 +323,10 @@ class MyFrame(wx.Frame):
 
     def read_single_ini_value(self, section_name, key_name):
         """Method to read a single value from the configuration file apparat.ini"""
+        self.check_if_ini_file_exists()
         print_debug_to_terminal('read_single_ini_value')
         config = ConfigParser.ConfigParser()
-        config.read("apparat.ini")
+        config.read(APP_INI_PATH)
         #print config.sections()
         value = config.get(section_name, key_name)
         print_debug_to_terminal('\tSection:\t'+section_name)
@@ -331,15 +337,43 @@ class MyFrame(wx.Frame):
 
     def write_single_ini_value(self, section_name, key_name, value):
         """Method to write a single value to the configuration file apparat.ini"""
+        self.check_if_ini_file_exists()
         print_debug_to_terminal('write_single_ini_value')
         config = ConfigParser.ConfigParser()
-        config.read("apparat.ini")
+        #config.read("apparat.ini")
+        config.read(APP_INI_PATH)
         config.set(section_name, key_name, value)
         print_debug_to_terminal('\tSection:\t'+section_name)
         print_debug_to_terminal('\tKey:\t\t'+key_name)
         print_debug_to_terminal('\tValue:\t\t'+str(value))
-        with open('apparat.ini', 'wb') as configfile:
+        with open(APP_INI_PATH, 'wb') as configfile:
             config.write(configfile)
+
+
+    def check_if_ini_file_exists(self):
+        """Method to check if an ini file exists - and generate it if it doesnt"""
+        print_debug_to_terminal('check_if_ini_file_exists')
+
+        # check if config folder exists - if not create it
+        if not os.path.exists(APP_INI_FOLDER):
+            print_debug_to_terminal("\tCreating config folder")
+            os.makedirs(APP_INI_FOLDER)
+
+        if os.path.isfile(APP_INI_PATH):
+            print_debug_to_terminal("\tFound ini file")
+        else:
+            print_debug_to_terminal("\tNo ini file found")
+            print_debug_to_terminal("\tCreating default ini file")
+
+            mode = 'a' if os.path.exists(APP_INI_PATH) else 'w'
+            with open(APP_INI_PATH, mode) as f:
+                f.write('[Language]\n')
+                f.write('lang = EN\n\n')
+                f.write('[Statistics]\n')
+                f.write('apparat_started = 0\n')
+                f.write('command_executed = 0\n')
+                f.write('plugin_executed = 0\n')
+            print_debug_to_terminal("\tFinished ini file creation")
 
 
     def on_clicked_option_button(self, event):
@@ -387,6 +421,9 @@ class MyFrame(wx.Frame):
         ## if we got a search string and 1 result in counter -> launch_external_application
         #if len(self.search_and_result_combobox.GetValue()) > 0 and self.ui__txt_result_counter.GetValue() == '1':
         if len(self.search_and_result_combobox.GetValue()) > 0:
+
+            global is_resetted
+            is_resetted = False
 
             global is_combobox_open
             if is_combobox_open == 0:
@@ -442,7 +479,15 @@ class MyFrame(wx.Frame):
 
         if current_keycode == 27: # ESC
             print_debug_to_terminal('\tESC in combobox')
-            self.reset_ui()
+
+            global is_resetted
+            if(is_resetted is False):
+                print_debug_to_terminal('\tLaunch reset method')
+                self.reset_ui()
+            else:
+                # hide main window
+                print_debug_to_terminal('\tUI is already resetted')
+                self.tbicon.execute_tray_icon_left_click()
 
         elif current_keycode == 317:    # Arrow Down
             print_debug_to_terminal('\tARROW DOWN')
@@ -828,6 +873,10 @@ class MyFrame(wx.Frame):
 
         # reset the result counter
         self.ui__txt_result_counter.SetValue('') # Reset result counter
+
+        global is_resetted
+        is_resetted = True
+
         print_debug_to_terminal('\tFinished resetting UI')
 
 
@@ -967,6 +1016,13 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
         print_debug_to_terminal('on_app_tray_icon_left_click')
         print_debug_to_terminal('\tEvent: '+str(event))
+        self.execute_tray_icon_left_click()
+
+
+
+    def execute_tray_icon_left_click(self):
+        """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
+        print_debug_to_terminal('execute_tray_icon_left_click')
         if self.frame.IsIconized(): # if main window is minimized
             print_debug_to_terminal('\tMainWindow was minimized - should show it now')
             self.frame.Raise()
