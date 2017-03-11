@@ -19,14 +19,14 @@ APPARAT_EXECUTABLE='apparat.py'
 wmctrl -lx | awk '{print $3}' | grep -i "$APPARAT_EXECUTABLE" # check if apparat.py is running right now
 
 if [ $? -eq 0 ]; then # it is - so focus it
-    sleep 1
     #notify-send "Focusing apparat" -t 3000
+    #sleep 1
     wmctrl -xa $APPARAT_EXECUTABLE
     exit 1
 
 else # it isnt - so start it
-    notify-send "Starting: "$APPARAT_EXECUTABLE -t 3000
-    sleep 1
+    #notify-send "Starting: "$APPARAT_EXECUTABLE -t 3000
+    #sleep 1
     cd "$APPARAT_FOLDER" && python "./apparat.py"
     exit 0
 fi
