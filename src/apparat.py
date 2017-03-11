@@ -47,8 +47,8 @@ else:
     import subprocess                   # for checking if cmd_exists
     from sys import platform            # to detect the platform the script is executed on
     import webbrowser                   # for opening urls (example: github project page)
-    #import gtk                          # for app-icon handling - crashes - reason: wx?
-    #gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+    import gtk                          # for app-icon handling - crashes - reason: wx?
+    gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
     import wx                           # for all the WX GUI items
 
 
@@ -70,10 +70,9 @@ APP_INI_PATH = os.environ['HOME']+'/.config/apparat/apparat.ini'
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170310.01'
+APP_VERSION = '20170311.01'
 
 DEBUG = True                    # True or False
-#DEBUG = False                    # True or False
 
 WINDOW_WIDTH = 350
 WINDOW_HEIGHT = 310
@@ -81,7 +80,7 @@ WINDOW_HEIGHT = 310
 TARGET_ICON_SIZE = 128
 
 is_combobox_open = 0
-is_resetted = False
+is_resetted = True
 
 
 # -----------------------------------------------------------------------------------------------
@@ -410,6 +409,9 @@ class MyFrame(wx.Frame):
         if self.search_and_result_combobox.GetValue() == '':
             print_debug_to_terminal('\tSearch string is empty - could reset UI at that point - but cant so far because of endless loop')
             #self.reset_ui()
+        else:
+            global is_resetted
+            is_resetted = False
 
 
 
@@ -465,18 +467,6 @@ class MyFrame(wx.Frame):
         current_keycode = event.GetKeyCode()
         #print current_keycode
 
-        ## Checking for key-combinations
-        #
-        # Modifiers
-            # 1 = alt
-            # 2 = ctrl
-            # 3 = alt + ctrl
-            #print event.GetModifiers()
-        if event.HasModifiers():            # either CTRL or ALT was pressed
-            # ctrl+alt+a
-            if event.GetModifiers() == 3 and current_keycode == 65:
-                print('magic combo: "CTRL + ALT + a" was pressed')
-
         if current_keycode == 27: # ESC
             print_debug_to_terminal('\tESC in combobox')
 
@@ -484,8 +474,7 @@ class MyFrame(wx.Frame):
             if(is_resetted is False):
                 print_debug_to_terminal('\tLaunch reset method')
                 self.reset_ui()
-            else:
-                # hide main window
+            else: # hide main window
                 print_debug_to_terminal('\tUI is already resetted')
                 self.tbicon.execute_tray_icon_left_click()
 
@@ -496,7 +485,6 @@ class MyFrame(wx.Frame):
             # global var to keep track if dropdown is open or closed
             global is_combobox_open
             is_combobox_open = 1
-
         else:
             current_search_string = self.search_and_result_combobox.GetValue()
             if len(current_search_string) == 0:
@@ -885,7 +873,7 @@ class MyFrame(wx.Frame):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Define the tab content as class
-class ui__tab_general(wx.Panel):
+class UITabGeneral(wx.Panel):
 
     """Preference Window - Tab: General"""
 
@@ -898,7 +886,7 @@ class ui__tab_general(wx.Panel):
 
 
 
-class ui__tab_statistics(wx.Panel):
+class UITabStatistics(wx.Panel):
 
     """Preference Window - Tab: Statistics - Shows usage stats"""
 
@@ -912,7 +900,7 @@ class ui__tab_statistics(wx.Panel):
 
 
 
-class ui__tab_about(wx.Panel):
+class UITabAbout(wx.Panel):
 
     """Preference Window - Tab: About"""
 
@@ -944,9 +932,9 @@ class PreferenceWindow(wx.Frame):
         nb = wx.Notebook(p)
 
         # Create the tab windows
-        tab1 = ui__tab_general(nb)
-        tab2 = ui__tab_statistics(nb)
-        tab3 = ui__tab_about(nb)
+        tab1 = UITabGeneral(nb)
+        tab2 = UITabStatistics(nb)
+        tab3 = UITabAbout(nb)
 
         # Add the windows to tabs and name them.
         nb.AddPage(tab1, "General ")
