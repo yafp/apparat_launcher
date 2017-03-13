@@ -47,29 +47,30 @@ else:
     import subprocess                   # for checking if cmd_exists
     from sys import platform            # to detect the platform the script is executed on
     import webbrowser                   # for opening urls (example: github project page)
-    import gtk                          # for app-icon handling - crashes - reason: wx?
-    gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
+    #import gtk                          # for app-icon handling - crashes - reason: wx?
+    #gtk.remove_log_handlers()           # GTK/WX Issue - fix for Ubuntu
     import wx                           # for all the WX GUI items
 
 
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_NAME = 'apparat'
+APP_NAME = 'Apparat'
 APP_URL = 'https://github.com/yafp/apparat'
 APP_LICENSE = 'GPL3'
 APP_TRAY_TOOLTIP = 'apparat'
 APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
-#APP_INI_PATH = '/home/fpoeck/.config/apparat/apparat.ini'
 APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat/'
-APP_INI_PATH = os.environ['HOME']+'/.config/apparat/apparat.ini'
+#APP_INI_PATH = os.environ['HOME']+'/.config/apparat/apparat.ini'
+APP_INI_PATH = APP_INI_FOLDER+'apparat.ini'
+APP_PLUGINS_INTERNET_SEARCH_TRIGGER = ['!a', '!b', '!g', '!r', '!s', '!t', '!v', '!w', '!y' ]
 
 
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170312.01'
-DEBUG = True                    # True or False
+APP_VERSION = '20170313.01'
+DEBUG = True                    # True or False - overwritten by Preference Window
 WINDOW_WIDTH = 350
 WINDOW_HEIGHT = 310
 TARGET_ICON_SIZE = 128
@@ -101,6 +102,8 @@ def print_debug_to_terminal(string):
     """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         print("debug >> "+string)
+    if DEBUG == "True":
+        print("debug__ >> "+string)
 
 
 def check_platform():
@@ -124,6 +127,44 @@ def check_platform():
         exit()
 
 
+
+
+
+
+def read_single_ini_valueX(section_name, key_name):
+    """Method to read a single value from the configuration file apparat.ini"""
+    #check_if_ini_file_exists()
+    print_debug_to_terminal('read_single_ini_value')
+    config = ConfigParser.ConfigParser()
+    config.read(APP_INI_PATH)
+    #print config.sections()
+    value = config.get(section_name, key_name)
+    print_debug_to_terminal('\tSection:\t'+section_name)
+    print_debug_to_terminal('\tKey:\t\t'+key_name)
+    print_debug_to_terminal('\tValue:\t\t'+value)
+    return value
+
+
+def write_single_ini_valueX(section_name, key_name, value):
+    """Method to write a single value to the configuration file apparat.ini"""
+    #self.check_if_ini_file_exists()
+    print_debug_to_terminal('write_single_ini_value')
+    config = ConfigParser.ConfigParser()
+    #config.read("apparat.ini")
+    config.read(APP_INI_PATH)
+    config.set(section_name, key_name, value)
+    print_debug_to_terminal('\tSection:\t'+section_name)
+    print_debug_to_terminal('\tKey:\t\t'+key_name)
+    print_debug_to_terminal('\tValue:\t\t'+str(value))
+    with open(APP_INI_PATH, 'wb') as configfile:
+        config.write(configfile)
+
+
+
+
+
+
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MAIN-WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,6 +180,11 @@ class MyFrame(wx.Frame):
         cur_app_start_count = self.read_single_ini_value('Statistics', 'apparat_started')          # get current value from ini
         self.write_single_ini_value('Statistics', 'apparat_started', int(cur_app_start_count)+1)    # update ini +1
 
+        # check debug setting
+        print_debug_to_terminal('\tReading Debug settings from .ini (enable_debug_output)')
+        global DEBUG
+        DEBUG = self.read_single_ini_value('General', 'enable_debug_output')          # get current value from ini
+
         #style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED )    # Define the style of the frame
         style = (\
             wx.MINIMIZE_BOX | \
@@ -148,7 +194,7 @@ class MyFrame(wx.Frame):
             wx.FRAME_NO_TASKBAR \
             )
 
-        wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH, WINDOW_HEIGHT), style=style)              # Custom Frame
+        self.mainUI = wx.Frame.__init__(self, parent, title=title, size=(WINDOW_WIDTH, WINDOW_HEIGHT), style=style)              # Custom Frame
         self.SetSizeHintsSz(wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT), wx.Size(WINDOW_WIDTH, WINDOW_HEIGHT))         # forcing min and max size to same values - prevents resizing option
         self.tbicon = TaskBarIcon(self)
         self.Bind(wx.EVT_CLOSE, self.on_close_application)
@@ -356,6 +402,9 @@ class MyFrame(wx.Frame):
             with open(APP_INI_PATH, mode) as f:
                 f.write('[Language]\n')
                 f.write('lang = EN\n\n')
+                f.write('[General]\n')
+                f.write('hide_ui_after_command_execution = True\n')
+                f.write('enable_debug_output = True\n\n')
                 f.write('[Statistics]\n')
                 f.write('apparat_started = 0\n')
                 f.write('command_executed = 0\n')
@@ -482,55 +531,61 @@ class MyFrame(wx.Frame):
         print_debug_to_terminal('plugin__internet_search_prepare')
 
         ## Amazon
-        if current_search_string.startswith('!a') is True:
+        if current_search_string.startswith('!a ') is True:
             print_debug_to_terminal('\tPlugin Amazon activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Amazon')
 
         ## Bandcamp
-        if current_search_string.startswith('!b') is True:
+        if current_search_string.startswith('!b ') is True:
             print_debug_to_terminal('\tPlugin Bandcamp activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Bandcamp')
 
         ## Google
-        if current_search_string.startswith('!g') is True:
+        if current_search_string.startswith('!g ') is True:
             print_debug_to_terminal('\tPlugin Google activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Google')
 
+        ## LastFM
+        if current_search_string.startswith('!l ') is True:
+            print_debug_to_terminal('\tPlugin LastFM activated')
+            self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_lastfm_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_result.SetToolTipString('LastFM')
+
         ## Reddit
-        if current_search_string.startswith('!r') is True:
+        if current_search_string.startswith('!r ') is True:
             print_debug_to_terminal('\tPlugin Reddit activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Reddit')
 
         ## Soundcloud
-        if current_search_string.startswith('!s') is True:
+        if current_search_string.startswith('!s ') is True:
             print_debug_to_terminal('\tPlugin Soundcloud activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Soundcloud')
 
         ## Twitter
-        if current_search_string.startswith('!t') is True:
+        if current_search_string.startswith('!t ') is True:
             print_debug_to_terminal('\tPlugin Twitter activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Twitter')
 
         ## Vimeo
-        if current_search_string.startswith('!v') is True:
+        if current_search_string.startswith('!v ') is True:
             print_debug_to_terminal('\tPlugin Vimeo activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Vimeo')
 
         ## Wikipedia
-        if current_search_string.startswith('!w') is True:
+        if current_search_string.startswith('!w ') is True:
             print_debug_to_terminal('\tPlugin Wikipedia activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Wikipedia')
 
         ## Youtube
-        if current_search_string.startswith('!y') is True:
+        if current_search_string.startswith('!y ') is True:
             print_debug_to_terminal('\tPlugin YouTube activated')
             self.ui__img_selected_result = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_result.SetToolTipString('Youtube')
@@ -570,6 +625,10 @@ class MyFrame(wx.Frame):
         # Google
         if cur_searchphrase.startswith('!g ') is True:                           # https://www.google.com/search?q=foobar
             remote_url = 'https://www.google.com/search?q='+search_phrase
+
+        # LastFM
+        if cur_searchphrase.startswith('!l ') is True:                           # https://www.last.fm/search?q=foobar
+            remote_url = 'https://www.last.fm/search?q='+search_phrase
 
         # Reddit
         if cur_searchphrase.startswith('!r ') is True:                           # https://www.reddit.com/search?q=foobar
@@ -635,11 +694,21 @@ class MyFrame(wx.Frame):
         print_debug_to_terminal('parse_user_search_input')
         if current_search_string != '':
 
+            ## Plugin: Lock
+            if current_search_string == '!lock':
+                self.process_lock_plugin()
+                return
+
+
+            #if any(item.startswith(current_search_string) for item in APP_PLUGINS_INTERNET_SEARCH_TRIGGER):
+                
+
             ## Plugin: Internet-Search
             if \
             (current_search_string.startswith('!a') is True) or \
             (current_search_string.startswith('!b') is True) or \
             (current_search_string.startswith('!g') is True) or \
+            (current_search_string.startswith('!l') is True) or \
             (current_search_string.startswith('!r') is True) or \
             (current_search_string.startswith('!s') is True) or \
             (current_search_string.startswith('!t') is True) or \
@@ -650,10 +719,7 @@ class MyFrame(wx.Frame):
                 self.plugin__internet_search_prepare(current_search_string)
                 return
 
-            ## Plugin: Lock
-            if current_search_string == '!l':
-                self.process_lock_plugin()
-                return
+            
 
             ## Default case
             print_debug_to_terminal('\tSearching executables for the following string: '+current_search_string)
@@ -766,6 +832,7 @@ class MyFrame(wx.Frame):
         (cur_searchphrase.startswith('!a ') is True) or \
         (cur_searchphrase.startswith('!b ') is True) or \
         (cur_searchphrase.startswith('!g ') is True) or \
+        (cur_searchphrase.startswith('!l ') is True) or \
         (cur_searchphrase.startswith('!r ') is True) or \
         (cur_searchphrase.startswith('!s ') is True) or \
         (cur_searchphrase.startswith('!t ') is True) or \
@@ -802,6 +869,12 @@ class MyFrame(wx.Frame):
                     print_debug_to_terminal('\tExecuted: '+cur_searchphrase+' '+cur_searchphrase_parameter)
 
                 self.reset_ui()
+
+                # if enabled in ini - hide the Main UI after executing the command
+                cur_ini_value_for_hide_ui_after_command_execution = read_single_ini_valueX('General', 'hide_ui_after_command_execution') # get current value from ini
+                if cur_ini_value_for_hide_ui_after_command_execution == "True":
+                    self.tbicon.execute_tray_icon_left_click()
+
             else:
                 print_debug_to_terminal('\tERROR >> Checking the executable failed')
         else:
@@ -858,9 +931,52 @@ class UITabGeneral(wx.Panel):
     def __init__(self, parent):
         """Inits the general tab"""
         wx.Panel.__init__(self, parent)
-        t = wx.StaticText(self, -1, "This tab should show some general things", (20, 20))
+
         # show language
-        # show key-combo
+        cur_ini_value_for_language = read_single_ini_valueX('Language', 'lang')          # get current value from ini
+        t = wx.StaticText(self, -1, "Language: "+cur_ini_value_for_language, (20, 20))
+
+        # #9 - Hide UI
+        self.cb_enable_hide_ui = wx.CheckBox(self, -1, 'Hide UI after command execution ', (20, 60))
+        cur_ini_value_for_hide_ui_after_command_execution = read_single_ini_valueX('General', 'hide_ui_after_command_execution')          # get current value from ini
+        if cur_ini_value_for_hide_ui_after_command_execution == "False":
+            self.cb_enable_hide_ui.SetValue(False)
+        else:
+            self.cb_enable_hide_ui.SetValue(True)
+        wx.EVT_CHECKBOX(self, self.cb_enable_hide_ui.GetId(), self.prefs_general_toggle_hide_ui)
+
+        # #10 - Enable Debug Output
+        self.cb_enable_debug = wx.CheckBox(self, -1, 'Enable debug output in commandline ', (20, 90))
+        cur_ini_value_for_enable_debug = read_single_ini_valueX('General', 'enable_debug_output')          # get current value from ini
+        if cur_ini_value_for_enable_debug == "False":
+            self.cb_enable_debug.SetValue(False)
+        else:
+            self.cb_enable_debug.SetValue(True)
+        wx.EVT_CHECKBOX(self, self.cb_enable_debug.GetId(), self.prefs_general_toggle_enable_debug)
+
+
+    # #9
+    def prefs_general_toggle_hide_ui(self, event):
+        """Toggle the general pref: hide_ui"""
+        print_debug_to_terminal('Preference - General - Hide UI: '+str(event))
+        if self.cb_enable_hide_ui.GetValue() is True:
+            print_debug_to_terminal('Enabled')
+            write_single_ini_valueX('General', 'hide_ui_after_command_execution', "True") # update preference value
+        else:
+            print_debug_to_terminal('Disabled')
+            write_single_ini_valueX('General', 'hide_ui_after_command_execution', "False") # update preference value
+
+
+    # #10
+    def prefs_general_toggle_enable_debug(self, event):
+        """Toggle the general pref: enable_debug"""
+        print_debug_to_terminal('Preference - General - Enable Debug: '+str(event))
+        if self.cb_enable_debug.GetValue() is True:
+            print_debug_to_terminal('Enabled')
+            write_single_ini_valueX('General', 'enable_debug_output', "True") # update preference value
+        else:
+            print_debug_to_terminal('Disabled')
+            write_single_ini_valueX('General', 'enable_debug_output', "False") # update preference value
 
 
 class UITabStatistics(wx.Panel):
@@ -870,10 +986,43 @@ class UITabStatistics(wx.Panel):
     def __init__(self, parent):
         """Inits the statistics tab"""
         wx.Panel.__init__(self, parent)
-        t = wx.StaticText(self, -1, "This tab should show the usage statistics", (20, 20))
+
         # show app start counter
+        cur_ini_value_for_apparat_started = read_single_ini_valueX('Statistics', 'apparat_started')          # get current value from ini
+        t = wx.StaticText(self, -1, "Apparat started:\t\t\t"+cur_ini_value_for_apparat_started, (20, 20))
+
         # show execute counter
+        cur_ini_value_for_command_executed = read_single_ini_valueX('Statistics', 'command_executed')          # get current value from ini
+        t = wx.StaticText(self, -1, "Command executed:\t\t"+cur_ini_value_for_command_executed, (20, 40))
+
         # show plugin trigger count
+        cur_ini_value_for_plugin_executed = read_single_ini_valueX('Statistics', 'plugin_executed')          # get current value from ini
+        t = wx.StaticText(self, -1, "Plugin executed:\t\t\t"+cur_ini_value_for_plugin_executed, (20, 60))
+
+
+class UITabPluginCommands(wx.Panel):
+
+    """Preference Window - Tab: Commands- Shows available plugin commands"""
+
+    def __init__(self, parent):
+        """Inits the plugin-commands tab"""
+        wx.Panel.__init__(self, parent)
+
+        # define fonts
+        font1 = wx.Font(18, wx.DECORATIVE, wx.NORMAL, wx.BOLD) # family, style, weight
+        font2 = wx.Font(10, wx.FONTFAMILY_MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
+
+        t1 = wx.StaticText(self, -1, "Session", (20, 20))
+        t1.SetFont(font1)
+
+        t2 = wx.StaticText(self, -1, "!lock = Lock session", (20, 60))
+        t2.SetFont(font2)
+
+        t3 = wx.StaticText(self, -1, "Internet-Search", (20, 100))
+        t3.SetFont(font1)
+
+        t4 = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!g = Google\n!l = LastFM\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
+        t4.SetFont(font2)
 
 
 class UITabAbout(wx.Panel):
@@ -900,7 +1049,7 @@ class PreferenceWindow(wx.Frame):
         """Initialize the preference window"""
         # define style of preference window
         pref_window_style = (wx.RESIZE_BORDER | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
-        wx.Frame.__init__(self, parent, id, 'Preferences', size=(500, 300), style=pref_window_style)
+        wx.Frame.__init__(self, parent, id, APP_NAME+' Preferences', size=(600, 500), style=pref_window_style)
 
         # Create a panel and notebook (tabs holder)
         p = wx.Panel(self)
@@ -909,12 +1058,14 @@ class PreferenceWindow(wx.Frame):
         # Create the tab windows
         tab1 = UITabGeneral(nb)
         tab2 = UITabStatistics(nb)
-        tab3 = UITabAbout(nb)
+        tab3 = UITabPluginCommands(nb)
+        tab4 = UITabAbout(nb)
 
         # Add the windows to tabs and name them.
         nb.AddPage(tab1, "General ")
         nb.AddPage(tab2, "Statistics ")
-        nb.AddPage(tab3, "About ")
+        nb.AddPage(tab3, "Plugin Commands ")
+        nb.AddPage(tab4, "About ")
 
         # Set noteboook in a sizer to create the layout
         sizer = wx.BoxSizer()
@@ -922,6 +1073,17 @@ class PreferenceWindow(wx.Frame):
         p.SetSizer(sizer)
 
         wx.Frame.CenterOnScreen(self) # center the pref window
+
+        self.Bind(wx.EVT_CLOSE, self.close_preference_ui)
+
+
+    def close_preference_ui(self, event):
+        """Closes the preference window"""
+        print_debug_to_terminal("close_preference_ui")
+        self.Destroy() # close the pref UI
+
+        # TODO:
+        # set focus to mainwindow
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
