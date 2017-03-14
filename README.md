@@ -7,7 +7,7 @@ apparat
 ==========
 
 ## About
-apparat is a python based application launcher for linux
+apparat is an application launcher for linux
 
 
 ## Requirements
@@ -19,24 +19,32 @@ apparat is a python based application launcher for linux
 ## Plugins
 ### Internet-Search
 
-Usage: 
-```trigger + searchphrase```
+Usage:
+```trigger + SPACE + searchphrase```
 
-- !a (amazon)
-- !b (bandcamp)
-- !g (google)
-- !r (reddit)
-- !s (soundcloud)
-- !t (twitter)
-- !v (vimeo)
-- !w (wikipedia)
-- !y (youtube)
+| Trigger       | Alias         | Function   |
+| ------------- |:--------------| :----------|
+| ```!a```      |               | Amazon     |
+| ```!b```      |               | Bandcamp   |
+| ```!g```      |               | Google     |
+| ```!l```      |               | LastFM     |
+| ```!r```      |               | Reddit     |
+| ```!s```      |               | SoundCloud |
+| ```!t```      |               | Twitter    |
+| ```!v```      |               | Vimeo      |
+| ```!w```      |               | Wikipedia  |
+| ```!y```      |               | YouTube    |
 
 
+### Session
 
-### Session-Lock
-- !l (locks the user session)
-
+| Trigger          | Alias          | Function                    |
+| ---------------- |:-------------- | :---------------------------|
+| ```!hibernate``` | ```!sleep```   | hibernate the machine       |
+| ```!lock```      |                | locks the current session   |
+| ```!logout```    |                | logout from current session |
+| ```!reboot```    | ```!restart``` | reboot the machine          |
+| ```!shutdown```  |                | shutdown the machine        |
 
 
 ## Development
