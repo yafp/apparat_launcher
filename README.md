@@ -26,8 +26,10 @@ Usage:
 | ------------- |:--------------| :----------|
 | ```!a```      |               | Amazon     |
 | ```!b```      |               | Bandcamp   |
+| ```!e```      |               | Exchange   |
 | ```!g```      |               | Google     |
 | ```!l```      |               | LastFM     |
+| ```!o```      |               | Overflow   |
 | ```!r```      |               | Reddit     |
 | ```!s```      |               | SoundCloud |
 | ```!t```      |               | Twitter    |
