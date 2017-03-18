@@ -171,8 +171,8 @@ class MyFrame(wx.Frame):
         self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
         self.ui__txt_plugin_information.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_plugin_information.SetToolTipString(u'Activated plugin')
-        self.ui__txt_plugin_information.SetMinSize(wx.Size(400, 15))
-        self.ui__txt_plugin_information.SetMaxSize(wx.Size(400, 15))
+        self.ui__txt_plugin_information.SetMinSize(wx.Size(600, 15))
+        self.ui__txt_plugin_information.SetMaxSize(wx.Size(600, 15))
         self.ui__txt_plugin_information.SetEditable(False)
         self.ui__txt_plugin_information.Enable(False)
         self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
@@ -180,7 +180,7 @@ class MyFrame(wx.Frame):
         ## Version Information
         self.ui__txt_version_information = wx.StaticText(self, wx.ID_ANY, ' v'+config.APP_VERSION, wx.DefaultPosition, wx.DefaultSize, 0)
         self.ui__txt_version_information.Wrap(-1)
-        self.ui__txt_version_information.SetFont(wx.Font(8, 74, 90, 90, False, 'Sans'))
+        self.ui__txt_version_information.SetFont(wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_version_information.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
 
 
@@ -255,22 +255,22 @@ class MyFrame(wx.Frame):
         #
         ## It helps to import GTK after having created the WX app
         global gtk
-        import gtk
+        #import gtk
 
 
     def on_focus_parameter_button(self, event):
-        print('on focus button')
+        """On focus of parameter button"""
+        tools.print_debug_to_terminal('on_focus_parameter_button', 'starting with event: '+str(event))
 
 
     def OnKeyDown(self, event):
         """On Key Down in main ui"""
-        print('key down on main ui')
+        tools.print_debug_to_terminal('OnKeyDown', 'starting with event: '+str(event))
 
 
     def on_close_application(self, event):
         """Method to close the app"""
-        tools.print_debug_to_terminal('on_close_application', 'starting')
-        tools.print_debug_to_terminal('on_close_application', 'Event: '+str(event))
+        tools.print_debug_to_terminal('on_close_application', 'starting with event: '+str(event))
         self.tbicon.RemoveIcon()
         self.tbicon.Destroy()
         self.Destroy()

@@ -10,11 +10,10 @@ DEBUG = False
 # General
 import datetime                     # for timestamp in debug output
 import os
-import platform     # to detect the platform the script is executed on
+#import platform     # to detect the platform the script is executed on
 import sys
 
 # Apparat
-import apparat
 import config
 
 
