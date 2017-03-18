@@ -87,6 +87,13 @@ class UITabGeneral(wx.Panel):
             self.cb_enable_hide_ui.SetValue(True)
         wx.EVT_CHECKBOX(self, self.cb_enable_hide_ui.GetId(), self.prefs_general_toggle_hide_ui)
 
+        general_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
+        general_sizer.AddSpacer(10)
+        general_sizer.Add(t, 0, wx.ALL, border=10)
+        general_sizer.AddSpacer(10)
+        general_sizer.Add(self.cb_enable_hide_ui, 0, wx.ALL, border=10)
+        self.SetSizer(general_sizer)
+
 
     def prefs_general_toggle_hide_ui(self, event):
         """Toggle the general pref: hide_ui"""
@@ -110,15 +117,24 @@ class UITabStatistics(wx.Panel):
 
         ## show app start counter
         cur_ini_value_for_apparat_started = ini.read_single_value('Statistics', 'apparat_started')          # get current value from ini
-        t = wx.StaticText(self, -1, "Apparat started:\t\t\t"+cur_ini_value_for_apparat_started, (20, 20))
+        t1 = wx.StaticText(self, -1, "Apparat started:\t\t\t"+cur_ini_value_for_apparat_started, (20, 20))
 
         ## show execute counter
         cur_ini_value_for_command_executed = ini.read_single_value('Statistics', 'command_executed')          # get current value from ini
-        t = wx.StaticText(self, -1, "Command executed:\t\t"+cur_ini_value_for_command_executed, (20, 40))
+        t2 = wx.StaticText(self, -1, "Command executed:\t\t"+cur_ini_value_for_command_executed, (20, 40))
 
         ## show plugin trigger count
         cur_ini_value_for_plugin_executed = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
-        t = wx.StaticText(self, -1, "Plugin executed:\t\t\t"+cur_ini_value_for_plugin_executed, (20, 60))
+        t3 = wx.StaticText(self, -1, "Plugin executed:\t\t\t"+cur_ini_value_for_plugin_executed, (20, 60))
+        
+        statistics_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
+        statistics_sizer.AddSpacer(10)
+        statistics_sizer.Add(t1, 0, wx.ALL, border=10)
+        statistics_sizer.AddSpacer(10)
+        statistics_sizer.Add(t2, 0, wx.ALL, border=10)
+        statistics_sizer.AddSpacer(10)
+        statistics_sizer.Add(t3, 0, wx.ALL, border=10)
+        self.SetSizer(statistics_sizer)
 
 
 

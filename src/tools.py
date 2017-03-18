@@ -10,7 +10,6 @@ DEBUG = False
 # General
 import datetime                     # for timestamp in debug output
 import os
-#import platform     # to detect the platform the script is executed on
 import sys
 
 # Apparat
@@ -81,6 +80,8 @@ def which(program):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
     fpath, fname = os.path.split(program)
+    print_debug_to_terminal('which', fpath)
+    print_debug_to_terminal('which', fname)
     if fpath:
         if is_exe(program):
             return program
