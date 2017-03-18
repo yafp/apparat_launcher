@@ -15,6 +15,13 @@ apparat is an application launcher for linux
 - python-wxtools
 - gtk
 
+## Parameter
+
+| Parameter     | Alias          | Function            |
+| ------------- |:---------------| :-------------------|
+| ```-d```      | ```--debug```  | Show debug output   |
+| ```-h```      | ```--help```   | Show help           |
+| ```-v```      | ```--version```| Show version        |
 
 ## Plugins
 ### Internet-Search
