@@ -10,6 +10,7 @@ DEBUG = False
 # General
 import datetime                     # for timestamp in debug output
 import os
+import subprocess                   # for checking if cmd_exists
 import sys
 
 # Apparat
@@ -19,6 +20,12 @@ import config
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # FUNCTIONS
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def cmd_exists(cmd):
+    """Method to check if a command exists."""
+    print_debug_to_terminal('cmd_exists', 'starting_______________________')
+    return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
+
+
 def check_arguments():
     """Checks if apparat was started with arguments or not"""
     # TODO: check getopt

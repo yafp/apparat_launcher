@@ -40,7 +40,7 @@ else:
     import webbrowser                   # for opening urls (example: github project page)
     import wx                           # for all the WX GUI items
 
-    ## project imports
+    ## apparat imports
     import constants                    # contains some constants
     import config                       # contains some config values
     import ini                          # ini file handling
@@ -59,14 +59,6 @@ is_resetted = True
 # -----------------------------------------------------------------------------------------------
 # CODE
 # -----------------------------------------------------------------------------------------------
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# TOOLS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def cmd_exists(cmd):
-    """Method to check if a command exists."""
-    tools.print_debug_to_terminal('cmd_exists', 'starting')
-    return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,7 +146,6 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_app.SetEditable(False)
         self.ui__txt_selected_app.Enable(False)
         self.ui__txt_selected_app.SetBackgroundColour(wx.Colour(237, 237, 237))
-        #self.ui__txt_selected_app.Hide()
 
         ## parameter text
         self.ui__txt_selected_parameter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
@@ -165,7 +156,6 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_parameter.SetEditable(False)
         self.ui__txt_selected_parameter.Enable(False)
         self.ui__txt_selected_parameter.SetBackgroundColour(wx.Colour(237, 237, 237))
-        #self.ui__txt_selected_parameter.Hide()
 
         ## Plugin Information
         self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
@@ -255,7 +245,7 @@ class MyFrame(wx.Frame):
         #
         ## It helps to import GTK after having created the WX app
         global gtk
-        #import gtk
+        import gtk
 
 
     def on_focus_parameter_button(self, event):
@@ -308,7 +298,6 @@ class MyFrame(wx.Frame):
 
         if self.ui__search_and_result_combobox.GetValue() == '': #searchstring is empty
             tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: <empty> - could reset UI at that point - but cant so far because of endless loop')
-            #self.reset_ui()
         else:
             tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: '+self.ui__search_and_result_combobox.GetValue())
             global is_resetted
@@ -319,8 +308,6 @@ class MyFrame(wx.Frame):
         """Triggered if Enter was pressed in combobox"""
         tools.print_debug_to_terminal('on_combobox_enter', 'starting with event: '+str(event))
 
-        ## if we got a search string and 1 result in counter -> launch_external_application
-        #if len(self.ui__search_and_result_combobox.GetValue()) > 0 and self.ui__txt_result_counter.GetValue() == '1':
         if len(self.ui__search_and_result_combobox.GetValue()) > 0:
             global is_resetted
             is_resetted = False
@@ -372,7 +359,6 @@ class MyFrame(wx.Frame):
     def on_combobox_key_press(self, event):
         """If content of the searchfield of the combobox changes"""
         tools.print_debug_to_terminal('on_combobox_key_press', 'starting with event: '+str(event))
-
         global is_combobox_open
 
         current_keycode = event.GetKeyCode()
@@ -486,13 +472,13 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.SetToolTipString('')
 
-            # command
+            ## command
             self.ui__txt_selected_app.SetValue('')
 
-            # parameter
+            ## parameter
             self.ui__txt_selected_parameter.SetValue('')
 
-            # plugin info
+            ## plugin info
             self.set_ui_plugin_information('')
             return
 
@@ -502,7 +488,6 @@ class MyFrame(wx.Frame):
             return # we can stop here - nothing more to do as plugin should be already activated
 
         ## Prepare UI for plugin
-        #
         if current_search_string.startswith('!a') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
             self.set_ui_plugin_information('Amazon')
@@ -550,7 +535,6 @@ class MyFrame(wx.Frame):
         if current_search_string.startswith('!y') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
             self.set_ui_plugin_information('YouTube')
-
 
         ## for all search plugin cases
         #
@@ -629,7 +613,7 @@ class MyFrame(wx.Frame):
             # application buttons
             self.ui__bt_selected_app.Enable(True)
 
-            ## Option button
+            ## parameter button
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
 
             ## set result-count
@@ -644,17 +628,24 @@ class MyFrame(wx.Frame):
 
         else:
             # application buttons
+            self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
             self.ui__bt_selected_app.Enable(False)
 
-            ## Option button
+            ## parameter button
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+            self.ui__bt_selected_parameter.SetToolTipString('')
             self.ui__bt_selected_parameter.Enable(False) # Enable option button
+
+            ## set result-count
+            self.ui__txt_result_counter.SetValue('')
 
             # Plugin Name in specific field
             self.ui__txt_plugin_information.SetValue(plugin_name)
 
-        # tooltip
-        #self.ui__bt_selected_app.SetToolTipString(plugin_name)
-
+            self.ui__txt_selected_app.SetValue('')
+            self.ui__txt_selected_parameter.SetValue('')
 
 
     def process_plugin_trash_open(self):
@@ -677,7 +668,7 @@ class MyFrame(wx.Frame):
         ## set command and parameter
         self.ui__txt_selected_app.SetValue('nautilus')
         self.ui__txt_selected_parameter.SetValue('trash://')
-        
+
         # TODO: introduce multiple actions for 1 app
         # - open trash
         # - empty trash
@@ -801,13 +792,21 @@ class MyFrame(wx.Frame):
 
         if current_search_string != '':
 
+            ## Reset UI partly if search is just !
+            #
+            if current_search_string == "!":
+                tools.print_debug_to_terminal('parse_user_search_input', 'Case: !')
+                self.set_ui_plugin_information('')
+                return
+
+
             ## Plugin: Trash
             ##
             if current_search_string in constants.APP_PLUGINS_TRASH_TRIGGER:
+                tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Trash')
                 if current_search_string == '!trash':
                     self.process_plugin_trash_open()
                 return
-
 
             ## Plugin: Session
             ##
@@ -837,7 +836,6 @@ class MyFrame(wx.Frame):
                 else:
                     print("Error")
                 return
-
 
             ## Plugin: Internet-Search
             ##
@@ -945,7 +943,7 @@ class MyFrame(wx.Frame):
             tools.print_debug_to_terminal('launch_external_application', 'Should execute: "'+command+'" with parameter: "'+parameter+'"')
 
             ## check if name exists and is executable
-            executable_exists = cmd_exists(command)
+            executable_exists = tools.cmd_exists(command)
             if executable_exists is True:
                 ## update usage-statistics
                 tools.print_debug_to_terminal('launch_external_application', 'Updating statistics (command_executed)')
