@@ -1,9 +1,9 @@
 #!/usr/bin/python
 """apparat - an application launcher for linux"""
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 # IMPORTS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 
 # General
 import wx
@@ -15,9 +15,9 @@ import ini
 import tools
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 # PREFERENCE WINDOW
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 class PreferenceWindow(wx.Frame):
 
     """Class for Preference Window"""
@@ -26,7 +26,7 @@ class PreferenceWindow(wx.Frame):
         """Initialize the preference window"""
         ## define style of preference window
         pref_window_style = (wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
-        wx.Frame.__init__(self, parent, id, constants.APP_NAME+' Preferences', size=(600, 500), style=pref_window_style)
+        wx.Frame.__init__(self, parent, id, constants.APP_NAME+' Preferences', size=(600, 700), style=pref_window_style)
 
         ## Create a panel and notebook (tabs holder)
         p = wx.Panel(self)
@@ -125,8 +125,8 @@ class UITabStatistics(wx.Panel):
 
         ## show plugin trigger count
         cur_ini_value_for_plugin_executed = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
-        t3 = wx.StaticText(self, -1, "Plugin executed:\t\t\t"+cur_ini_value_for_plugin_executed, (20, 60))
-        
+        t3 = wx.StaticText(self, -1, "Plugins executed:\t\t\t"+cur_ini_value_for_plugin_executed, (20, 60))
+
         statistics_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         statistics_sizer.AddSpacer(10)
         statistics_sizer.Add(t1, 0, wx.ALL, border=10)
@@ -161,13 +161,22 @@ class UITabPluginCommands(wx.Panel):
         plugin_internet_search_cmd_list = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
         plugin_internet_search_cmd_list.SetFont(FONT_NORMAL_MONO)
 
+        h1_plugin_trash = wx.StaticText(self, -1, "Trash", (20, 20))
+        h1_plugin_trash.SetFont(FONT_BIG)
+
+        plugin_trash_cmd_list = wx.StaticText(self, -1, "!trash      = Opens trash in nautilus", (20, 60))
+        plugin_trash_cmd_list.SetFont(FONT_NORMAL_MONO)
+
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
+        pref_sizer.AddSpacer(10)
+        pref_sizer.Add(h1_plugin_internet_search, 0, wx.ALL, border=10)
+        pref_sizer.Add(plugin_internet_search_cmd_list, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(10)
         pref_sizer.Add(h1_plugin_session, 0, wx.ALL, border=10)
         pref_sizer.Add(plugin_session_cmd_list, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(10)
-        pref_sizer.Add(h1_plugin_internet_search, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_internet_search_cmd_list, 0, wx.ALL, border=10)
+        pref_sizer.Add(h1_plugin_trash, 0, wx.ALL, border=10)
+        pref_sizer.Add(plugin_trash_cmd_list, 0, wx.ALL, border=10)
         self.SetSizer(pref_sizer)
 
 
@@ -179,7 +188,7 @@ class UITabAbout(wx.Panel):
     def __init__(self, parent):
         """Inits the About Tab"""
         wx.Panel.__init__(self, parent)
-        
+
         FONT_BIG = wx.Font(18, wx.DECORATIVE, wx.NORMAL, wx.BOLD) # family, style, weight
         FONT_NORMAL_MONO = wx.Font(10, wx.FONTFAMILY_MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
 

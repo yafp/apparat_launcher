@@ -1,6 +1,11 @@
 #!/usr/bin/python
 """apparat - an application launcher for linux"""
 
+
+# -----------------------------------------------------------------------------------------------
+# IMPORTS
+# -----------------------------------------------------------------------------------------------
+
 # General
 import os
 import ConfigParser                 # to handle .ini/configuration files
@@ -10,6 +15,10 @@ import constants
 import tools
 
 
+
+# -----------------------------------------------------------------------------------------------
+# FUNCTIONS
+# -----------------------------------------------------------------------------------------------
 def read_single_value(section_name, key_name):
     """Method to read a single value from the configuration file apparat.ini"""
     check_if_ini_file_exists()
@@ -82,4 +91,3 @@ def check_if_ini_file_exists():
 def validate():
     """Validate the entire ini"""
     tools.print_debug_to_terminal('validate', 'Dummy: Validate ini')
-    

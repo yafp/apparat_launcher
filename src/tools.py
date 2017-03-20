@@ -1,11 +1,9 @@
 #!/usr/bin/python
 """apparat - an application launcher for linux"""
 
-DEBUG = False
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 # IMPORTS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 
 # General
 import datetime                     # for timestamp in debug output
@@ -17,12 +15,14 @@ import sys
 import config
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DEBUG = False
+
+# -----------------------------------------------------------------------------------------------
 # FUNCTIONS
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# -----------------------------------------------------------------------------------------------
 def cmd_exists(cmd):
     """Method to check if a command exists."""
-    print_debug_to_terminal('cmd_exists', 'starting_______________________')
+    print_debug_to_terminal('cmd_exists', 'starting')
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
