@@ -50,10 +50,10 @@ Usage:
 
 ### Nautilus
 
-| Trigger       | Alias          | Function                     |
-| ------------- |:-------------- | :----------------------------|
-| ```!recent``` |                | Opens trash in nautilus      |
-| ```!trash```  |                | Show recent files in nautilus|
+| Trigger       | Alias          | Function                      |
+| ------------- |:-------------- | :-----------------------------|
+| ```!recent``` |                | Show recent files in nautilus |
+| ```!trash```  |                | Opens trash in nautilus       |
 
 
 ### Session
