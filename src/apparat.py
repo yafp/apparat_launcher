@@ -2,25 +2,9 @@
 """apparat - an application launcher for linux"""
 
 # NAME:         apparat
-# DESCRIPTION:  Python based application launcher
+# DESCRIPTION:  an application launcher for linux
 # AUTHOR:       yafp
 # URL:          https://github.com/yafp/apparat
-
-
-# -----------------------------------------------------------------------------------------------
-# RESOURCES
-# -----------------------------------------------------------------------------------------------
-# TrayIcon:                             http://stackoverflow.com/questions/6389580/quick-and-easy-trayicon-with-python
-# Icons Font Awesome                    Color: #7f8c8d
-
-
-# -----------------------------------------------------------------------------------------------
-# REMINDER/OPEN
-# -----------------------------------------------------------------------------------------------
-# global hotkey to bring running app in foreground:
-#   https://wxpython.org/docs/api/wx.Window-class.html#RegisterHotKey
-#   https://github.com/schurpf/pyhk
-
 
 
 # -----------------------------------------------------------------------------------------------
@@ -48,7 +32,6 @@ else:
     import tools                        # contains helper-tools
 
 
-
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
@@ -70,7 +53,6 @@ class MyFrame(wx.Frame):
 
     def __init__(self, parent, title):
         """Initialize the MainWindow"""
-
         ## Update Statistics (ini) - Apparat launched
         tools.print_debug_to_terminal('__init__', 'Updating statistics (apparat_started)')
         cur_app_start_count = ini.read_single_value('Statistics', 'apparat_started')          # get current value from ini
@@ -179,33 +161,32 @@ class MyFrame(wx.Frame):
         # ------------------------------------------------
         b_sizer = wx.BoxSizer(wx.VERTICAL)                              # define layout container
 
-        b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100)          # preferences
-        b_sizer.AddSpacer(5)                                           # spacer
+        b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100) # preferences icon button
+        b_sizer.AddSpacer(10)
 
         # horizontal sub-item 1
         box1 = wx.BoxSizer(wx.HORIZONTAL)
-        box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE)             # result counter
-        box1.Add(self.ui__search_and_result_combobox, 0, wx.CENTRE)         # combobox
+        box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE) # result counter
+        box1.Add(self.ui__search_and_result_combobox, 0, wx.CENTRE) # combobox
         b_sizer.Add(box1, 0, wx.CENTRE)
-        b_sizer.AddSpacer(5)                                           # spacer
+        b_sizer.AddSpacer(5)
 
         # horizontal sub-item 2
         box2 = wx.BoxSizer(wx.HORIZONTAL)
-        box2.Add(self.ui__bt_selected_app, 0, wx.CENTRE)             # launch button
-        box2.Add(self.ui__bt_selected_parameter, 0, wx.CENTRE)              # options button
+        box2.Add(self.ui__bt_selected_app, 0, wx.CENTRE) # application button
+        box2.Add(self.ui__bt_selected_parameter, 0, wx.CENTRE) # parameter button
         b_sizer.Add(box2, 0, wx.CENTRE)
 
         # horizontal sub-item 3
         box3 = wx.BoxSizer(wx.HORIZONTAL)
-        box3.Add(self.ui__txt_selected_app, 0, wx.CENTRE)            # command
-        box3.Add(self.ui__txt_selected_parameter, 0, wx.CENTRE)   # parameter
+        box3.Add(self.ui__txt_selected_app, 0, wx.CENTRE) # command
+        box3.Add(self.ui__txt_selected_parameter, 0, wx.CENTRE) # parameter
         b_sizer.Add(box3, 0, wx.CENTRE)
 
-        b_sizer.AddSpacer(0)                                           # spacer
-        b_sizer.Add(self.ui__txt_plugin_information, 0, wx.CENTRE)         # plugin info
+        b_sizer.Add(self.ui__txt_plugin_information, 0, wx.CENTRE) # plugin info
         b_sizer.AddSpacer(10)
 
-        b_sizer.Add(self.ui__txt_version_information, 0, wx.CENTRE)         # version
+        b_sizer.Add(self.ui__txt_version_information, 0, wx.CENTRE) # version
         self.SetSizer(b_sizer)
 
 
@@ -216,11 +197,11 @@ class MyFrame(wx.Frame):
 
         ## combobox
         self.ui__search_and_result_combobox.Bind(wx.EVT_KEY_UP, self.on_combobox_key_press)                 # Pressed any key
-        self.ui__search_and_result_combobox.Bind(wx.EVT_TEXT, self.on_combobox_text_changed)                # NEW: combobox text changes.
+        self.ui__search_and_result_combobox.Bind(wx.EVT_TEXT, self.on_combobox_text_changed)                # combobox text changes.
         self.ui__search_and_result_combobox.Bind(wx.EVT_TEXT_ENTER, self.on_combobox_enter)                 # Pressed Enter
         self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX, self.on_combobox_select_item)             # Item selected
-        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.on_combobox_open)           # Popup opened
-        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combobox_close)           # Popup closed
+        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.on_combobox_popup_open)     # Popup opened
+        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combobox_popup_close)     # Popup closed
 
         ## parameter button
         self.ui__bt_selected_parameter.Bind(wx.EVT_BUTTON, self.on_clicked_option_button)
@@ -233,7 +214,7 @@ class MyFrame(wx.Frame):
 
 
         # ------------------------------------------------
-        # foo
+        # show the UI
         # ------------------------------------------------
         self.SetTransparent(config.TRANSPARENCY_VALUE)       # 0-255
         self.ui__search_and_result_combobox.SetFocus()     # set focus to search
@@ -241,9 +222,7 @@ class MyFrame(wx.Frame):
         self.Show(True)                 # show main UI
 
 
-        ## GTK vs WX is a mess - Issue: #15
-        #
-        ## It helps to import GTK after having created the WX app
+        ## GTK vs WX is a mess - Issue: #15 - It helps to import GTK after having created the WX app (at least for Ubuntu, not for Fedora)
         global gtk
         import gtk
 
@@ -330,30 +309,27 @@ class MyFrame(wx.Frame):
         """If an item of the result-list was selected"""
         tools.print_debug_to_terminal('on_combobox_select_item', 'starting with event: '+str(event))
         self.ui__txt_selected_app.SetValue(self.ui__search_and_result_combobox.GetValue())   # write command to command text field
-
-        # get icon for selected executable
-        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue())
-
-        # set cursor to end of string
-        self.ui__search_and_result_combobox.SetInsertionPointEnd()
+        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
+        self.ui__search_and_result_combobox.SetInsertionPointEnd() # set cursor to end of string
 
 
-    def on_combobox_open(self, event):
+    def on_combobox_popup_open(self, event):
         """If the popup of the combobox gets opened"""
-        tools.print_debug_to_terminal('on_combobox_open', 'starting with event: '+str(event))
-        tools.print_debug_to_terminal('on_combobox_open', 'combobox just got opened')
+        tools.print_debug_to_terminal('on_combobox_popup_open', 'starting with event: '+str(event))
+        tools.print_debug_to_terminal('on_combobox_popup_open', 'combobox just got opened')
         global is_combobox_open
         is_combobox_open = True
-        tools.print_debug_to_terminal('on_combobox_open', 'finished')
+        tools.print_debug_to_terminal('on_combobox_popup_open', 'finished')
 
 
-    def on_combobox_close(self, event):
+    def on_combobox_popup_close(self, event):
         """If the popup of the combobox is closed"""
-        tools.print_debug_to_terminal('on_combobox_close', 'starting with event: '+str(event))
-        tools.print_debug_to_terminal('on_combobox_close', 'combobox just got closed')
+        tools.print_debug_to_terminal('on_combobox_popup_close', 'starting with event: '+str(event))
+        tools.print_debug_to_terminal('on_combobox_popup_close', 'combobox just got closed')
+        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
         global is_combobox_open
         is_combobox_open = False
-        tools.print_debug_to_terminal('on_combobox_close', 'finished')
+        tools.print_debug_to_terminal('on_combobox_popup_close', 'finished')
 
 
     def on_combobox_key_press(self, event):
@@ -401,7 +377,7 @@ class MyFrame(wx.Frame):
     def get_icon_for_executable(self, full_executable_name):
         """Tries to get an icon for an selected executable"""
         ## Icon search - http://www.pygtk.org/pygtk2reference/class-gtkicontheme.html
-        #
+
         ## get app-icon for selected application from operating system
         icon_theme = gtk.icon_theme_get_default()
         ## check what icon sizes are available and choose best size
@@ -443,7 +419,7 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_app.Enable(True) # Enable the Button
 
         ## option buttons
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.Enable(True) # Enable option button
         self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
@@ -453,33 +429,15 @@ class MyFrame(wx.Frame):
         """Plugin: Internet-Search - Updates the UI on trigger input"""
         tools.print_debug_to_terminal('plugin__internet_search_prepare', 'starting')
 
+        ## show searchstring in parameter field
         if(self.ui__txt_selected_app.GetValue() != ''):
-            ## show searchstring in parameter field
             cur_searchphrase_parameter = current_search_string[3:] # remove trigger '!y ' or '!g ' or '!w '
             self.ui__txt_selected_parameter.SetValue(cur_searchphrase_parameter)
 
         ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
-        #
-        if(len(current_search_string) == 3) and (current_search_string[2] != " "):
+        if(len(current_search_string) >= 3) and (current_search_string[2] != " "):
             tools.print_debug_to_terminal('plugin__internet_search_prepare', 'No space after trigger - should reset icons')
-
-            # application button
-            self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
-            self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-
-            ## option button
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
-            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-            self.ui__bt_selected_parameter.SetToolTipString('')
-
-            ## command
-            self.ui__txt_selected_app.SetValue('')
-
-            ## parameter
-            self.ui__txt_selected_parameter.SetValue('')
-
-            ## plugin info
-            self.set_ui_plugin_information('')
+            self.plugin__update_general_ui_information('')
             return
 
         ## If search-string > 2 - abort - as all the work is already done
@@ -490,51 +448,55 @@ class MyFrame(wx.Frame):
         ## Prepare UI for plugin
         if current_search_string.startswith('!a') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Amazon')
+            self.plugin__update_general_ui_information('Amazon')
 
         if current_search_string.startswith('!b') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Bandcamp')
+            self.plugin__update_general_ui_information('Bandcamp')
 
         if current_search_string.startswith('!e') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_stack-exchange_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Stack-Exchange')
+            self.plugin__update_general_ui_information('Stack-Exchange')
 
         if current_search_string.startswith('!g') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Google')
+            self.plugin__update_general_ui_information('Google')
 
         if current_search_string.startswith('!l') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_lastfm_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('LastFM')
+            self.plugin__update_general_ui_information('LastFM')
+
+        if current_search_string.startswith('!m') is True:
+            self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_maps_128.png', wx.BITMAP_TYPE_PNG)
+            self.plugin__update_general_ui_information('Google-Maps')
 
         if current_search_string.startswith('!o') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_stack-overflow_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Stack-Overflow')
+            self.plugin__update_general_ui_information('Stack-Overflow')
 
         if current_search_string.startswith('!r') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Reddit')
+            self.plugin__update_general_ui_information('Reddit')
 
         if current_search_string.startswith('!s') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('SoundCloud')
+            self.plugin__update_general_ui_information('SoundCloud')
 
         if current_search_string.startswith('!t') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Twitter')
+            self.plugin__update_general_ui_information('Twitter')
 
         if current_search_string.startswith('!v') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Vimeo')
+            self.plugin__update_general_ui_information('Vimeo')
 
         if current_search_string.startswith('!w') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('Wikipedia')
+            self.plugin__update_general_ui_information('Wikipedia')
 
         if current_search_string.startswith('!y') is True:
             self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
-            self.set_ui_plugin_information('YouTube')
+            self.plugin__update_general_ui_information('YouTube')
 
         ## for all search plugin cases
         #
@@ -567,6 +529,9 @@ class MyFrame(wx.Frame):
 
         if command == ('!l'):                           # https://www.last.fm/search?q=foobar
             remote_url = 'https://www.last.fm/search?q='+parameter
+
+        if command == ('!m'):                           # https://www.google.de/maps/place/foobar/
+            remote_url = 'https://www.google.de/maps/place/'+parameter
 
         if command == ('!o'):                           # https://stackoverflow.com/search?q=foobar
             remote_url = 'https://stackoverflow.com/search?q='+parameter
@@ -605,9 +570,9 @@ class MyFrame(wx.Frame):
             self.tbicon.execute_tray_icon_left_click()
 
 
-    def set_ui_plugin_information(self, plugin_name):
+    def plugin__update_general_ui_information(self, plugin_name):
         """set some general UI values after having a plugin triggered"""
-        tools.print_debug_to_terminal('set_ui_plugin_information', 'started')
+        tools.print_debug_to_terminal('plugin__update_general_ui_information', 'started')
 
         if(plugin_name != ''):
             # application buttons
@@ -624,7 +589,7 @@ class MyFrame(wx.Frame):
 
             # Plugin Name in specific field
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name)
-            tools.print_debug_to_terminal('set_ui_plugin_information', 'Plugin '+plugin_name+' activated')
+            tools.print_debug_to_terminal('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated')
 
         else:
             # application buttons
@@ -648,21 +613,43 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
 
-    def process_plugin_trash_open(self):
-        """Plugin Trash"""
-        tools.print_debug_to_terminal('process_plugin_trash_open', 'starting')
+    def prepare_plugin_nautilus_show_recent(self):
+        """Plugin Nautilus - Recent"""
+        tools.print_debug_to_terminal('prepare_plugin_nautilus_show_recent', 'starting')
 
         ## update plugin info
-        self.set_ui_plugin_information('Trash')
+        self.plugin__update_general_ui_information('Nautilus (Recent)')
 
         ## application buttons
-        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/trash/bt_trash_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_recent_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-        self.ui__bt_selected_app.SetToolTipString('Lock Session')
+        self.ui__bt_selected_app.SetToolTipString('Show recent files')
 
-        ## option buttons
-        self.ui__bt_selected_parameter.SetToolTipString('Launch')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        ## parameter buttons
+        self.ui__bt_selected_parameter.SetToolTipString('Open')
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+        ## set command and parameter
+        self.ui__txt_selected_app.SetValue('nautilus')
+        self.ui__txt_selected_parameter.SetValue('recent://')
+
+
+    def prepare_plugin_nautilus_open_trash(self):
+        """Plugin Nautilus - Trash"""
+        tools.print_debug_to_terminal('prepare_plugin_nautilus_open_trash', 'starting')
+
+        ## update plugin info
+        self.plugin__update_general_ui_information('Nautilus (Trash)')
+
+        ## application buttons
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_trash_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+        self.ui__bt_selected_app.SetToolTipString('Open Trash')
+
+        ## parameter buttons
+        self.ui__bt_selected_parameter.SetToolTipString('Open')
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -672,16 +659,38 @@ class MyFrame(wx.Frame):
         # TODO: introduce multiple actions for 1 app
         # - open trash
         # - empty trash
-        self.ui__bt_selected_parameter.SetFocus()
+        #self.ui__bt_selected_parameter.SetFocus()
 
 
-
-    def process_plugin_session_lock(self):
-        """Plugin Lock"""
-        tools.print_debug_to_terminal('process_plugin_session_lock', 'starting')
+    def prepare_plugin_shell(self):
+        """Plugin Shell"""
+        tools.print_debug_to_terminal('prepare_plugin_shell', 'starting')
 
         ## update plugin info
-        self.set_ui_plugin_information('Lock')
+        self.plugin__update_general_ui_information('Shell')
+
+        ## application buttons
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/shell/bt_shell_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+        self.ui__bt_selected_app.SetToolTipString('Lock Session')
+
+        ## parameter buttons
+        self.ui__bt_selected_parameter.SetToolTipString('Open')
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+        ## set command and parameter
+        ## http://askubuntu.com/questions/484993/run-command-on-anothernew-terminal-window
+        self.ui__txt_selected_app.SetValue('xterm')
+        self.ui__txt_selected_parameter.SetValue('"'+self.ui__search_and_result_combobox.GetValue()[4:]+'"')
+
+
+    def prepare_plugin_session_lock(self):
+        """Plugin Session - Lock"""
+        tools.print_debug_to_terminal('prepare_plugin_session_lock', 'starting')
+
+        ## update plugin info
+        self.plugin__update_general_ui_information('Lock')
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
@@ -690,7 +699,7 @@ class MyFrame(wx.Frame):
 
         ## option buttons
         self.ui__bt_selected_parameter.SetToolTipString('Launch')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -698,12 +707,12 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_parameter.SetValue('--lock')
 
 
-    def process_plugin_session_logout(self):
-        """Plugin Logout"""
-        tools.print_debug_to_terminal('process_plugin_session_logout', 'starting')
+    def prepare_plugin_session_logout(self):
+        """Plugin Session - Logout"""
+        tools.print_debug_to_terminal('prepare_plugin_session_logout', 'starting')
 
         ## update plugin info
-        self.set_ui_plugin_information('Logout')
+        self.plugin__update_general_ui_information('Logout')
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_logout_128.png', wx.BITMAP_TYPE_PNG)
@@ -712,7 +721,7 @@ class MyFrame(wx.Frame):
 
         ## option buttons
         self.ui__bt_selected_parameter.SetToolTipString('Launch')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -720,12 +729,12 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_parameter.SetValue('--logout')
 
 
-    def process_plugin_session_shutdown(self):
-        """Plugin Logout"""
-        tools.print_debug_to_terminal('process_plugin_session_shutdown', 'starting')
+    def prepare_plugin_session_shutdown(self):
+        """Plugin Session - Shutdown"""
+        tools.print_debug_to_terminal('prepare_plugin_session_shutdown', 'starting')
 
         ## update plugin info
-        self.set_ui_plugin_information('Shutdown')
+        self.plugin__update_general_ui_information('Shutdown')
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_shutdown_128.png', wx.BITMAP_TYPE_PNG)
@@ -734,7 +743,7 @@ class MyFrame(wx.Frame):
 
         ## option buttons
         self.ui__bt_selected_parameter.SetToolTipString('Launch')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -742,12 +751,12 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_parameter.SetValue('--power-off')
 
 
-    def process_plugin_session_hibernate(self):
-        """Plugin Logout"""
-        tools.print_debug_to_terminal('process_plugin_session_hibernate', 'starting')
+    def prepare_plugin_session_hibernate(self):
+        """Plugin Session - Hibernate"""
+        tools.print_debug_to_terminal('prepare_plugin_session_hibernate', 'starting')
 
         ## update plugin info
-        self.set_ui_plugin_information('Hibernate')
+        self.plugin__update_general_ui_information('Hibernate')
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_hibernate_128.png', wx.BITMAP_TYPE_PNG)
@@ -756,7 +765,7 @@ class MyFrame(wx.Frame):
 
         ## option buttons
         self.ui__bt_selected_parameter.SetToolTipString('Launch')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -764,12 +773,12 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_parameter.SetValue('suspend')
 
 
-    def process_plugin_session_reboot(self):
-        """Plugin Reboot"""
-        tools.print_debug_to_terminal('process_plugin_session_reboot', 'starting')
+    def prepare_plugin_session_reboot(self):
+        """Plugin Session - Reboot"""
+        tools.print_debug_to_terminal('prepare_plugin_session_reboot', 'starting')
 
         ## update plugin info
-        self.set_ui_plugin_information('Reboot')
+        self.plugin__update_general_ui_information('Reboot')
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_reboot_128.png', wx.BITMAP_TYPE_PNG)
@@ -778,7 +787,7 @@ class MyFrame(wx.Frame):
 
         ## option buttons
         self.ui__bt_selected_parameter.SetToolTipString('Launch')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -787,7 +796,7 @@ class MyFrame(wx.Frame):
 
 
     def parse_user_search_input(self, current_search_string):
-        """ Method to search applications and/or plugin commands to fill the results """
+        """Method to search applications and/or plugin commands to fill the results"""
         tools.print_debug_to_terminal('parse_user_search_input', 'starting')
 
         if current_search_string != '':
@@ -796,17 +805,30 @@ class MyFrame(wx.Frame):
             #
             if current_search_string == "!":
                 tools.print_debug_to_terminal('parse_user_search_input', 'Case: !')
-                self.set_ui_plugin_information('')
+                self.plugin__update_general_ui_information('')
                 return
 
 
-            ## Plugin: Trash
+            ## Plugin: Nautilus
             ##
-            if current_search_string in constants.APP_PLUGINS_TRASH_TRIGGER:
-                tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Trash')
-                if current_search_string == '!trash':
-                    self.process_plugin_trash_open()
+            if  current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER:
+                tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Nautilus')
+                if current_search_string == ('!recent'):
+                    self.prepare_plugin_nautilus_show_recent()
+
+                if current_search_string == ('!trash'):
+                    self.prepare_plugin_nautilus_open_trash()
                 return
+
+
+            ## Plugin: Shell
+            ##
+            if  current_search_string.startswith(constants.APP_PLUGINS_SHELL_TRIGGER):
+                tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Shell')
+                if current_search_string.startswith('!sh'):
+                    self.prepare_plugin_shell()
+                return
+
 
             ## Plugin: Session
             ##
@@ -815,23 +837,23 @@ class MyFrame(wx.Frame):
 
                 ## Hibernate
                 if current_search_string == '!hibernate' or current_search_string == '!sleep':
-                    self.process_plugin_session_hibernate()
+                    self.prepare_plugin_session_hibernate()
 
                 ## Lock
                 elif current_search_string == '!lock':
-                    self.process_plugin_session_lock()
+                    self.prepare_plugin_session_lock()
 
                 ## Logout
                 elif current_search_string == '!logout':
-                    self.process_plugin_session_logout()
+                    self.prepare_plugin_session_logout()
 
                 ## Reboot
                 elif current_search_string == '!reboot' or current_search_string == '!restart':
-                    self.process_plugin_session_reboot()
+                    self.prepare_plugin_session_reboot()
 
                 ## Shutdown
-                elif current_search_string == '!shutdown':
-                    self.process_plugin_session_shutdown()
+                elif current_search_string == '!shutdown' or current_search_string == '!halt':
+                    self.prepare_plugin_session_shutdown()
 
                 else:
                     print("Error")
@@ -848,7 +870,7 @@ class MyFrame(wx.Frame):
             ## Default case / search for executable
             ##
             # reset plugin name field
-            self.set_ui_plugin_information('')
+            self.plugin__update_general_ui_information('')
 
             tools.print_debug_to_terminal('parse_user_search_input', 'Searching executables for the following string: '+current_search_string)
             search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
@@ -887,7 +909,7 @@ class MyFrame(wx.Frame):
                 self.ui__bt_selected_app.SetToolTipString(search_results[0]) # set tooltip
 
                 ## options buttons
-                self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
                 self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
                 self.ui__bt_selected_parameter.Enable(True) # Enable option button
                 self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
@@ -945,12 +967,19 @@ class MyFrame(wx.Frame):
             ## check if name exists and is executable
             executable_exists = tools.cmd_exists(command)
             if executable_exists is True:
+
                 ## update usage-statistics
+                #
+                ## commands executed
                 tools.print_debug_to_terminal('launch_external_application', 'Updating statistics (command_executed)')
                 current_commands_executed_count = ini.read_single_value('Statistics', 'command_executed')          # get current value from ini
+                ini.write_single_value('Statistics', 'command_executed', int(current_commands_executed_count)+1) # update ini +1
 
-                ## update ini +1
-                ini.write_single_value('Statistics', 'command_executed', int(current_commands_executed_count)+1)
+                ## update plugin execution count
+                if self.ui__txt_plugin_information != "":
+                    tools.print_debug_to_terminal('launch_external_application', 'Updating statistics (plugins_executed)')
+                    current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
+                    ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
 
                 tools.print_debug_to_terminal('launch_external_application', 'Executable: "'+command+'" exists')
                 # https://docs.python.org/2/library/subprocess.html
@@ -958,10 +987,10 @@ class MyFrame(wx.Frame):
                 if parameter == '':
                     #subprocess.Popen(["rm","-r","some.file"])
                     subprocess.Popen([command])
-                    tools.print_debug_to_terminal('launch_external_application', 'Executed: '+command)
+                    tools.print_debug_to_terminal('launch_external_application', 'Executed: "'+command+'"')
                 else:
                     subprocess.Popen([command, parameter])
-                    tools.print_debug_to_terminal('launch_external_application', 'Executed: '+command+' '+parameter)
+                    tools.print_debug_to_terminal('launch_external_application', 'Executed: "'+command+'" with parameter "'+parameter+'"')
 
                 self.reset_ui()
 
@@ -1114,9 +1143,8 @@ class App(wx.App):
 
     """Class App"""
 
-    def OnInit(self):
+    def onInit(self):
         """While starting the app (checks for already running instances)"""
-        tools.print_debug_to_terminal('OnInit', 'starting')
         self.name = constants.APP_NAME+'.lock'
         self.instance = wx.SingleInstanceChecker(self.name)
         if self.instance.IsAnotherRunning(): # allow only 1 instance of apparat
@@ -1130,7 +1158,7 @@ class App(wx.App):
 # MAIN
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def main():
-    """Main"""
+    """main"""
     app = App(False)
     tools.check_arguments()
     tools.check_platform() # Check if platform is supported at all, otherwise abort
@@ -1138,6 +1166,7 @@ def main():
     ini.validate()
 
     frame = MyFrame(None, constants.APP_NAME) # Main UI window
+    tools.print_debug_to_terminal('main', 'Frame: '+str(frame))
     app.MainLoop()
 
 
