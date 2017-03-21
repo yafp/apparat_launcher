@@ -31,29 +31,31 @@ The following command line parameters are available:
 Usage:
 ```trigger + SPACE + searchphrase```
 
-| Trigger       | Alias         | Function       |
-| ------------- |:--------------| :--------------|
-| ```!a```      |               | Amazon         |
-| ```!b```      |               | Bandcamp       |
-| ```!e```      |               | Stack-Exchange |
-| ```!g```      |               | Google         |
-| ```!l```      |               | LastFM         |
-| ```!m```      |               | Google-Maps    |
-| ```!o```      |               | Stack-Overflow |
-| ```!r```      |               | Reddit         |
-| ```!s```      |               | SoundCloud     |
-| ```!t```      |               | Twitter        |
-| ```!v```      |               | Vimeo          |
-| ```!w```      |               | Wikipedia      |
-| ```!y```      |               | YouTube        |
+| Trigger       | Alias         | Parameter      | Function       |
+| ------------- |:--------------| :--------------|:-------------- |
+| ```!a```      |               | <searchstring> | Amazon         |
+| ```!b```      |               | <searchstring> | Bandcamp       |
+| ```!e```      |               | <searchstring> | Stack-Exchange |
+| ```!g```      |               | <searchstring> | Google         |
+| ```!l```      |               | <searchstring> | LastFM         |
+| ```!m```      |               | <searchstring> | Google-Maps    |
+| ```!o```      |               | <searchstring> | Stack-Overflow |
+| ```!r```      |               | <searchstring> | Reddit         |
+| ```!s```      |               | <searchstring> | SoundCloud     |
+| ```!t```      |               | <searchstring> | Twitter        |
+| ```!v```      |               | <searchstring> | Vimeo          |
+| ```!w```      |               | <searchstring> | Wikipedia      |
+| ```!y```      |               | <searchstring> | YouTube        |
 
 
 ### Nautilus
 
-| Trigger       | Alias          | Function                      |
-| ------------- |:-------------- | :-----------------------------|
-| ```!recent``` |                | Show recent files in nautilus |
-| ```!trash```  |                | Opens trash in nautilus       |
+| Trigger        | Alias          | Parameter           | Function                         |
+| -------------- |:-------------- | :-------------------|:---------------------------------|
+| ```!open```    |                | <path>              | Open directory in nautilus       |
+| ```!network``` | ```!net```     |                     | Show network devices in nautilus |
+| ```!recent```  |                |                     | Show recent files in nautilus    |
+| ```!trash```   |                |                     | Show trash in nautilus           |
 
 
 ### Session
@@ -72,5 +74,5 @@ Please check the [Contribution guidelines for this project](.github/CONTRIBUTING
 
 
 ## Credits
-* All icons used in Apparat are from [Font Awesome](http://fontawesome.io) - Color: #7f8c8d
+* Icons from [Font Awesome](http://fontawesome.io) (Color: #7f8c8d)
 
