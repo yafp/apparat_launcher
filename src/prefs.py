@@ -161,22 +161,22 @@ class UITabPluginCommands(wx.Panel):
         plugin_internet_search_cmd_list = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
         plugin_internet_search_cmd_list.SetFont(FONT_NORMAL_MONO)
 
-        h1_plugin_trash = wx.StaticText(self, -1, "Trash", (20, 20))
-        h1_plugin_trash.SetFont(FONT_BIG)
+        h1_plugin_nautilus = wx.StaticText(self, -1, "Nautilus", (20, 20))
+        h1_plugin_nautilus.SetFont(FONT_BIG)
 
-        plugin_trash_cmd_list = wx.StaticText(self, -1, "!trash      = Opens trash in nautilus", (20, 60))
-        plugin_trash_cmd_list.SetFont(FONT_NORMAL_MONO)
+        plugin_nautilus_cmd_list = wx.StaticText(self, -1, "!network = Show network devices in nautilus\n!open    = Open custom path in nautilus\n!recent  = Show recent files in nautilus\n!trash   = Show trash in nautilus", (20, 60))
+        plugin_nautilus_cmd_list.SetFont(FONT_NORMAL_MONO)
 
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         pref_sizer.AddSpacer(10)
         pref_sizer.Add(h1_plugin_internet_search, 0, wx.ALL, border=10)
         pref_sizer.Add(plugin_internet_search_cmd_list, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(10)
+        pref_sizer.Add(h1_plugin_nautilus, 0, wx.ALL, border=10)
+        pref_sizer.Add(plugin_nautilus_cmd_list, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(10)
         pref_sizer.Add(h1_plugin_session, 0, wx.ALL, border=10)
         pref_sizer.Add(plugin_session_cmd_list, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(10)
-        pref_sizer.Add(h1_plugin_trash, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_trash_cmd_list, 0, wx.ALL, border=10)
         self.SetSizer(pref_sizer)
 
 

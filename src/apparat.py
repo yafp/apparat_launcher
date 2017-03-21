@@ -32,6 +32,7 @@ else:
     import tools                        # contains helper-tools
 
 
+
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
@@ -67,8 +68,8 @@ class MyFrame(wx.Frame):
         ## Define the style of the frame
         style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED | wx.FRAME_NO_TASKBAR)
 
-        self.mainUI = wx.Frame.__init__(self, parent, title=title, size=(config.WINDOW_WIDTH, config.WINDOW_HEIGHT), style=style)              # Custom Frame
-        self.SetSizeHintsSz(wx.Size(config.WINDOW_WIDTH, config.WINDOW_HEIGHT), wx.Size(config.WINDOW_WIDTH, config.WINDOW_HEIGHT))         # forcing min and max size to same values - prevents resizing option
+        self.mainUI = wx.Frame.__init__(self, parent, title=title, size=(config.WINDOW_WIDTH, config.WINDOW_HEIGHT), style=style) # Custom Frame
+        self.SetSizeHintsSz(wx.Size(config.WINDOW_WIDTH, config.WINDOW_HEIGHT), wx.Size(config.WINDOW_WIDTH, config.WINDOW_HEIGHT)) # forcing min and max size to same values - prevents resizing option
         self.tbicon = TaskBarIcon(self)
         self.Bind(wx.EVT_CLOSE, self.on_close_application)
 
@@ -212,7 +213,6 @@ class MyFrame(wx.Frame):
         #self.Bind(wx.EVT_KEY_UP, self.OnKeyDown)
         #self.Bind(wx.EVT_CHAR, self.OnKeyDown)
 
-
         # ------------------------------------------------
         # show the UI
         # ------------------------------------------------
@@ -220,7 +220,6 @@ class MyFrame(wx.Frame):
         self.ui__search_and_result_combobox.SetFocus()     # set focus to search
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
-
 
         ## GTK vs WX is a mess - Issue: #15 - It helps to import GTK after having created the WX app (at least for Ubuntu, not for Fedora)
         global gtk
@@ -613,6 +612,52 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
 
+    def prepare_plugin_nautilus_open(self):
+        """Plugin Nautilus - Open"""
+        tools.print_debug_to_terminal('prepare_plugin_nautilus_open', 'starting')
+
+        ## update plugin info
+        self.plugin__update_general_ui_information('Nautilus (Open)')
+
+        ## application buttons
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_goto_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+        self.ui__bt_selected_app.SetToolTipString('Go to folder')
+
+        ## parameter buttons
+        self.ui__bt_selected_parameter.SetToolTipString('Open')
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+        ## set command
+        self.ui__txt_selected_app.SetValue('nautilus')
+
+        # set parameter
+        self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[6:])
+
+
+    def prepare_plugin_nautilus_show_network_devices(self):
+        """Plugin Nautilus - Network"""
+        tools.print_debug_to_terminal('prepare_plugin_nautilus_show_network_devices', 'starting')
+
+        ## update plugin info
+        self.plugin__update_general_ui_information('Nautilus (Network)')
+
+        ## application buttons
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_network_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+        self.ui__bt_selected_app.SetToolTipString('Show network devices')
+
+        ## parameter buttons
+        self.ui__bt_selected_parameter.SetToolTipString('Open')
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+        ## set command and parameter
+        self.ui__txt_selected_app.SetValue('nautilus')
+        self.ui__txt_selected_parameter.SetValue('network://')
+
+
     def prepare_plugin_nautilus_show_recent(self):
         """Plugin Nautilus - Recent"""
         tools.print_debug_to_terminal('prepare_plugin_nautilus_show_recent', 'starting')
@@ -799,7 +844,7 @@ class MyFrame(wx.Frame):
         """Method to search applications and/or plugin commands to fill the results"""
         tools.print_debug_to_terminal('parse_user_search_input', 'starting')
 
-        if current_search_string != '':
+        if current_search_string != '': # if there is a search string
 
             ## Reset UI partly if search is just !
             #
@@ -811,14 +856,24 @@ class MyFrame(wx.Frame):
 
             ## Plugin: Nautilus
             ##
-            if  current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER:
+            if current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER or current_search_string.startswith('!open'):
                 tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Nautilus')
+
+                if current_search_string.startswith('!open'):
+                    self.prepare_plugin_nautilus_open()
+                    return
+
                 if current_search_string == ('!recent'):
                     self.prepare_plugin_nautilus_show_recent()
+                    return
 
                 if current_search_string == ('!trash'):
                     self.prepare_plugin_nautilus_open_trash()
-                return
+                    return
+
+                if current_search_string == ('!network') or current_search_string == ('!net'):
+                    self.prepare_plugin_nautilus_show_network_devices()
+                    return
 
 
             ## Plugin: Shell
@@ -950,6 +1005,11 @@ class MyFrame(wx.Frame):
         """Launches the actual external process"""
         command = self.ui__txt_selected_app.GetValue()
         parameter = self.ui__txt_selected_parameter.GetValue()
+
+        if(command == ''):
+            tools.print_debug_to_terminal('launch_external_application', 'Nothing to do - empty command')
+            return
+
         tools.print_debug_to_terminal('launch_external_application', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
 
         ## Plugin: Internet-Search
@@ -1160,7 +1220,7 @@ class App(wx.App):
 def main():
     """main"""
     app = App(False)
-    tools.check_arguments()
+    tools.check_arguments() # check launch parameter / arguments
     tools.check_platform() # Check if platform is supported at all, otherwise abort
     tools.check_linux_requirements()
     ini.validate()
