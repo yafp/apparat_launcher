@@ -12,7 +12,7 @@ apparat is an application launcher for linux.
 It is developed for Gnome Desktop environments.
 
 ## Screenshot
-![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshot_ui.png)
+![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/doc/screenshot_ui.png)
 
 ## Requirements
 - python2
