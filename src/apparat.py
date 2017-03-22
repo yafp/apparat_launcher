@@ -14,7 +14,7 @@ import sys                          # to show python version used
 
 if sys.version_info >= (3, 0):
     sys.stdout.write('Python version used: '+sys.version) ## show python version
-    sys.stdout.write("Sorry, requires Python 2.x, not Python 3.x\n")
+    sys.stdout.write('Sorry, requires Python 2.x, not Python 3.x\n')
     sys.exit(1)
 else:
     import difflib                      # for intelligent list sort
@@ -99,7 +99,7 @@ class MyFrame(wx.Frame):
         ## Search & Results as comboBox
         search_results = []
         combo_box_style = wx.TE_PROCESS_ENTER
-        self.ui__search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u"", wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
+        self.ui__search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
         self.ui__search_and_result_combobox.SetFont(wx.Font(24, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
 
         ## app button
@@ -231,9 +231,9 @@ class MyFrame(wx.Frame):
         tools.print_debug_to_terminal('on_focus_parameter_button', 'starting with event: '+str(event))
 
 
-    def OnKeyDown(self, event):
-        """On Key Down in main ui"""
-        tools.print_debug_to_terminal('OnKeyDown', 'starting with event: '+str(event))
+    #def OnKeyDown(self, event):
+        #"""On Key Down in main ui"""
+        #tools.print_debug_to_terminal('OnKeyDown', 'starting with event: '+str(event))
 
 
     def on_close_application(self, event):
@@ -308,8 +308,9 @@ class MyFrame(wx.Frame):
         """If an item of the result-list was selected"""
         tools.print_debug_to_terminal('on_combobox_select_item', 'starting with event: '+str(event))
         self.ui__txt_selected_app.SetValue(self.ui__search_and_result_combobox.GetValue())   # write command to command text field
-        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
         self.ui__search_and_result_combobox.SetInsertionPointEnd() # set cursor to end of string
+        self.parse_user_search_input(self.ui__search_and_result_combobox.GetValue()) ## run search again after selecting the desired search string from dropdown
+        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
 
 
     def on_combobox_popup_open(self, event):
@@ -367,7 +368,7 @@ class MyFrame(wx.Frame):
             current_search_string = self.ui__search_and_result_combobox.GetValue()
             if len(current_search_string) == 0:
                 tools.print_debug_to_terminal('on_combobox_key_press', 'Search string is empty - doing nothing')
-                self.reset_ui()
+                #self.reset_ui()
             else:
                 tools.print_debug_to_terminal('on_combobox_key_press', 'Searching: '+current_search_string)
                 self.parse_user_search_input(current_search_string)
@@ -375,8 +376,11 @@ class MyFrame(wx.Frame):
 
     def get_icon_for_executable(self, full_executable_name):
         """Tries to get an icon for an selected executable"""
-        ## Icon search - http://www.pygtk.org/pygtk2reference/class-gtkicontheme.html
+        # Abort if a plugin is activated
+        if(self.ui__txt_plugin_information.GetValue() != ''):
+            return
 
+        ## Icon search - http://www.pygtk.org/pygtk2reference/class-gtkicontheme.html
         ## get app-icon for selected application from operating system
         icon_theme = gtk.icon_theme_get_default()
         ## check what icon sizes are available and choose best size
@@ -565,7 +569,7 @@ class MyFrame(wx.Frame):
 
         ## if enabled in ini - hide the Main UI after executing the command
         cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
-        if cur_ini_value_for_hide_ui_after_command_execution == "True":
+        if cur_ini_value_for_hide_ui_after_command_execution == 'True':
             self.tbicon.execute_tray_icon_left_click()
 
 
@@ -612,12 +616,36 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
 
-    def prepare_plugin_nautilus_open(self):
-        """Plugin Nautilus - Open"""
-        tools.print_debug_to_terminal('prepare_plugin_nautilus_open', 'starting')
+    def prepare_plugin_misc_open(self):
+        """Plugin Misc - Open"""
+        tools.print_debug_to_terminal('sprepare_plugin_misc_open', 'starting')
 
         ## update plugin info
-        self.plugin__update_general_ui_information('Nautilus (Open)')
+        self.plugin__update_general_ui_information('Misc (Open)')
+
+        ## application buttons
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/misc/bt_open_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+        self.ui__bt_selected_app.SetToolTipString('Open')
+
+        ## parameter buttons
+        self.ui__bt_selected_parameter.SetToolTipString('Open')
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+        ## set command
+        self.ui__txt_selected_app.SetValue('xdg-open')
+
+        # set parameter
+        self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[6:])
+
+
+    def prepare_plugin_nautilus_goto(self):
+        """Plugin Nautilus - GoTo"""
+        tools.print_debug_to_terminal('prepare_plugin_nautilus_goto', 'starting')
+
+        ## update plugin info
+        self.plugin__update_general_ui_information('Nautilus (GoTo)')
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_goto_128.png', wx.BITMAP_TYPE_PNG)
@@ -727,7 +755,7 @@ class MyFrame(wx.Frame):
         ## set command and parameter
         ## http://askubuntu.com/questions/484993/run-command-on-anothernew-terminal-window
         self.ui__txt_selected_app.SetValue('xterm')
-        self.ui__txt_selected_parameter.SetValue('"'+self.ui__search_and_result_combobox.GetValue()[4:]+'"')
+        self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[4:])
 
 
     def prepare_plugin_session_lock(self):
@@ -848,19 +876,26 @@ class MyFrame(wx.Frame):
 
             ## Reset UI partly if search is just !
             #
-            if current_search_string == "!":
+            if current_search_string == '!':
                 tools.print_debug_to_terminal('parse_user_search_input', 'Case: !')
                 self.plugin__update_general_ui_information('')
                 return
 
+            ## Plugin: Misc
+            ##
+            if  current_search_string.startswith(constants.APP_PLUGINS_MISC_TRIGGER):
+                tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Misc')
+                if current_search_string.startswith('!open'):
+                    self.prepare_plugin_misc_open()
+                return
 
             ## Plugin: Nautilus
             ##
-            if current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER or current_search_string.startswith('!open'):
+            if current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER or current_search_string.startswith('!goto'):
                 tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Nautilus')
 
-                if current_search_string.startswith('!open'):
-                    self.prepare_plugin_nautilus_open()
+                if current_search_string.startswith('!goto'):
+                    self.prepare_plugin_nautilus_goto()
                     return
 
                 if current_search_string == ('!recent'):
@@ -875,7 +910,6 @@ class MyFrame(wx.Frame):
                     self.prepare_plugin_nautilus_show_network_devices()
                     return
 
-
             ## Plugin: Shell
             ##
             if  current_search_string.startswith(constants.APP_PLUGINS_SHELL_TRIGGER):
@@ -883,7 +917,6 @@ class MyFrame(wx.Frame):
                 if current_search_string.startswith('!sh'):
                     self.prepare_plugin_shell()
                 return
-
 
             ## Plugin: Session
             ##
@@ -911,7 +944,7 @@ class MyFrame(wx.Frame):
                     self.prepare_plugin_session_shutdown()
 
                 else:
-                    print("Error")
+                    tools.print_debug_to_terminal('parse_user_search_input', 'Error: Undefined session command')
                 return
 
             ## Plugin: Internet-Search
@@ -921,84 +954,158 @@ class MyFrame(wx.Frame):
                 self.plugin__internet_search_prepare(current_search_string)
                 return
 
+            ## Search for local files
+            #
+            if current_search_string.startswith('?'):
+                tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Local-Search')
+                self.search_user_files(current_search_string)
+                return
 
-            ## Default case / search for executable
-            ##
-            # reset plugin name field
-            self.plugin__update_general_ui_information('')
+            ## Search for executables
+            #
+            self.search_executables(current_search_string)
 
-            tools.print_debug_to_terminal('parse_user_search_input', 'Searching executables for the following string: '+current_search_string)
-            search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
-
-            ## Sort results - http://stackoverflow.com/questions/17903706/how-to-sort-list-of-strings-by-best-match-difflib-ratio
-            search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
-
-            self.ui__txt_result_counter.SetValue(str(len(search_results))) # update result count
-            self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
-
-            tools.print_debug_to_terminal('parse_user_search_input', 'Found '+str(len(search_results))+' matching application')
-            if len(search_results) == 0: # 0 result
-                ## update launch button icon
-                if current_search_string.startswith("!"): # starting input for plugins
-                    self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
-                else: # no result - so sad
-                    self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-
-                ## update option button
-                self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-
-                ## set command
-                self.ui__txt_selected_app.SetValue('')
-
-                ## set parameter
-                self.ui__txt_selected_parameter.SetValue('')
-
-            elif len(search_results) == 1: # 1 result
-                # combobox - autocomplete
-                #self.ui__search_and_result_combobox.SetValue(search_results[0])
-
-                ## application buttons
-                self.ui__bt_selected_app.Enable(True) # Enable application button
-                self.ui__bt_selected_app.SetToolTipString(search_results[0]) # set tooltip
-
-                ## options buttons
-                self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-                self.ui__bt_selected_parameter.Enable(True) # Enable option button
-                self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
-
-                ## update command
-                self.ui__txt_selected_app.SetValue(search_results[0])
-
-                ## update parameter
-                self.ui__txt_selected_parameter.SetValue('')
-
-                ## Icon search
-                self.get_icon_for_executable(str(search_results[0]))
-
-            else: # > 1 search
-                ## update launch button
-                self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_list_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-                self.ui__bt_selected_app.Enable(False)
-                self.ui__bt_selected_app.SetToolTipString(u'')
-
-                # update launch-options button
-                self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
-                self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-                self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
-                self.ui__bt_selected_parameter.SetToolTipString(u'')
-
-                ## update command
-                self.ui__txt_selected_app.SetValue('')
-
-                ## update parameter
-                self.ui__txt_selected_parameter.SetValue('')
 
         else: # search string is empty
             tools.print_debug_to_terminal('parse_user_search_input', 'Empty search string')
+
+
+
+    def search_user_files(self, current_search_string):
+        """Search for user files"""
+        tools.print_debug_to_terminal('search_user_files', 'starting')
+
+        ## update plugin info
+        self.plugin__update_general_ui_information('Local Search')
+
+        ## application buttons
+        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+        self.ui__bt_selected_app.SetToolTipString('Search local user files')
+
+        ## parameter buttons
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+        self.ui__bt_selected_parameter.SetToolTipString('Search local user files')
+
+        ## set command
+        self.ui__txt_selected_app.SetValue('xdg-open')
+
+        ## set parameter
+        self.ui__txt_selected_parameter.SetValue('')
+
+
+        if(len(current_search_string) > 4) and current_search_string.startswith('? '):
+            current_search_string = current_search_string[2:] # get the real search term without trigger
+            tools.print_debug_to_terminal('search_user_files', 'Searching local files for: '+current_search_string)
+            root = os.environ['HOME']
+            pattern = '*'+current_search_string+'*'
+
+            search_results = []
+
+            if(len(current_search_string) > 2): # if search string is long enough
+                tools.print_debug_to_terminal('search_user_files', 'Searching local user files for the following string: '+current_search_string)
+                for root, dirs, files in os.walk(root):
+                    for filename in fnmatch.filter(files, pattern):
+                        #print( os.path.join(root, filename))
+
+                        # append to list
+                        result = os.path.join(root, filename)
+                        search_results.append(result)
+
+                tools.print_debug_to_terminal('search_user_files', 'Got '+(str(len(search_results)))+' Results')
+
+                if(len(search_results) > 0):
+                    # update result count
+                    self.ui__txt_result_counter.SetValue(str(len(search_results)))
+                else:
+                    self.ui__txt_result_counter.SetValue('')
+
+                # update combobox
+                self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
+        else:
+            tools.print_debug_to_terminal('search_user_files', 'aborting search (string too short)')
+
+
+
+
+
+
+
+
+    def search_executables(self, current_search_string):
+        """Searches for executables"""
+        self.plugin__update_general_ui_information('')
+
+        tools.print_debug_to_terminal('search_executables', 'Searching executables for the following string: '+current_search_string)
+        search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
+
+        ## Sort results - http://stackoverflow.com/questions/17903706/how-to-sort-list-of-strings-by-best-match-difflib-ratio
+        search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
+
+        self.ui__txt_result_counter.SetValue(str(len(search_results))) # update result count
+        self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
+
+        tools.print_debug_to_terminal('search_executables', 'Found '+str(len(search_results))+' matching application')
+        if len(search_results) == 0: # 0 result
+            ## update launch button icon
+            if current_search_string.startswith('!'): # starting input for plugins
+                self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            else: # no result - so sad
+                self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+
+            ## update option button
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+            ## set command
+            self.ui__txt_selected_app.SetValue('')
+
+            ## set parameter
+            self.ui__txt_selected_parameter.SetValue('')
+
+        elif len(search_results) == 1: # 1 result
+            # combobox - autocomplete
+            #self.ui__search_and_result_combobox.SetValue(search_results[0])
+
+            ## application buttons
+            self.ui__bt_selected_app.Enable(True) # Enable application button
+            self.ui__bt_selected_app.SetToolTipString(search_results[0]) # set tooltip
+
+            ## options buttons
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+            self.ui__bt_selected_parameter.Enable(True) # Enable option button
+            self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
+
+            ## update command
+            self.ui__txt_selected_app.SetValue(search_results[0])
+
+            ## update parameter
+            self.ui__txt_selected_parameter.SetValue('')
+
+            ## Icon search
+            self.get_icon_for_executable(str(search_results[0]))
+
+        else: # > 1 search
+            ## update launch button
+            self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_list_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+            self.ui__bt_selected_app.Enable(False)
+            self.ui__bt_selected_app.SetToolTipString(u'')
+
+            # update launch-options button
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+            self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
+            self.ui__bt_selected_parameter.SetToolTipString(u'')
+
+            ## update command
+            self.ui__txt_selected_app.SetValue('')
+
+            ## update parameter
+            self.ui__txt_selected_parameter.SetValue('')
 
 
     def launch_external_application(self):
@@ -1011,6 +1118,20 @@ class MyFrame(wx.Frame):
             return
 
         tools.print_debug_to_terminal('launch_external_application', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
+
+        ## Plugin: Shell
+        ##
+        #if self.ui__txt_plugin_information.GetValue() == 'Plugin: Shell':
+            #command = parameter
+            #parameter = ''
+
+
+        ## Plugin: Local-Search
+        ##
+        if self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search':
+            parameter = command
+            command = 'xdg-open'
+
 
         ## Plugin: Internet-Search
         ##
@@ -1036,7 +1157,7 @@ class MyFrame(wx.Frame):
                 ini.write_single_value('Statistics', 'command_executed', int(current_commands_executed_count)+1) # update ini +1
 
                 ## update plugin execution count
-                if self.ui__txt_plugin_information != "":
+                if self.ui__txt_plugin_information != '':
                     tools.print_debug_to_terminal('launch_external_application', 'Updating statistics (plugins_executed)')
                     current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
                     ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
@@ -1046,6 +1167,8 @@ class MyFrame(wx.Frame):
                 # TODO: check: check_output - https://docs.python.org/2/library/subprocess.html#subprocess.check_output
                 if parameter == '':
                     #subprocess.Popen(["rm","-r","some.file"])
+                    
+                    # 
                     subprocess.Popen([command])
                     tools.print_debug_to_terminal('launch_external_application', 'Executed: "'+command+'"')
                 else:
@@ -1056,7 +1179,7 @@ class MyFrame(wx.Frame):
 
                 ## if enabled in ini - hide the Main UI after executing the command
                 cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
-                if cur_ini_value_for_hide_ui_after_command_execution == "True":
+                if cur_ini_value_for_hide_ui_after_command_execution == 'True':
                     self.tbicon.execute_tray_icon_left_click()
 
             else:
@@ -1203,13 +1326,13 @@ class App(wx.App):
 
     """Class App"""
 
-    def onInit(self):
+    def OnInit(self):
         """While starting the app (checks for already running instances)"""
         self.name = constants.APP_NAME+'.lock'
         self.instance = wx.SingleInstanceChecker(self.name)
         if self.instance.IsAnotherRunning(): # allow only 1 instance of apparat
             tools.print_debug_to_terminal('OnInit', 'An instance is already running. Aborting')
-            wx.MessageBox("An instance of "+constants.APP_NAME+" is already running. Aborting", "Error", wx.OK | wx.ICON_WARNING)
+            wx.MessageBox(constants.APP_NAME+' is already running', 'Error', wx.OK | wx.ICON_WARNING)
             return False
         return True
 

@@ -164,7 +164,7 @@ class UITabPluginCommands(wx.Panel):
         h1_plugin_nautilus = wx.StaticText(self, -1, "Nautilus", (20, 20))
         h1_plugin_nautilus.SetFont(FONT_BIG)
 
-        plugin_nautilus_cmd_list = wx.StaticText(self, -1, "!network = Show network devices in nautilus\n!open    = Open custom path in nautilus\n!recent  = Show recent files in nautilus\n!trash   = Show trash in nautilus", (20, 60))
+        plugin_nautilus_cmd_list = wx.StaticText(self, -1, "!network = Show network devices in nautilus\n!goto    = Open custom path in nautilus\n!recent  = Show recent files in nautilus\n!trash   = Show trash in nautilus", (20, 60))
         plugin_nautilus_cmd_list.SetFont(FONT_NORMAL_MONO)
 
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
