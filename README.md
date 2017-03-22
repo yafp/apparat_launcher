@@ -7,8 +7,12 @@ apparat
 ==========
 
 ## About
-apparat is an application launcher for linux
+apparat is an application launcher for linux.
 
+It is developed for Gnome Desktop environments.
+
+## Screenshot
+![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshot_ui.png)
 
 ## Requirements
 - python2
@@ -26,33 +30,36 @@ The following command line parameters are available:
 
 
 ## Plugins
-### Internet-Search
+### Search (Local)
 
-Usage:
-```trigger + SPACE + searchphrase```
+| Trigger       | Alias         | Parameter      | Function                |
+| ------------- |:--------------| :--------------|:----------------------- |
+| ```?```       |               | searchstring   | Searches home directory |
+
+### Search (Internet)
 
 | Trigger       | Alias         | Parameter      | Function       |
 | ------------- |:--------------| :--------------|:-------------- |
-| ```!a```      |               | <searchstring> | Amazon         |
-| ```!b```      |               | <searchstring> | Bandcamp       |
-| ```!e```      |               | <searchstring> | Stack-Exchange |
-| ```!g```      |               | <searchstring> | Google         |
-| ```!l```      |               | <searchstring> | LastFM         |
-| ```!m```      |               | <searchstring> | Google-Maps    |
-| ```!o```      |               | <searchstring> | Stack-Overflow |
-| ```!r```      |               | <searchstring> | Reddit         |
-| ```!s```      |               | <searchstring> | SoundCloud     |
-| ```!t```      |               | <searchstring> | Twitter        |
-| ```!v```      |               | <searchstring> | Vimeo          |
-| ```!w```      |               | <searchstring> | Wikipedia      |
-| ```!y```      |               | <searchstring> | YouTube        |
+| ```!a```      |               | searchstring   | Amazon         |
+| ```!b```      |               | searchstring   | Bandcamp       |
+| ```!e```      |               | searchstring   | Stack-Exchange |
+| ```!g```      |               | searchstring   | Google         |
+| ```!l```      |               | searchstring   | LastFM         |
+| ```!m```      |               | searchstring   | Google-Maps    |
+| ```!o```      |               | searchstring   | Stack-Overflow |
+| ```!r```      |               | searchstring   | Reddit         |
+| ```!s```      |               | searchstring   | SoundCloud     |
+| ```!t```      |               | searchstring   | Twitter        |
+| ```!v```      |               | searchstring   | Vimeo          |
+| ```!w```      |               | searchstring   | Wikipedia      |
+| ```!y```      |               | searchstring   | YouTube        |
 
 
 ### Nautilus
 
 | Trigger        | Alias          | Parameter           | Function                         |
 | -------------- |:-------------- | :-------------------|:---------------------------------|
-| ```!open```    |                | <path>              | Open directory in nautilus       |
+| ```!goto```    |                | path                | Open directory in nautilus       |
 | ```!network``` | ```!net```     |                     | Show network devices in nautilus |
 | ```!recent```  |                |                     | Show recent files in nautilus    |
 | ```!trash```   |                |                     | Show trash in nautilus           |
@@ -69,10 +76,17 @@ Usage:
 | ```!shutdown```  | ```!halt```    | shutdown the machine        |
 
 
+### Misc
+
+| Trigger        | Alias          | Parameter           | Function                         |
+| -------------- |:-------------- | :-------------------|:---------------------------------|
+| ```!open```    |                | path                | Open using default application   |
+
+
 ## Development
 Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
 
 
 ## Credits
-* Icons from [Font Awesome](http://fontawesome.io) (Color: #7f8c8d)
+* Icons via [Font Awesome](http://fontawesome.io) (Color: #7f8c8d)
 
