@@ -25,18 +25,16 @@ wmctrl -lx | awk '{print $3}' | grep -i "$APPARAT_EXECUTABLE" # check if apparat
 
 if [ $? -eq 0 ]; then # it is running
 
-    ACTIVE_APP_WINDOW_TITLE=$(xdotool getwindowfocus getwindowname) # check active app
-    if [ $ACTIVE_APP_WINDOW_TITLE == 'Apparat' ]; then 
+    ACTIVE_APP_WINDOW_TITLE=$(xdotool getwindowfocus getwindowname) # check name of current foreground app
+    if [ $ACTIVE_APP_WINDOW_TITLE == 'Apparat' ]; then  #if it is apparat
         xdotool windowminimize $(xdotool getactivewindow) # apparat is active already - minimize it
         
     else # focus it
-        #sleep 1
         wmctrl -xa $APPARAT_EXECUTABLE
         exit 1
     fi
 
 else # apparat is not running -> start it
-    #notify-send "Starting: "$APPARAT_EXECUTABLE -t 3000
     cd "$APPARAT_FOLDER" && python "./apparat.py"
     exit 0
 fi
