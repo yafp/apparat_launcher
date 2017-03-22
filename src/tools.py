@@ -30,7 +30,10 @@ def check_arguments():
     """Checks if apparat was started with arguments or not"""
     # TODO: check getopt
     global DEBUG
-    if len(sys.argv) < 2: # no user argument available
+    if len(sys.argv) > 2: # too much arguments
+        print('Error: unsupported amount of parameters')
+        
+    elif len(sys.argv) < 2: # no user argument available
         DEBUG = False
 
     elif (sys.argv[1] in ("-d", "--debug")):
@@ -65,6 +68,7 @@ def check_linux_requirements():
     # - gnome-screensaver-command
     # - gnome-session-quit
     # - systemctl
+    # - xdg-open
     if which('gnome-screensaver-command') is None:
         print('Error: gnome-screensaver-command is missing')
         sys.exit()
@@ -75,6 +79,10 @@ def check_linux_requirements():
 
     if which('systemctl') is None:
         print('Error: systemctl is missing')
+        sys.exit()
+
+    if which('xdg-open') is None:
+        print('Error: xdg-open is missing')
         sys.exit()
 
 
