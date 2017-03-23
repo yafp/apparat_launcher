@@ -25,7 +25,7 @@ else:
     import webbrowser                   # for opening urls (example: github project page)
     import wx                           # for all the WX GUI items
 
-    ## project’s internal modules
+    ## projects internal modules
     import constants                    # contains some constants
     import config                       # contains some config values
     import ini                          # ini file handling
