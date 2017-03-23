@@ -5,13 +5,14 @@
 # IMPORTS
 # -----------------------------------------------------------------------------------------------
 
-# General
+## built-in modules
 import datetime                     # for timestamp in debug output
 import os
 import subprocess                   # for checking if cmd_exists
 import sys
 
-# Apparat
+## project’s internal modules
+import constants
 import config
 
 
@@ -31,7 +32,7 @@ def check_arguments():
     # TODO: check getopt
     global DEBUG
     if len(sys.argv) > 2: # too much arguments
-        print('Error: unsupported amount of parameters')
+        print('Error: Unsupported amount of parameters')
         
     elif len(sys.argv) < 2: # no user argument available
         DEBUG = False
@@ -48,7 +49,7 @@ def check_arguments():
         sys.exit()
 
     else:
-        print('Error: unknown argument. Loading help')
+        print('Error: Unknown argument. Loading help')
         show_help()
         sys.exit()
 
@@ -58,7 +59,7 @@ def print_debug_to_terminal(source, message):
     """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         timestamp = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
-        print("debug # "+timestamp+" # "+source+" # "+message)
+        print(constants.APP_NAME+" debug output # "+timestamp+" # "+source+" # "+message)
 
 
 
@@ -69,6 +70,7 @@ def check_linux_requirements():
     # - gnome-session-quit
     # - systemctl
     # - xdg-open
+    # - xdotool
     if which('gnome-screensaver-command') is None:
         print('Error: gnome-screensaver-command is missing')
         sys.exit()
@@ -83,6 +85,10 @@ def check_linux_requirements():
 
     if which('xdg-open') is None:
         print('Error: xdg-open is missing')
+        sys.exit()
+
+    if which('xdotool') is None:
+        print('Error: xdotool is missing')
         sys.exit()
 
 

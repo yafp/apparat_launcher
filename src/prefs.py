@@ -5,10 +5,10 @@
 # IMPORTS
 # -----------------------------------------------------------------------------------------------
 
-# General
+## built-in modules
 import wx
 
-# Apparat
+## project’s internal modules
 import config
 import constants
 import ini
@@ -59,8 +59,7 @@ class PreferenceWindow(wx.Frame):
         tools.print_debug_to_terminal('close_preference_ui', 'starting')
         tools.print_debug_to_terminal('close_preference_ui', 'Event: '+str(event))
         self.Destroy() # close the pref UI
-
-        # TODO: set focus to mainwindow
+        # TODO: set focus back to main-window
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

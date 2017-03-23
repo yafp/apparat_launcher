@@ -17,6 +17,7 @@ if sys.version_info >= (3, 0):
     sys.stdout.write('Sorry, requires Python 2.x, not Python 3.x\n')
     sys.exit(1)
 else:
+    ## built-in modules
     import difflib                      # for intelligent list sort
     import fnmatch                      # for searching applications
     import os                           # for searching applications
@@ -24,13 +25,12 @@ else:
     import webbrowser                   # for opening urls (example: github project page)
     import wx                           # for all the WX GUI items
 
-    ## apparat imports
+    ## project’s internal modules
     import constants                    # contains some constants
     import config                       # contains some config values
     import ini                          # ini file handling
     import prefs
     import tools                        # contains helper-tools
-
 
 
 # -----------------------------------------------------------------------------------------------
@@ -101,6 +101,7 @@ class MyFrame(wx.Frame):
         combo_box_style = wx.TE_PROCESS_ENTER
         self.ui__search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
         self.ui__search_and_result_combobox.SetFont(wx.Font(24, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        # TODO: check if wx.ComboCtrl is better
 
         ## app button
         self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
@@ -114,8 +115,8 @@ class MyFrame(wx.Frame):
         ## parameter button
         self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
-        self.ui__bt_selected_parameter.SetBitmapFocus(wx.NullBitmap) # TODO: image when in focus
-        self.ui__bt_selected_parameter.SetBitmapHover(wx.NullBitmap) # TODO: image on hover
+        self.ui__bt_selected_parameter.SetBitmapFocus(wx.NullBitmap) # image when in focus
+        self.ui__bt_selected_parameter.SetBitmapHover(wx.NullBitmap) # image on hover
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.SetLabel('Options')
         self.ui__bt_selected_parameter.Enable(False)
@@ -208,8 +209,8 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_parameter.Bind(wx.EVT_BUTTON, self.on_clicked_option_button)
         self.ui__bt_selected_parameter.Bind(wx.EVT_SET_FOCUS, self.on_focus_parameter_button)
 
-        ## TODO: check when events in the main ui gets triggered
-        #self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        ## Handle clicks outside of the expected area 8main ui or none
+        self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
         #self.Bind(wx.EVT_KEY_UP, self.OnKeyDown)
         #self.Bind(wx.EVT_CHAR, self.OnKeyDown)
 
@@ -228,12 +229,16 @@ class MyFrame(wx.Frame):
 
     def on_focus_parameter_button(self, event):
         """On focus of parameter button"""
-        tools.print_debug_to_terminal('on_focus_parameter_button', 'starting with event: '+str(event))
+        tools.print_debug_to_terminal('on_focus_parameter_button----------------------', 'starting with event: '+str(event))
 
 
-    #def OnKeyDown(self, event):
-        #"""On Key Down in main ui"""
-        #tools.print_debug_to_terminal('OnKeyDown', 'starting with event: '+str(event))
+    def on_key_down(self, event):
+        """On Key Down in main ui"""
+        tools.print_debug_to_terminal('OnKeyDown', 'starting with event: '+str(event))
+        tools.print_debug_to_terminal('OnKeyDown', 'Currently focus is at: '+str(self.FindFocus()))
+        self.ui__search_and_result_combobox.SetFocus() # set focus to search
+        self.ui__search_and_result_combobox.SetInsertionPointEnd() # set cursor to end of string
+        tools.print_debug_to_terminal('OnKeyDown', 'Set focus back to search.')
 
 
     def on_close_application(self, event):
@@ -249,7 +254,7 @@ class MyFrame(wx.Frame):
     def on_clicked_option_button(self, event):
         """If the launch option button was clicked"""
         tools.print_debug_to_terminal('on_clicked_option_button', 'starting with event: '+str(event))
-        self.launch_external_application()
+        self.do_execute()
 
 
     def on_clicked(self, event):
@@ -266,8 +271,8 @@ class MyFrame(wx.Frame):
     def open_preference_window(self):
         """Opens the preference window"""
         tools.print_debug_to_terminal('open_preference_window', 'starting')
-        self.new = prefs.PreferenceWindow(parent=None, id=-1)
-        self.new.Show()
+        self.prefWindow = prefs.PreferenceWindow(parent=None, id=-1)
+        self.prefWindow.Show()
 
 
     def on_combobox_text_changed(self, event):
@@ -275,7 +280,7 @@ class MyFrame(wx.Frame):
         tools.print_debug_to_terminal('on_combobox_text_changed', 'starting with event:'+str(event))
 
         if self.ui__search_and_result_combobox.GetValue() == '': #searchstring is empty
-            tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: <empty> - could reset UI at that point - but cant so far because of endless loop')
+            tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: <empty>. Nothing do to')
         else:
             tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: '+self.ui__search_and_result_combobox.GetValue())
             global is_resetted
@@ -292,7 +297,7 @@ class MyFrame(wx.Frame):
 
             global is_combobox_open
             if is_combobox_open == 0:
-                self.launch_external_application()
+                self.do_execute()
 
             else: # enter was pressed to close the combobox
                 tools.print_debug_to_terminal('on_combobox_enter', 'Pressed enter to close the open combobox')
@@ -309,8 +314,10 @@ class MyFrame(wx.Frame):
         tools.print_debug_to_terminal('on_combobox_select_item', 'starting with event: '+str(event))
         self.ui__txt_selected_app.SetValue(self.ui__search_and_result_combobox.GetValue())   # write command to command text field
         self.ui__search_and_result_combobox.SetInsertionPointEnd() # set cursor to end of string
-        self.parse_user_search_input(self.ui__search_and_result_combobox.GetValue()) ## run search again after selecting the desired search string from dropdown
+        ##
+        ##self.parse_user_search_input(self.ui__search_and_result_combobox.GetValue()) ## run search again after selecting the desired search string from dropdown
         self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
+        tools.print_debug_to_terminal('on_combobox_select_item', 'finished')
 
 
     def on_combobox_popup_open(self, event):
@@ -319,7 +326,12 @@ class MyFrame(wx.Frame):
         tools.print_debug_to_terminal('on_combobox_popup_open', 'combobox just got opened')
         global is_combobox_open
         is_combobox_open = True
+
+        # select the first item from list
+        #self.ui__search_and_result_combobox.SetSelection(0) # is default
+        subprocess.Popen(["xdotool", "key", "Down"]) # simulate key press to highlight the choosen value as well
         tools.print_debug_to_terminal('on_combobox_popup_open', 'finished')
+
 
 
     def on_combobox_popup_close(self, event):
@@ -367,8 +379,8 @@ class MyFrame(wx.Frame):
         else:
             current_search_string = self.ui__search_and_result_combobox.GetValue()
             if len(current_search_string) == 0:
-                tools.print_debug_to_terminal('on_combobox_key_press', 'Search string is empty - doing nothing')
-                #self.reset_ui()
+                tools.print_debug_to_terminal('on_combobox_key_press', 'Searchstring: <empty>. Nothing do to')
+                self.reset_ui()
             else:
                 tools.print_debug_to_terminal('on_combobox_key_press', 'Searching: '+current_search_string)
                 self.parse_user_search_input(current_search_string)
@@ -381,6 +393,7 @@ class MyFrame(wx.Frame):
             return
 
         ## Icon search - http://www.pygtk.org/pygtk2reference/class-gtkicontheme.html
+        #
         ## get app-icon for selected application from operating system
         icon_theme = gtk.icon_theme_get_default()
         ## check what icon sizes are available and choose best size
@@ -390,8 +403,7 @@ class MyFrame(wx.Frame):
             icon_info = icon_theme.lookup_icon(full_executable_name, max_icon_size, 0)
         else:
             tools.print_debug_to_terminal('get_icon_for_executable', 'Found several icon sizes: '+str(available_icon_sizes))
-            ## pick the biggest
-            max_icon_size = max(available_icon_sizes)
+            max_icon_size = max(available_icon_sizes) ## pick the biggest
             tools.print_debug_to_terminal('get_icon_for_executable', 'Picking the following icon size: '+str(max_icon_size))
             icon_info = icon_theme.lookup_icon(full_executable_name, max_icon_size, 0)
 
@@ -408,8 +420,8 @@ class MyFrame(wx.Frame):
                     if config.TARGET_ICON_SIZE == max_icon_size: # if icon has expected size
                         tools.print_debug_to_terminal('get_icon_for_executable', 'Icon size is as expected')
                     else: # resize icon
-                        tools.print_debug_to_terminal('get_icon_for_executable', 'Icon size does not match, starting re-scaling.')
-                        new_app_icon.Rescale(128, 128)                             # rescale image
+                        tools.print_debug_to_terminal('get_icon_for_executable', 'Icon size does not match, starting re-scaling to '+str(config.TARGET_ICON_SIZE)+'px')
+                        new_app_icon.Rescale(config.TARGET_ICON_SIZE, config.TARGET_ICON_SIZE) # rescale image
                 else: # found unsupported icon format
                     tools.print_debug_to_terminal('get_icon_for_executable', 'SVG icons ('+icon_path+') can not be used so far. Using a dummy icon for now')
                     new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
@@ -418,7 +430,7 @@ class MyFrame(wx.Frame):
                 new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
 
         # application button
-        self.ui__bt_selected_app.SetBitmap(new_app_icon.ConvertToBitmap())    # set icon to button
+        self.ui__bt_selected_app.SetBitmap(new_app_icon.ConvertToBitmap()) # set icon to button
         self.ui__bt_selected_app.Enable(True) # Enable the Button
 
         ## option buttons
@@ -434,7 +446,7 @@ class MyFrame(wx.Frame):
 
         ## show searchstring in parameter field
         if(self.ui__txt_selected_app.GetValue() != ''):
-            cur_searchphrase_parameter = current_search_string[3:] # remove trigger '!y ' or '!g ' or '!w '
+            cur_searchphrase_parameter = current_search_string[3:] # remove trigger - example: '!y '
             self.ui__txt_selected_parameter.SetValue(cur_searchphrase_parameter)
 
         ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
@@ -518,44 +530,47 @@ class MyFrame(wx.Frame):
         """Plugin: Internet-Search - Execute the actual internet search call"""
         tools.print_debug_to_terminal('plugin__internet_search_execute', 'starting')
 
-        if command == '!a':                             # https://www.amazon.de/s/field-keywords=foobar
+        if command == '!a': # https://www.amazon.de/s/field-keywords=foobar
             remote_url = 'https://www.amazon.de/s/field-keywords='+parameter
 
-        if command == ('!b'):                           # https://bandcamp.com/search?q=foobar
+        elif command == ('!b'): # https://bandcamp.com/search?q=foobar
             remote_url = 'https://bandcamp.com/search?q='+parameter
 
-        if command == ('!e'):                           # https://stackexchange.com/search?q=foobar
+        elif command == ('!e'): # https://stackexchange.com/search?q=foobar
             remote_url = 'https://stackexchange.com/search?q='+parameter
 
-        if command == ('!g'):                           # https://www.google.com/search?q=foobar
+        elif command == ('!g'): # https://www.google.com/search?q=foobar
             remote_url = 'https://www.google.com/search?q='+parameter
 
-        if command == ('!l'):                           # https://www.last.fm/search?q=foobar
+        elif command == ('!l'): # https://www.last.fm/search?q=foobar
             remote_url = 'https://www.last.fm/search?q='+parameter
 
-        if command == ('!m'):                           # https://www.google.de/maps/place/foobar/
+        elif command == ('!m'): # https://www.google.de/maps/place/foobar/
             remote_url = 'https://www.google.de/maps/place/'+parameter
 
-        if command == ('!o'):                           # https://stackoverflow.com/search?q=foobar
+        elif command == ('!o'): # https://stackoverflow.com/search?q=foobar
             remote_url = 'https://stackoverflow.com/search?q='+parameter
 
-        if command == ('!r'):                           # https://www.reddit.com/search?q=foobar
+        elif command == ('!r'): # https://www.reddit.com/search?q=foobar
             remote_url = 'https://www.reddit.com/search?q='+parameter
 
-        if command == ('!s'):                            # https://soundcloud.com/search?q=foobar
+        elif command == ('!s'): # https://soundcloud.com/search?q=foobar
             remote_url = 'https://soundcloud.com/search?q='+parameter
 
-        if command == ('!t'):                           # https://twitter.com/search?q=foobar
+        elif command == ('!t'): # https://twitter.com/search?q=foobar
             remote_url = 'https://twitter.com/search?q='+parameter
 
-        if command == ('!v '):                          # https://vimeo.com/search?q=foobar
+        elif command == ('!v '): # https://vimeo.com/search?q=foobar
             remote_url = 'https://vimeo.com/search?q='+parameter
 
-        if command == ('!w'):                           # https://en.wikipedia.org/w/index.php?search=foobar
+        elif command == ('!w'): # https://en.wikipedia.org/w/index.php?search=foobar
             remote_url = 'https://en.wikipedia.org/w/index.php?search='+parameter
 
-        if command == ('!y'):
-            remote_url = 'https://www.youtube.com/results?search_query='+parameter      # https://www.youtube.com/results?search_query=foobar
+        elif command == ('!y'): # https://www.youtube.com/results?search_query=foobar
+            remote_url = 'https://www.youtube.com/results?search_query='+parameter
+
+        else:
+            tools.print_debug_to_terminal('plugin__internet_search_execute', 'Error: unexpected case in "plugin__internet_search_execute"')
 
         ## for all - open the URL
         webbrowser.open(remote_url)
@@ -587,11 +602,12 @@ class MyFrame(wx.Frame):
             ## set result-count
             self.ui__txt_result_counter.SetValue('1')
 
-            ## update search command
+            ## update command (Example: !g)
             self.ui__txt_selected_app.SetValue(self.ui__search_and_result_combobox.GetValue()[:2])
 
             # Plugin Name in specific field
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name)
+
             tools.print_debug_to_terminal('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated')
 
         else:
@@ -628,16 +644,18 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
         self.ui__bt_selected_app.SetToolTipString('Open')
 
-        ## parameter buttons
-        self.ui__bt_selected_parameter.SetToolTipString('Open')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+        if(self.ui__search_and_result_combobox.GetValue()[6:] != ''):
+            ## parameter buttons
+            self.ui__bt_selected_parameter.SetToolTipString('Open')
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+            # set parameter
+            self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[6:])
 
         ## set command
         self.ui__txt_selected_app.SetValue('xdg-open')
-
-        # set parameter
-        self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[6:])
 
 
     def prepare_plugin_nautilus_goto(self):
@@ -898,16 +916,20 @@ class MyFrame(wx.Frame):
                     self.prepare_plugin_nautilus_goto()
                     return
 
-                if current_search_string == ('!recent'):
+                elif current_search_string == ('!recent'):
                     self.prepare_plugin_nautilus_show_recent()
                     return
 
-                if current_search_string == ('!trash'):
+                elif current_search_string == ('!trash'):
                     self.prepare_plugin_nautilus_open_trash()
                     return
 
-                if current_search_string == ('!network') or current_search_string == ('!net'):
+                elif current_search_string == ('!network') or current_search_string == ('!net'):
                     self.prepare_plugin_nautilus_show_network_devices()
+                    return
+
+                else:
+                    tools.print_debug_to_terminal('parse_user_search_input', 'Error: unexpected nautilus plugin command')
                     return
 
             ## Plugin: Shell
@@ -956,7 +978,8 @@ class MyFrame(wx.Frame):
 
             ## Search for local files
             #
-            if current_search_string.startswith('?'):
+            if current_search_string.startswith(constants.APP_PLUGINS_SEARCH_LOCAL_TRIGGER):
+            #if current_search_string.startswith('?'):
                 tools.print_debug_to_terminal('parse_user_search_input', 'Case: Plugin Local-Search')
                 self.search_user_files(current_search_string)
                 return
@@ -975,6 +998,10 @@ class MyFrame(wx.Frame):
         """Search for user files"""
         tools.print_debug_to_terminal('search_user_files', 'starting')
 
+        # reset combobox
+        search_results = []
+        self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
+
         ## update plugin info
         self.plugin__update_general_ui_information('Local Search')
 
@@ -984,7 +1011,7 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_app.SetToolTipString('Search local user files')
 
         ## parameter buttons
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.SetToolTipString('Search local user files')
 
@@ -993,7 +1020,6 @@ class MyFrame(wx.Frame):
 
         ## set parameter
         self.ui__txt_selected_parameter.SetValue('')
-
 
         if(len(current_search_string) > 4) and current_search_string.startswith('? '):
             current_search_string = current_search_string[2:] # get the real search term without trigger
@@ -1005,7 +1031,10 @@ class MyFrame(wx.Frame):
 
             if(len(current_search_string) > 2): # if search string is long enough
                 tools.print_debug_to_terminal('search_user_files', 'Searching local user files for the following string: '+current_search_string)
+
+                exclude = set(['.cache', '.dbus', '.dropbox', '.dropbox-dist']) # exclude list for file search in home dir
                 for root, dirs, files in os.walk(root):
+                    dirs[:] = [d for d in dirs if d not in exclude]
                     for filename in fnmatch.filter(files, pattern):
                         #print( os.path.join(root, filename))
 
@@ -1015,22 +1044,44 @@ class MyFrame(wx.Frame):
 
                 tools.print_debug_to_terminal('search_user_files', 'Got '+(str(len(search_results)))+' Results')
 
-                if(len(search_results) > 0):
+                # sort search results
+                search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
+
+                if(len(search_results) > 1):
                     # update result count
                     self.ui__txt_result_counter.SetValue(str(len(search_results)))
-                else:
+
+                    # update application button
+                    self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_files_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+
+                elif(len(search_results) == 1):
+                    # update result count
+                    self.ui__txt_result_counter.SetValue(str(len(search_results)))
+
+                    # update application button
+                    self.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_file_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
+
+                    ## parameter buttons
+                    self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+                    self.ui__txt_selected_app.SetValue('xdg-open')
+                    self.ui__txt_selected_parameter.SetValue(search_results[0])
+
+                else: # no results
                     self.ui__txt_result_counter.SetValue('')
+
+                    # update application button
+                    self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+                    self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
 
                 # update combobox
                 self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
         else:
             tools.print_debug_to_terminal('search_user_files', 'aborting search (string too short)')
-
-
-
-
-
-
+            self.ui__txt_result_counter.SetValue('')
 
 
     def search_executables(self, current_search_string):
@@ -1108,30 +1159,28 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
 
-    def launch_external_application(self):
-        """Launches the actual external process"""
+    def do_execute(self):
+        """Launches the actual task"""
         command = self.ui__txt_selected_app.GetValue()
         parameter = self.ui__txt_selected_parameter.GetValue()
 
         if(command == ''):
-            tools.print_debug_to_terminal('launch_external_application', 'Nothing to do - empty command')
+            tools.print_debug_to_terminal('do_execute', 'Nothing to do - empty command')
             return
 
-        tools.print_debug_to_terminal('launch_external_application', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
+        tools.print_debug_to_terminal('do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
 
         ## Plugin: Shell
         ##
         #if self.ui__txt_plugin_information.GetValue() == 'Plugin: Shell':
-            #command = parameter
+            #command = command +' '+ parameter
             #parameter = ''
 
-
-        ## Plugin: Local-Search
+        ## Plugin: Misoc Open
         ##
-        if self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search':
-            parameter = command
-            command = 'xdg-open'
-
+        if self.ui__txt_plugin_information.GetValue() == 'Plugin: Misc (Open)':
+            if parameter == '':
+                return
 
         ## Plugin: Internet-Search
         ##
@@ -1143,37 +1192,41 @@ class MyFrame(wx.Frame):
         ## Plugin: Session OR normal application
         ##
         if command is not None: # Check if the dropdown contains something at all or not
-            tools.print_debug_to_terminal('launch_external_application', 'Should execute: "'+command+'" with parameter: "'+parameter+'"')
+            tools.print_debug_to_terminal('do_execute', 'Should execute: "'+command+'" with parameter: "'+parameter+'"')
 
             ## check if name exists and is executable
             executable_exists = tools.cmd_exists(command)
             if executable_exists is True:
+                tools.print_debug_to_terminal('do_execute', 'Executable: "'+command+'" exists')
 
                 ## update usage-statistics
                 #
                 ## commands executed
-                tools.print_debug_to_terminal('launch_external_application', 'Updating statistics (command_executed)')
+                tools.print_debug_to_terminal('do_execute', 'Updating statistics (command_executed)')
                 current_commands_executed_count = ini.read_single_value('Statistics', 'command_executed')          # get current value from ini
                 ini.write_single_value('Statistics', 'command_executed', int(current_commands_executed_count)+1) # update ini +1
 
                 ## update plugin execution count
                 if self.ui__txt_plugin_information != '':
-                    tools.print_debug_to_terminal('launch_external_application', 'Updating statistics (plugins_executed)')
+                    tools.print_debug_to_terminal('do_execute', 'Updating statistics (plugins_executed)')
                     current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
                     ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
 
-                tools.print_debug_to_terminal('launch_external_application', 'Executable: "'+command+'" exists')
-                # https://docs.python.org/2/library/subprocess.html
-                # TODO: check: check_output - https://docs.python.org/2/library/subprocess.html#subprocess.check_output
                 if parameter == '':
                     #subprocess.Popen(["rm","-r","some.file"])
-                    
-                    # 
-                    subprocess.Popen([command])
-                    tools.print_debug_to_terminal('launch_external_application', 'Executed: "'+command+'"')
+                    #subprocess.Popen([command])
+                    p = subprocess.Popen([command], stdout=subprocess.PIPE)
+                    out, err = p.communicate()
+                    tools.print_debug_to_terminal('do_execute', 'Executed: "'+command+'"')
+
                 else:
-                    subprocess.Popen([command, parameter])
-                    tools.print_debug_to_terminal('launch_external_application', 'Executed: "'+command+'" with parameter "'+parameter+'"')
+                    #subprocess.Popen([command, parameter])
+                    p = subprocess.Popen([command, parameter], stdout=subprocess.PIPE)
+                    out, err = p.communicate()
+                    tools.print_debug_to_terminal('do_execute', 'Executed: "'+command+'" with parameter "'+parameter+'"')
+
+                tools.print_debug_to_terminal('do_execute', 'Output: "'+out+'"')
+                tools.print_debug_to_terminal('do_execute', 'Error: "'+str(err)+'"')
 
                 self.reset_ui()
 
@@ -1183,9 +1236,9 @@ class MyFrame(wx.Frame):
                     self.tbicon.execute_tray_icon_left_click()
 
             else:
-                tools.print_debug_to_terminal('launch_external_application', 'ERROR >> Checking the executable failed')
+                tools.print_debug_to_terminal('do_execute', 'ERROR >> Checking the executable failed')
         else:
-            tools.print_debug_to_terminal('launch_external_application', 'WARNING >> command is empty, aborting')
+            tools.print_debug_to_terminal('do_execute', 'WARNING >> command is empty, aborting')
 
 
     def open_app_url(self):

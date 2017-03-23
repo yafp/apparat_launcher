@@ -6,11 +6,11 @@
 # IMPORTS
 # -----------------------------------------------------------------------------------------------
 
-# General
+# built-in modules
 import os
 import ConfigParser                 # to handle .ini/configuration files
 
-# Apparat
+## project’s internal modules
 import constants
 import tools
 
@@ -21,7 +21,7 @@ import tools
 # -----------------------------------------------------------------------------------------------
 def read_single_value(section_name, key_name):
     """Method to read a single value from the configuration file apparat.ini"""
-    check_if_ini_file_exists()
+    check_if_ini_exists()
     tools.print_debug_to_terminal('read_single_value', 'starting')
     config = ConfigParser.ConfigParser()
     config.read(constants.APP_INI_PATH)
@@ -48,7 +48,7 @@ def read_single_value(section_name, key_name):
 
 def write_single_value(section_name, key_name, value):
     """Method to write a single value to the configuration file apparat.ini"""
-    check_if_ini_file_exists()
+    check_if_ini_exists()
     tools.print_debug_to_terminal('write_single_value', 'starting')
     config = ConfigParser.ConfigParser()
     config.read(constants.APP_INI_PATH)
@@ -60,21 +60,21 @@ def write_single_value(section_name, key_name, value):
         config.write(configfile)
 
 
-def check_if_ini_file_exists():
+def check_if_ini_exists():
     """Method to check if an ini file exists - and generate it if it doesnt"""
-    tools.print_debug_to_terminal('check_if_ini_file_exists', 'starting')
+    tools.print_debug_to_terminal('check_if_ini_exists', 'starting')
 
     ## check if config folder exists - if not create it
     if not os.path.exists(constants.APP_INI_FOLDER):
-        tools.print_debug_to_terminal('check_if_ini_file_exists', 'Creating config folder')
+        tools.print_debug_to_terminal('check_if_ini_exists', 'Creating config folder')
         os.makedirs(constants.APP_INI_FOLDER)
 
     ## check if config file exists
     if os.path.isfile(constants.APP_INI_PATH):
-        tools.print_debug_to_terminal('check_if_ini_file_exists', 'Found ini file')
+        tools.print_debug_to_terminal('check_if_ini_exists', 'Found ini file')
     else:
-        tools.print_debug_to_terminal('check_if_ini_file_exists', 'No ini file found')
-        tools.print_debug_to_terminal('check_if_ini_file_exists', 'Creating default ini file')
+        tools.print_debug_to_terminal('check_if_ini_exists', 'No ini file found')
+        tools.print_debug_to_terminal('check_if_ini_exists', 'Creating default ini file')
         mode = 'a' if os.path.exists(constants.APP_INI_PATH) else 'w'
         with open(constants.APP_INI_PATH, mode) as f:
             f.write('[Language]\n')
@@ -85,7 +85,8 @@ def check_if_ini_file_exists():
             f.write('apparat_started = 0\n')
             f.write('command_executed = 0\n')
             f.write('plugin_executed = 0\n')
-        tools.print_debug_to_terminal('check_if_ini_file_exists', 'Finished ini file creation')
+        tools.print_debug_to_terminal('check_if_ini_exists', 'Finished ini file creation')
+    tools.print_debug_to_terminal('check_if_ini_exists', 'finished')
 
 
 def validate():
