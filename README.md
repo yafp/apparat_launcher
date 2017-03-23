@@ -8,20 +8,20 @@ apparat
 
 ## Table of Contents
 
-  * [Description](##Description)
-  * [Screenshot](##Screenshot)
+  * [Description](#description)
+  * [Screenshot](#Screenshot)
   * [Installation](#Installation)
-    * [Requirements](####Requirements)
-  * [Usage](##Usage)
-    * [Parameter](####Parameter)
-    * [Hotkey](####Hotkey)
-  * [Plugins](##Plugins)
-  * [Contributing](##Contributing)
-  * [Credits](##Credits)
-  * [License](##License)
+    * [Requirements](#Requirements)
+  * [Usage](#Usage)
+    * [Parameter](#Parameter)
+    * [Hotkey](#Hotkey)
+  * [Plugins](#Plugins)
+  * [Contributing](#Contributing)
+  * [Credits](#Credits)
+  * [License](#License)
 
 
-## Description
+## <a name="description">Description
 
 __apparat__ is an application launcher for linux. It is developed and tested for Gnome Desktop environments.
 
@@ -39,7 +39,8 @@ There is no installation routine so far
 - gtk
 
 ## Usage
-Simply run: ```
+Simply run:
+```
 ./apparat.py
 ```
 
