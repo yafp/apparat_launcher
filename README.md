@@ -9,16 +9,21 @@ apparat
 ## Table of Contents
 
   * [Description](#description)
-  * [Screenshot](#Screenshot)
-  * [Installation](#Installation)
-    * [Requirements](#Requirements)
-  * [Usage](#Usage)
-    * [Parameter](#Parameter)
-    * [Hotkey](#Hotkey)
-  * [Plugins](#Plugins)
-  * [Contributing](#Contributing)
-  * [Credits](#Credits)
-  * [License](#License)
+  * [Screenshot](#screenshot)
+  * [Installation](#installation)
+    * [Requirements](rRequirements)
+  * [Usage](#usage)
+    * [Parameter](#parameter)
+    * [Hotkey](#hotkey)
+  * [Plugins](#plugins)
+    * [Local-Search](#local-search)
+    * [Internet-Search](#internet-search)
+    * [Nautilus](#nautilus)
+    * [Session](#session)
+    * [Misc](#misc)
+  * [Contributing](#contributing)
+  * [Credits](#credits)
+  * [License](#license)
 
 
 ## <a name="description">Description
@@ -26,26 +31,26 @@ apparat
 __apparat__ is an application launcher for linux. It is developed and tested for Gnome Desktop environments.
 
 
-## Screenshot
+## <a name="screenshot">Screenshot
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshot_ui.png)
 
 
-## Installation
+## <a name="installation">Installation
 There is no installation routine so far
 
-#### Requirements
+#### <a name="requirements">Requirements
 - python2
 - python-wxtools
 - gtk
 
-## Usage
+## <a name="usage">Usage
 Simply run:
 ```
 ./apparat.py
 ```
 
 
-#### Parameter
+#### <a name="parameter">Parameter
 The following command line parameters are available:
 
 | Parameter     | Alias          | Function            |
@@ -55,7 +60,7 @@ The following command line parameters are available:
 | ```-v```      | ```--version```| Show version        |
 
 
-#### Hotkey
+#### <a name="hotkey">Hotkey
 If you want to use a global hotkey to trigger ```apparat``` consider using ```apparatHotkeyHelper.sh```. Define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
 
 Gnome:
@@ -67,13 +72,13 @@ Gnome:
 
 More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en).
 
-## Plugins
-#### Search local
+## <a name="plugins">Plugins
+#### <a name="local-search">Local-Search
 | Trigger          | Alias         | Parameter      | Function                      |
 | ---------------- |:--------------| :--------------|:----------------------------- |
 | ```?```          |               | searchstring   | Filesearch for home directory |
 
-#### Internet Search
+#### <a name="internet-search">Internet-Search
 | Trigger          | Alias         | Parameter      | Function       |
 | ---------------- |:--------------| :--------------|:-------------- |
 | ```!a```         |               | _searchstring_ | Amazon         |
@@ -91,7 +96,7 @@ More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-
 | ```!y```         |               | _searchstring_ | YouTube        |
 
 
-#### Nautilus
+#### <a name="nautilus">Nautilus
 | Trigger          | Alias          | Parameter           | Function                         |
 | ---------------- |:-------------- | :-------------------|:---------------------------------|
 | ```!goto```      |                | _path_              | Open directory in nautilus       |
@@ -100,7 +105,7 @@ More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-
 | ```!trash```     |                |                     | Show trash in nautilus           |
 
 
-#### Session
+#### <a name="session">Session
 | Trigger          | Alias          | Function                    |
 | ---------------- |:-------------- | :---------------------------|
 | ```!hibernate``` | ```!sleep```   | hibernate the machine       |
@@ -110,18 +115,18 @@ More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-
 | ```!shutdown```  | ```!halt```    | shutdown the machine        |
 
 
-#### Misc
+#### <a name="misc">Misc
 | Trigger          | Alias          | Parameter           | Function                         |
 | ---------------- |:-------------- | :-------------------|:---------------------------------|
 | ```!open```      |                | path                | Open using default application   |
 
 
-## Contributing
+## <a name="contributing">Contributing
 Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
 
 
-## Credits
+## <a name="credits">Credits
 * Icons via [Font Awesome](http://fontawesome.io) (Color: #7f8c8d)
 
-## License
+## <a name="license">License
 [![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](LICENSE)
