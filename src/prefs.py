@@ -8,7 +8,7 @@
 ## built-in modules
 import wx
 
-## project’s internal modules
+## projects internal modules
 import config
 import constants
 import ini

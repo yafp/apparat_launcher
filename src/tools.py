@@ -11,7 +11,7 @@ import os
 import subprocess                   # for checking if cmd_exists
 import sys
 
-## project’s internal modules
+## projects internal modules
 import constants
 import config
 

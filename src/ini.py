@@ -10,7 +10,7 @@
 import os
 import ConfigParser                 # to handle .ini/configuration files
 
-## project’s internal modules
+## projects internal modules
 import constants
 import tools
 
