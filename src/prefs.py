@@ -9,7 +9,6 @@
 import wx
 
 ## projects internal modules
-import config
 import constants
 import ini
 import tools
