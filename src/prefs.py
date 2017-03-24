@@ -36,13 +36,11 @@ class PreferenceWindow(wx.Frame):
         tab1 = UITabGeneral(nb)
         tab2 = UITabStatistics(nb)
         tab3 = UITabPluginCommands(nb)
-        tab4 = UITabAbout(nb)
 
         ## Add the windows to tabs and name them.
         nb.AddPage(tab1, "General ")
         nb.AddPage(tab2, "Statistics ")
         nb.AddPage(tab3, "Plugin Commands ")
-        nb.AddPage(tab4, "About ")
 
         ## Set noteboook in a sizer to create the layout
         sizer = wx.BoxSizer()
@@ -148,82 +146,48 @@ class UITabPluginCommands(wx.Panel):
         FONT_BIG = wx.Font(18, wx.DECORATIVE, wx.NORMAL, wx.BOLD) # family, style, weight
         FONT_NORMAL_MONO = wx.Font(10, wx.FONTFAMILY_MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
 
-        h1_plugin_session = wx.StaticText(self, -1, "Session", (20, 20))
-        h1_plugin_session.SetFont(FONT_BIG)
+        # Plugin: Internet search
+        plugin_internet_search_headline = wx.StaticText(self, -1, "Internet-Search", (20, 100))
+        plugin_internet_search_headline.SetFont(FONT_BIG)
+        plugin_internet_search_details = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
+        plugin_internet_search_details.SetFont(FONT_NORMAL_MONO)
 
-        plugin_session_cmd_list = wx.StaticText(self, -1, "!lock      = Lock session\n!logout    = Logout session\n!shutdown  = Shutdown machine\n!hibernate = Hibernate machine\n!reboot    = Reboot machine", (20, 60))
-        plugin_session_cmd_list.SetFont(FONT_NORMAL_MONO)
+        # Plugin: Nautilus
+        plugin_nautilus_headline = wx.StaticText(self, -1, "Nautilus", (20, 20))
+        plugin_nautilus_headline.SetFont(FONT_BIG)
+        plugin_nautilus_details = wx.StaticText(self, -1, "!network = Show network devices in nautilus\n!goto    = Open custom path in nautilus\n!recent  = Show recent files in nautilus\n!trash   = Show trash in nautilus", (20, 60))
+        plugin_nautilus_details.SetFont(FONT_NORMAL_MONO)
 
-        h1_plugin_internet_search = wx.StaticText(self, -1, "Internet-Search", (20, 100))
-        h1_plugin_internet_search.SetFont(FONT_BIG)
+        # Plugin: Session
+        plugin_session_headline = wx.StaticText(self, -1, "Session", (20, 20))
+        plugin_session_headline.SetFont(FONT_BIG)
+        plugin_session_details = wx.StaticText(self, -1, "!lock      = Lock session\n!logout    = Logout session\n!shutdown  = Shutdown machine\n!hibernate = Hibernate machine\n!reboot    = Reboot machine", (20, 60))
+        plugin_session_details.SetFont(FONT_NORMAL_MONO)
 
-        plugin_internet_search_cmd_list = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
-        plugin_internet_search_cmd_list.SetFont(FONT_NORMAL_MONO)
+        # Lines
+        line1 = wx.StaticLine(self, -1, (25, 50), (600, 1))
+        line2 = wx.StaticLine(self, -1, (25, 50), (600, 1))
 
-        h1_plugin_nautilus = wx.StaticText(self, -1, "Nautilus", (20, 20))
-        h1_plugin_nautilus.SetFont(FONT_BIG)
-
-        plugin_nautilus_cmd_list = wx.StaticText(self, -1, "!network = Show network devices in nautilus\n!goto    = Open custom path in nautilus\n!recent  = Show recent files in nautilus\n!trash   = Show trash in nautilus", (20, 60))
-        plugin_nautilus_cmd_list.SetFont(FONT_NORMAL_MONO)
-
+        ## Layout
+        #
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         pref_sizer.AddSpacer(10)
-        pref_sizer.Add(h1_plugin_internet_search, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_internet_search_cmd_list, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(10)
-        pref_sizer.Add(h1_plugin_nautilus, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_nautilus_cmd_list, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(10)
-        pref_sizer.Add(h1_plugin_session, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_session_cmd_list, 0, wx.ALL, border=10)
+        # Internet search
+        pref_sizer.Add(plugin_internet_search_headline, 0, wx.ALL, border=10)
+        pref_sizer.Add(plugin_internet_search_details, 0, wx.ALL, border=10)
+        # Spacer
+        pref_sizer.AddSpacer(5)
+        pref_sizer.Add(line1, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(5)
+        # Nautilus
+        pref_sizer.Add(plugin_nautilus_headline, 0, wx.ALL, border=10)
+        pref_sizer.Add(plugin_nautilus_details, 0, wx.ALL, border=10)
+        # Spacer
+        pref_sizer.AddSpacer(5)
+        pref_sizer.Add(line2, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(5)
+        # Session
+        pref_sizer.Add(plugin_session_headline, 0, wx.ALL, border=10)
+        pref_sizer.Add(plugin_session_details, 0, wx.ALL, border=10)
+
         self.SetSizer(pref_sizer)
-
-
-
-class UITabAbout(wx.Panel):
-
-    """Preference Window - Tab: About"""
-
-    def __init__(self, parent):
-        """Inits the About Tab"""
-        wx.Panel.__init__(self, parent)
-
-        FONT_BIG = wx.Font(18, wx.DECORATIVE, wx.NORMAL, wx.BOLD) # family, style, weight
-        FONT_NORMAL_MONO = wx.Font(10, wx.FONTFAMILY_MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
-
-        about_app_icon = wx.Bitmap('gfx/core/bt_appIcon_128.png', wx.BITMAP_TYPE_BMP)
-        about_app_icon_static = wx.StaticBitmap(self, -1, about_app_icon)
-
-        about_app_name = wx.StaticText(self, -1, constants.APP_NAME, (20, 20))
-        about_app_name.SetFont(FONT_BIG)
-
-        about_app_description = wx.StaticText(self, -1, "An application launcher for Linux", (20, 20))
-        about_app_description.SetFont(FONT_NORMAL_MONO)
-
-        about_app_version = wx.StaticText(self, -1, "Version: "+config.APP_VERSION, (20, 60))
-        about_app_version.SetFont(FONT_NORMAL_MONO)
-
-        about_app_license = wx.StaticText(self, -1, "License: "+constants.APP_LICENSE, (20, 80))
-        about_app_license.SetFont(FONT_NORMAL_MONO)
-
-        about_app_github_icon = wx.Bitmap('gfx/core/bt_github_32.png', wx.BITMAP_TYPE_BMP)
-        about_app_github_icon_static = wx.StaticBitmap(self, -1, about_app_github_icon)
-
-        about_app_url = wx.HyperlinkCtrl(self, id=-1, label=constants.APP_URL, url=constants.APP_URL, pos=(20, 140))
-        about_app_url.SetFont(FONT_NORMAL_MONO)
-
-        pref_about_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
-        pref_about_sizer.AddSpacer(20)
-        pref_about_sizer.Add(about_app_icon_static, flag=wx.ALIGN_CENTER)
-        pref_about_sizer.AddSpacer(10)
-        pref_about_sizer.Add(about_app_name, 0, wx.ALIGN_CENTER)
-        pref_about_sizer.AddSpacer(20)
-        pref_about_sizer.Add(about_app_description, 0, wx.ALIGN_CENTER)
-        pref_about_sizer.AddSpacer(20)
-        pref_about_sizer.Add(about_app_version, 0, wx.ALIGN_CENTER)
-        pref_about_sizer.AddSpacer(20)
-        pref_about_sizer.Add(about_app_license, 0, wx.ALIGN_CENTER)
-        pref_about_sizer.AddSpacer(80)
-        pref_about_sizer.Add(about_app_github_icon_static, 0, wx.ALIGN_CENTER)
-        pref_about_sizer.Add(about_app_url, 0, wx.ALIGN_CENTER)
-        self.SetSizer(pref_about_sizer)
