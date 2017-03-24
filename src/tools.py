@@ -29,12 +29,15 @@ def cmd_exists(cmd):
 
 def check_arguments():
     """Checks if apparat was started with arguments or not"""
+    print_debug_to_terminal('check_arguments', 'starting')
     # TODO: check getopt
     global DEBUG
     if len(sys.argv) > 2: # too much arguments
         print('Error: Unsupported amount of parameters')
-        
-    elif len(sys.argv) < 2: # no user argument available
+        show_help()
+        sys.exit()
+
+    elif len(sys.argv) == 1: # no user argument available
         DEBUG = False
 
     elif (sys.argv[1] in ("-d", "--debug")):
@@ -53,6 +56,8 @@ def check_arguments():
         show_help()
         sys.exit()
 
+    print_debug_to_terminal('check_arguments', 'finished')
+
 
 
 def print_debug_to_terminal(source, message):
@@ -65,6 +70,7 @@ def print_debug_to_terminal(source, message):
 
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
+    print_debug_to_terminal('check_linux_requirements', 'starting')
     ## needed for session commands:
     # - gnome-screensaver-command
     # - gnome-session-quit
@@ -91,18 +97,20 @@ def check_linux_requirements():
         print('Error: xdotool is missing')
         sys.exit()
 
+    print_debug_to_terminal('check_linux_requirements', 'finished')
+
 
 
 def which(program):
     """Method to check if executable exists"""
-    print_debug_to_terminal('which', program)
+    print_debug_to_terminal('which', 'starting')
     def is_exe(fpath):
         """foo"""
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
     fpath, fname = os.path.split(program)
-    print_debug_to_terminal('which', fpath)
-    print_debug_to_terminal('which', fname)
+    print_debug_to_terminal('which', 'fpath: '+fpath)
+    print_debug_to_terminal('which', 'fname: '+fname)
     if fpath:
         if is_exe(program):
             return program
@@ -112,6 +120,7 @@ def which(program):
             exe_file = os.path.join(path, program)
             if is_exe(exe_file):
                 return exe_file
+    print_debug_to_terminal('which', 'finished')
     return None
 
 
