@@ -80,10 +80,16 @@ class MyFrame(wx.Frame):
         # ------------------------------------------------
         # Define UI Elements
         # ------------------------------------------------
+        # Some general bitmaps which might be needed for some button states
+        self.ui_bt_img_search = wx.Bitmap('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_BMP)
+        self.ui_bt_img_blank = wx.Bitmap('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_BMP)
 
         ## Preference button
         self.ui__bt_prefs_img = wx.Bitmap('gfx/core/bt_prefs_16.png', wx.BITMAP_TYPE_BMP)
+        self.ui__bt_prefs_img_focus = wx.Bitmap('gfx/core/bt_prefs_16_black.png', wx.BITMAP_TYPE_BMP) # #c0392b
         self.ui__bt_prefs = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_prefs_img, size=(self.ui__bt_prefs_img.GetWidth()+10, self.ui__bt_prefs_img.GetHeight()+10))
+        self.ui__bt_prefs.SetBitmapFocus(self.ui__bt_prefs_img_focus)
+        self.ui__bt_prefs.SetBitmapHover(self.ui__bt_prefs_img_focus)
         self.ui__bt_prefs.SetLabel('Preferences')
         self.ui__bt_prefs.SetToolTipString(u'Preferences')
 
@@ -95,19 +101,31 @@ class MyFrame(wx.Frame):
         self.ui__txt_result_counter.SetMaxSize(wx.Size(50, 50))
         self.ui__txt_result_counter.SetEditable(False)
         self.ui__txt_result_counter.Enable(False)
+        self.ui__txt_result_counter.SetValue('0')
 
         ## Search & Results as comboBox
         search_results = []
         combo_box_style = wx.TE_PROCESS_ENTER
-        self.ui__search_and_result_combobox = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
-        self.ui__search_and_result_combobox.SetFont(wx.Font(24, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        self.ui__cb_search = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
+        self.ui__cb_search.SetFont(wx.Font(24, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         # TODO: check if wx.ComboCtrl is better
+
+        ## Plugin Information
+        self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
+        self.ui__txt_plugin_information.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        self.ui__txt_plugin_information.SetMinSize(wx.Size(600, 15))
+        self.ui__txt_plugin_information.SetMaxSize(wx.Size(600, 15))
+        self.ui__txt_plugin_information.Enable(False)
+        self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## app button
         self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_app = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_selected_app.SetBitmapFocus(wx.NullBitmap)
         self.ui__bt_selected_app.SetBitmapHover(wx.NullBitmap)
+        self.ui__bt_selected_app.SetBitmapDisabled(self.ui_bt_img_search)
+        #self.ui__bt_selected_app.SetBitmapSelected(wx.NullBitmap)
+        #
         self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
         self.ui__bt_selected_app.SetLabel('Applications')
         self.ui__bt_selected_app.Enable(False)
@@ -117,39 +135,29 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_selected_parameter.SetBitmapFocus(wx.NullBitmap) # image when in focus
         self.ui__bt_selected_parameter.SetBitmapHover(wx.NullBitmap) # image on hover
+        self.ui__bt_selected_parameter.SetBitmapDisabled(self.ui_bt_img_blank)
+        #
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.SetLabel('Options')
         self.ui__bt_selected_parameter.Enable(False)
 
         ## app text
         self.ui__txt_selected_app = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
-        self.ui__txt_selected_app.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        self.ui__txt_selected_app.SetFont(wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_selected_app.SetToolTipString(u'Command')
-        self.ui__txt_selected_app.SetMinSize(wx.Size(300, 15))
-        self.ui__txt_selected_app.SetMaxSize(wx.Size(300, 15))
-        self.ui__txt_selected_app.SetEditable(False)
+        self.ui__txt_selected_app.SetMinSize(wx.Size(300, 18))
+        self.ui__txt_selected_app.SetMaxSize(wx.Size(300, 18))
         self.ui__txt_selected_app.Enable(False)
         self.ui__txt_selected_app.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## parameter text
         self.ui__txt_selected_parameter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
-        self.ui__txt_selected_parameter.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        self.ui__txt_selected_parameter.SetFont(wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_selected_parameter.SetToolTipString(u'Parameter')
-        self.ui__txt_selected_parameter.SetMinSize(wx.Size(300, 15))
-        self.ui__txt_selected_parameter.SetMaxSize(wx.Size(300, 15))
-        self.ui__txt_selected_parameter.SetEditable(False)
+        self.ui__txt_selected_parameter.SetMinSize(wx.Size(300, 18))
+        self.ui__txt_selected_parameter.SetMaxSize(wx.Size(300, 18))
         self.ui__txt_selected_parameter.Enable(False)
         self.ui__txt_selected_parameter.SetBackgroundColour(wx.Colour(237, 237, 237))
-
-        ## Plugin Information
-        self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
-        self.ui__txt_plugin_information.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
-        self.ui__txt_plugin_information.SetToolTipString(u'Activated plugin')
-        self.ui__txt_plugin_information.SetMinSize(wx.Size(600, 15))
-        self.ui__txt_plugin_information.SetMaxSize(wx.Size(600, 15))
-        self.ui__txt_plugin_information.SetEditable(False)
-        self.ui__txt_plugin_information.Enable(False)
-        self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## Version Information
         self.ui__txt_version_information = wx.StaticText(self, wx.ID_ANY, ' v'+config.APP_VERSION, wx.DefaultPosition, wx.DefaultSize, 0)
@@ -164,13 +172,16 @@ class MyFrame(wx.Frame):
         b_sizer = wx.BoxSizer(wx.VERTICAL)                              # define layout container
 
         b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100) # preferences icon button
-        b_sizer.AddSpacer(10)
+        b_sizer.AddSpacer(5)
 
         # horizontal sub-item 1
         box1 = wx.BoxSizer(wx.HORIZONTAL)
         box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE) # result counter
-        box1.Add(self.ui__search_and_result_combobox, 0, wx.CENTRE) # combobox
+        box1.Add(self.ui__cb_search, 0, wx.CENTRE) # combobox
         b_sizer.Add(box1, 0, wx.CENTRE)
+        b_sizer.AddSpacer(5)
+
+        b_sizer.Add(self.ui__txt_plugin_information, 0, wx.CENTRE) # plugin info
         b_sizer.AddSpacer(5)
 
         # horizontal sub-item 2
@@ -185,7 +196,6 @@ class MyFrame(wx.Frame):
         box3.Add(self.ui__txt_selected_parameter, 0, wx.CENTRE) # parameter
         b_sizer.Add(box3, 0, wx.CENTRE)
 
-        b_sizer.Add(self.ui__txt_plugin_information, 0, wx.CENTRE) # plugin info
         b_sizer.AddSpacer(10)
 
         b_sizer.Add(self.ui__txt_version_information, 0, wx.CENTRE) # version
@@ -198,12 +208,12 @@ class MyFrame(wx.Frame):
         self.ui__bt_prefs.Bind(wx.EVT_BUTTON, self.on_clicked)
 
         ## combobox
-        self.ui__search_and_result_combobox.Bind(wx.EVT_KEY_UP, self.on_combobox_key_press)                 # Pressed any key
-        self.ui__search_and_result_combobox.Bind(wx.EVT_TEXT, self.on_combobox_text_changed)                # combobox text changes.
-        self.ui__search_and_result_combobox.Bind(wx.EVT_TEXT_ENTER, self.on_combobox_enter)                 # Pressed Enter
-        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX, self.on_combobox_select_item)             # Item selected
-        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.on_combobox_popup_open)     # Popup opened
-        self.ui__search_and_result_combobox.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combobox_popup_close)     # Popup closed
+        self.ui__cb_search.Bind(wx.EVT_KEY_UP, self.on_combobox_key_press)                 # Pressed any key
+        self.ui__cb_search.Bind(wx.EVT_TEXT, self.on_combobox_text_changed)                # combobox text changes.
+        self.ui__cb_search.Bind(wx.EVT_TEXT_ENTER, self.on_combobox_enter)                 # Pressed Enter
+        self.ui__cb_search.Bind(wx.EVT_COMBOBOX, self.on_combobox_select_item)             # Item selected
+        self.ui__cb_search.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.on_combobox_popup_open)     # Popup opened
+        self.ui__cb_search.Bind(wx.EVT_COMBOBOX_CLOSEUP, self.on_combobox_popup_close)     # Popup closed
 
         ## parameter button
         self.ui__bt_selected_parameter.Bind(wx.EVT_BUTTON, self.on_clicked_option_button)
@@ -218,7 +228,7 @@ class MyFrame(wx.Frame):
         # show the UI
         # ------------------------------------------------
         self.SetTransparent(config.TRANSPARENCY_VALUE)       # 0-255
-        self.ui__search_and_result_combobox.SetFocus()     # set focus to search
+        self.ui__cb_search.SetFocus()     # set focus to search
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
 
@@ -236,8 +246,8 @@ class MyFrame(wx.Frame):
         """On Key Down in main ui"""
         tools.print_debug_to_terminal('OnKeyDown', 'starting with event: '+str(event))
         tools.print_debug_to_terminal('OnKeyDown', 'Currently focus is at: '+str(self.FindFocus()))
-        self.ui__search_and_result_combobox.SetFocus() # set focus to search
-        self.ui__search_and_result_combobox.SetInsertionPointEnd() # set cursor to end of string
+        self.ui__cb_search.SetFocus() # set focus to search
+        self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
         tools.print_debug_to_terminal('OnKeyDown', 'Set focus back to search.')
 
 
@@ -255,6 +265,7 @@ class MyFrame(wx.Frame):
         """If the launch option button was clicked"""
         tools.print_debug_to_terminal('on_clicked_option_button', 'starting with event: '+str(event))
         self.do_execute()
+        self.ui__cb_search.SetFocus()
 
 
     def on_clicked(self, event):
@@ -279,10 +290,10 @@ class MyFrame(wx.Frame):
         """Triggered if the combobox text changes"""
         tools.print_debug_to_terminal('on_combobox_text_changed', 'starting with event:'+str(event))
 
-        if self.ui__search_and_result_combobox.GetValue() == '': #searchstring is empty
+        if self.ui__cb_search.GetValue() == '': #searchstring is empty
             tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: <empty>. Nothing do to')
         else:
-            tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: '+self.ui__search_and_result_combobox.GetValue())
+            tools.print_debug_to_terminal('on_combobox_text_changed', 'Searchstring: '+self.ui__cb_search.GetValue())
             global is_resetted
             is_resetted = False
 
@@ -291,7 +302,7 @@ class MyFrame(wx.Frame):
         """Triggered if Enter was pressed in combobox"""
         tools.print_debug_to_terminal('on_combobox_enter', 'starting with event: '+str(event))
 
-        if len(self.ui__search_and_result_combobox.GetValue()) > 0:
+        if len(self.ui__cb_search.GetValue()) > 0:
             global is_resetted
             is_resetted = False
 
@@ -304,7 +315,7 @@ class MyFrame(wx.Frame):
                 is_combobox_open = 0    # global var to keep track if dropdown is open or closed
 
                 ## run search again after selecting the desired search string from dropdown
-                self.parse_user_search_input(self.ui__search_and_result_combobox.GetValue())
+                self.parse_user_search_input(self.ui__cb_search.GetValue())
         else:
             tools.print_debug_to_terminal('on_combobox_enter', 'Combobox is empty, nothing to do here.')
 
@@ -312,11 +323,11 @@ class MyFrame(wx.Frame):
     def on_combobox_select_item(self, event):
         """If an item of the result-list was selected"""
         tools.print_debug_to_terminal('on_combobox_select_item', 'starting with event: '+str(event))
-        self.ui__txt_selected_app.SetValue(self.ui__search_and_result_combobox.GetValue())   # write command to command text field
-        self.ui__search_and_result_combobox.SetInsertionPointEnd() # set cursor to end of string
+        self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue())   # write command to command text field
+        self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
         ##
-        ##self.parse_user_search_input(self.ui__search_and_result_combobox.GetValue()) ## run search again after selecting the desired search string from dropdown
-        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
+        ##self.parse_user_search_input(self.ui__cb_search.GetValue()) ## run search again after selecting the desired search string from dropdown
+        self.get_icon_for_executable(self.ui__cb_search.GetValue()) # get icon for selected executable
         tools.print_debug_to_terminal('on_combobox_select_item', 'finished')
 
 
@@ -328,7 +339,7 @@ class MyFrame(wx.Frame):
         is_combobox_open = True
 
         # select the first item from list
-        #self.ui__search_and_result_combobox.SetSelection(0) # is default
+        #self.ui__cb_search.SetSelection(0) # is default
         subprocess.Popen(["xdotool", "key", "Down"]) # simulate key press to highlight the choosen value as well
         tools.print_debug_to_terminal('on_combobox_popup_open', 'finished')
 
@@ -338,7 +349,7 @@ class MyFrame(wx.Frame):
         """If the popup of the combobox is closed"""
         tools.print_debug_to_terminal('on_combobox_popup_close', 'starting with event: '+str(event))
         tools.print_debug_to_terminal('on_combobox_popup_close', 'combobox just got closed')
-        self.get_icon_for_executable(self.ui__search_and_result_combobox.GetValue()) # get icon for selected executable
+        self.get_icon_for_executable(self.ui__cb_search.GetValue()) # get icon for selected executable
         global is_combobox_open
         is_combobox_open = False
         tools.print_debug_to_terminal('on_combobox_popup_close', 'finished')
@@ -363,8 +374,8 @@ class MyFrame(wx.Frame):
 
         elif current_keycode == 317:    # Arrow Down
             tools.print_debug_to_terminal('on_combobox_key_press', 'ARROW DOWN in combobox')
-            if(self.ui__txt_result_counter.GetValue() != ''):
-                self.ui__search_and_result_combobox.Popup()
+            if(self.ui__txt_result_counter.GetValue() != '0'):
+                self.ui__cb_search.Popup()
                 tools.print_debug_to_terminal('on_combobox_key_press', 'Opening dropdown')
                 is_combobox_open = 1
             else:
@@ -374,10 +385,11 @@ class MyFrame(wx.Frame):
 
         elif current_keycode == 13: # Enter
             tools.print_debug_to_terminal('on_combobox_key_press', 'ENTER was pressed - ignoring it because of "on_combobox_enter"')
+            self.parse_user_search_input(self.ui__cb_search.GetValue())
             is_combobox_open = 0
 
         else:
-            current_search_string = self.ui__search_and_result_combobox.GetValue()
+            current_search_string = self.ui__cb_search.GetValue()
             if len(current_search_string) == 0:
                 tools.print_debug_to_terminal('on_combobox_key_press', 'Searchstring: <empty>. Nothing do to')
                 self.reset_ui()
@@ -603,7 +615,7 @@ class MyFrame(wx.Frame):
             self.ui__txt_result_counter.SetValue('1')
 
             ## update command (Example: !g)
-            self.ui__txt_selected_app.SetValue(self.ui__search_and_result_combobox.GetValue()[:2])
+            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue()[:2])
 
             # Plugin Name in specific field
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name)
@@ -623,7 +635,7 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter.Enable(False) # Enable option button
 
             ## set result-count
-            self.ui__txt_result_counter.SetValue('')
+            self.ui__txt_result_counter.SetValue('0')
 
             # Plugin Name in specific field
             self.ui__txt_plugin_information.SetValue(plugin_name)
@@ -634,7 +646,7 @@ class MyFrame(wx.Frame):
 
     def prepare_plugin_misc_open(self):
         """Plugin Misc - Open"""
-        tools.print_debug_to_terminal('sprepare_plugin_misc_open', 'starting')
+        tools.print_debug_to_terminal('prepare_plugin_misc_open', 'starting')
 
         ## update plugin info
         self.plugin__update_general_ui_information('Misc (Open)')
@@ -645,14 +657,14 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_app.SetToolTipString('Open')
 
 
-        if(self.ui__search_and_result_combobox.GetValue()[6:] != ''):
+        if(self.ui__cb_search.GetValue()[6:] != ''):
             ## parameter buttons
             self.ui__bt_selected_parameter.SetToolTipString('Open')
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_play_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
             # set parameter
-            self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[6:])
+            self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[6:])
 
         ## set command
         self.ui__txt_selected_app.SetValue('xdg-open')
@@ -679,7 +691,7 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_app.SetValue('nautilus')
 
         # set parameter
-        self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[6:])
+        self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[6:])
 
 
     def prepare_plugin_nautilus_show_network_devices(self):
@@ -773,7 +785,7 @@ class MyFrame(wx.Frame):
         ## set command and parameter
         ## http://askubuntu.com/questions/484993/run-command-on-anothernew-terminal-window
         self.ui__txt_selected_app.SetValue('xterm')
-        self.ui__txt_selected_parameter.SetValue(self.ui__search_and_result_combobox.GetValue()[4:])
+        self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[4:])
 
 
     def prepare_plugin_session_lock(self):
@@ -1000,7 +1012,7 @@ class MyFrame(wx.Frame):
 
         # reset combobox
         search_results = []
-        self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
+        self.ui__cb_search.SetItems(search_results) # update combobox
 
         ## update plugin info
         self.plugin__update_general_ui_information('Local Search')
@@ -1032,7 +1044,7 @@ class MyFrame(wx.Frame):
             if(len(current_search_string) > 2): # if search string is long enough
                 tools.print_debug_to_terminal('search_user_files', 'Searching local user files for the following string: '+current_search_string)
 
-                exclude = set(['.cache', '.dbus', '.dropbox', '.dropbox-dist']) # exclude list for file search in home dir
+                exclude = set(['.cache', '.dbus', '.dropbox', '.dropbox-dist', '.local/share/Trash']) # exclude list for file search in home dir
                 for root, dirs, files in os.walk(root):
                     dirs[:] = [d for d in dirs if d not in exclude]
                     for filename in fnmatch.filter(files, pattern):
@@ -1071,17 +1083,20 @@ class MyFrame(wx.Frame):
                     self.ui__txt_selected_parameter.SetValue(search_results[0])
 
                 else: # no results
-                    self.ui__txt_result_counter.SetValue('')
+                    self.ui__txt_result_counter.SetValue('0')
 
                     # update application button
                     self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
                     self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
 
                 # update combobox
-                self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
+                self.ui__cb_search.SetItems(search_results) # update combobox
         else:
             tools.print_debug_to_terminal('search_user_files', 'aborting search (string too short)')
-            self.ui__txt_result_counter.SetValue('')
+            self.ui__txt_result_counter.SetValue('0')
+
+
+
 
 
     def search_executables(self, current_search_string):
@@ -1095,11 +1110,12 @@ class MyFrame(wx.Frame):
         search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
 
         self.ui__txt_result_counter.SetValue(str(len(search_results))) # update result count
-        self.ui__search_and_result_combobox.SetItems(search_results) # update combobox
+        self.ui__cb_search.SetItems(search_results) # update combobox
 
         tools.print_debug_to_terminal('search_executables', 'Found '+str(len(search_results))+' matching application')
         if len(search_results) == 0: # 0 result
             ## update launch button icon
+            self.ui__bt_selected_app.Enable(True)
             if current_search_string.startswith('!'): # starting input for plugins
                 self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             else: # no result - so sad
@@ -1117,8 +1133,13 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
         elif len(search_results) == 1: # 1 result
-            # combobox - autocomplete
-            #self.ui__search_and_result_combobox.SetValue(search_results[0])
+            # combobox - autocomplete if it makes sense
+            #
+            if(search_results[0].startswith(current_search_string)): # if only result starts with search_string - autocomplete and mark critical completed part
+                self.ui__cb_search.SetValue(search_results[0])
+                self.ui__cb_search.SetInsertionPoint(len(current_search_string))
+                #self.ui__cb_search.SetMark(len(current_search_string)-1, len(search_results[0]))
+                self.ui__cb_search.SetMark(len(current_search_string), len(search_results[0]))
 
             ## application buttons
             self.ui__bt_selected_app.Enable(True) # Enable application button
@@ -1140,27 +1161,36 @@ class MyFrame(wx.Frame):
             self.get_icon_for_executable(str(search_results[0]))
 
         else: # > 1 search
-            ## update launch button
+
+            ## application button
             self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_list_128.png', wx.BITMAP_TYPE_PNG)
-            self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-            self.ui__bt_selected_app.Enable(False)
-            self.ui__bt_selected_app.SetToolTipString(u'')
+            self.ui__bt_selected_app.Enable(True)
+            self.ui__bt_selected_app.SetToolTipString(search_results[0])
 
             # update launch-options button
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
-            self.ui__bt_selected_parameter.SetToolTipString(u'')
+            self.ui__bt_selected_parameter.SetToolTipString('Launch')
 
             ## update command
-            self.ui__txt_selected_app.SetValue('')
+            #self.ui__txt_selected_app.SetValue('')
 
             ## update parameter
             self.ui__txt_selected_parameter.SetValue('')
 
+            # construction area
+            #
+            # get icon for primary search result
+            self.get_icon_for_executable(search_results[0])
+            # assume first search result is the way to go
+            self.ui__txt_selected_app.SetValue(search_results[0])
+
+
 
     def do_execute(self):
         """Launches the actual task"""
+        # get command and parameter inforations
         command = self.ui__txt_selected_app.GetValue()
         parameter = self.ui__txt_selected_parameter.GetValue()
 
@@ -1176,7 +1206,7 @@ class MyFrame(wx.Frame):
             #command = command +' '+ parameter
             #parameter = ''
 
-        ## Plugin: Misoc Open
+        ## Plugin: Misc Open
         ##
         if self.ui__txt_plugin_information.GetValue() == 'Plugin: Misc (Open)':
             if parameter == '':
@@ -1254,31 +1284,28 @@ class MyFrame(wx.Frame):
         tools.print_debug_to_terminal('reset_ui', 'starting')
 
         ## reset the combobox
-        self.ui__search_and_result_combobox.SetFocus() # set focus to search
-        self.ui__search_and_result_combobox.Clear() # clear all list values
-        self.ui__search_and_result_combobox.SetValue('') # clear search field
+        self.ui__cb_search.SetFocus() # set focus to search
+        self.ui__cb_search.Clear() # clear all list values
+        self.ui__cb_search.SetValue('') # clear search field
 
         ## reset the applications button
-        self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_app.Enable(False)
-        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
 
         ## reset the option buttons
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.Enable(False)
-        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
+        self.ui__bt_selected_parameter.SetToolTipString('')
 
-        ## reset command
+        ## reset txt command
         self.ui__txt_selected_app.SetValue('')
 
-        ## reset parameter
+        ## reset txt parameter
         self.ui__txt_selected_parameter.SetValue('')
 
         # reset plugin name field
         self.ui__txt_plugin_information.SetValue('')
 
         ## reset the result counter
-        self.ui__txt_result_counter.SetValue('')
+        self.ui__txt_result_counter.SetValue('0')
 
         global is_resetted
         is_resetted = True
@@ -1319,7 +1346,10 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
         tools.print_debug_to_terminal('CreatePopupMenu', 'starting')
         menu = wx.Menu()
+        create_menu_item(menu, 'Show Mainwindow', self.on_app_tray_icon_left_click)
+        menu.AppendSeparator()
         create_menu_item(menu, 'Preferences', self.on_tray_popup_click_preferences)
+        create_menu_item(menu, 'About', self.on_tray_popup_click_about)
         create_menu_item(menu, 'GitHub', self.on_tray_popup_click_github)
         menu.AppendSeparator()
         create_menu_item(menu, 'Exit', self.on_tray_popup_click_exit)
@@ -1355,6 +1385,26 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         tools.print_debug_to_terminal('on_tray_popup_click_preferences', 'starting')
         tools.print_debug_to_terminal('on_tray_popup_click_preferences', 'Event: '+str(event))
         self.open_preference_window()
+
+
+    def on_tray_popup_click_about(self, event):
+        """Method to handle click in the 'About' tray menu item"""
+        tools.print_debug_to_terminal('on_tray_popup_click_about', 'starting')
+        tools.print_debug_to_terminal('on_tray_popup_click_about', 'Event: '+str(event))
+
+        aboutInfo = wx.AboutDialogInfo()
+        aboutInfo.SetName(constants.APP_NAME)
+        aboutInfo.SetVersion(config.APP_VERSION)
+        aboutInfo.SetDescription((constants.APP_DESCRIPTION))
+        #aboutInfo.SetLicense(open("COPYING").read())
+        aboutInfo.SetLicense(open("../LICENSE").read())
+        #aboutInfo.AddDeveloper('random example')
+        aboutInfo.SetWebSite(constants.APP_URL)
+        aboutInfo.SetIcon(wx.Icon("gfx/core/bt_appIcon_128.png", wx.BITMAP_TYPE_PNG, 128, 128))
+        aboutInfo.AddDeveloper("yafp")
+
+        wx.AboutBox(aboutInfo)
+
 
 
     def on_tray_popup_click_exit(self, event):
