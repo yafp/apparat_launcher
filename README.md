@@ -36,12 +36,21 @@ __apparat__ is an application launcher for linux. It is developed and tested for
 
 
 ## <a name="installation">Installation
-There is no installation routine so far
+There is no installation routine so far.
 
 #### <a name="requirements">Requirements
+##### Python
+- gtk
 - python2
 - python-wxtools
-- gtk
+
+##### Linux packages
+- gnome-screensaver-command
+- gnome-session-quit
+- systemctl
+- xdg-open
+- xdotool
+
 
 ## <a name="usage">Usage
 Simply run:
@@ -74,51 +83,53 @@ More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-
 
 ## <a name="plugins">Plugins
 #### <a name="local-search">Local-Search
-| Trigger          | Alias         | Parameter      | Function                      |
-| ---------------- |:--------------| :--------------|:----------------------------- |
-| ```?```          |               | searchstring   | Filesearch for home directory |
+| Trigger          | Alias         -| Parameter      | Function                      |
+| ---------------- |:---------------| :--------------|:----------------------------- |
+| ```?```          |                | _searchstring_ | Filesearch for home directory |
+
 
 #### <a name="internet-search">Internet-Search
-| Trigger          | Alias         | Parameter      | Function       |
-| ---------------- |:--------------| :--------------|:-------------- |
-| ```!a```         |               | _searchstring_ | Amazon         |
-| ```!b```         |               | _searchstring_ | Bandcamp       |
-| ```!e```         |               | _searchstring_ | Stack-Exchange |
-| ```!g```         |               | _searchstring_ | Google         |
-| ```!l```         |               | _searchstring_ | LastFM         |
-| ```!m```         |               | _searchstring_ | Google-Maps    |
-| ```!o```         |               | _searchstring_ | Stack-Overflow |
-| ```!r```         |               | _searchstring_ | Reddit         |
-| ```!s```         |               | _searchstring_ | SoundCloud     |
-| ```!t```         |               | _searchstring_ | Twitter        |
-| ```!v```         |               | _searchstring_ | Vimeo          |
-| ```!w```         |               | _searchstring_ | Wikipedia      |
-| ```!y```         |               | _searchstring_ | YouTube        |
+| Trigger          | Alias          | Parameter      | Function       |
+| ---------------- |:---------------| :--------------|:-------------- |
+| ```!a```         |                | _searchstring_ | Amazon         |
+| ```!b```         |                | _searchstring_ | Bandcamp       |
+| ```!e```         |                | _searchstring_ | Stack-Exchange |
+| ```!g```         |                | _searchstring_ | Google         |
+| ```!l```         |                | _searchstring_ | LastFM         |
+| ```!m```         |                | _searchstring_ | Google-Maps    |
+| ```!o```         |                | _searchstring_ | Stack-Overflow |
+| ```!r```         |                | _searchstring_ | Reddit         |
+| ```!s```         |                | _searchstring_ | SoundCloud     |
+| ```!t```         |                | _searchstring_ | Twitter        |
+| ```!v```         |                | _searchstring_ | Vimeo          |
+| ```!w```         |                | _searchstring_ | Wikipedia      |
+| ```!y```         |                | _searchstring_ | YouTube        |
 
 
 #### <a name="nautilus">Nautilus
-| Trigger          | Alias          | Parameter           | Function                         |
-| ---------------- |:-------------- | :-------------------|:---------------------------------|
-| ```!goto```      |                | _path_              | Open directory in nautilus       |
-| ```!network```   | ```!net```     |                     | Show network devices in nautilus |
-| ```!recent```    |                |                     | Show recent files in nautilus    |
-| ```!trash```     |                |                     | Show trash in nautilus           |
+| Trigger          | Alias          | Parameter      | Function                         |
+| ---------------- |:-------------- | :--------------|:---------------------------------|
+| ```!goto```      |                | _path_         | Open directory in nautilus       |
+| ```!network```   | ```!net```     |                | Show network devices in nautilus |
+| ```!recent```    |                |                | Show recent files in nautilus    |
+| ```!trash```     |                |                | Show trash in nautilus           |
 
 
 #### <a name="session">Session
-| Trigger          | Alias          | Function                    |
-| ---------------- |:-------------- | :---------------------------|
-| ```!hibernate``` | ```!sleep```   | hibernate the machine       |
-| ```!lock```      |                | locks the current session   |
-| ```!logout```    |                | logout from current session |
-| ```!reboot```    | ```!restart``` | reboot the machine          |
-| ```!shutdown```  | ```!halt```    | shutdown the machine        |
+| Trigger          | Alias          | Parameter      | Function                    |
+| ---------------- |:-------------- | :--------------|:----------------------------|
+| ```!hibernate``` | ```!sleep```   |                | hibernate the machine       |
+| ```!lock```      |                |                | locks the current session   |
+| ```!logout```    |                |                | logout from current session |
+| ```!reboot```    | ```!restart``` |                | reboot the machine          |
+| ```!shutdown```  | ```!halt```    |                | shutdown the machine        |
 
 
 #### <a name="misc">Misc
-| Trigger          | Alias          | Parameter           | Function                         |
-| ---------------- |:-------------- | :-------------------|:---------------------------------|
-| ```!open```      |                | path                | Open using default application   |
+| Trigger          | Alias              | Parameter      | Function                         |
+| ---------------- |:------------------ | :--------------|:---------------------------------|
+| ```!open```      |                    | path           | Open using default application   |
+| ```!ss```        | ```!screenshot```  |                | Screenshot function              |
 
 
 ## <a name="contributing">Contributing
@@ -126,7 +137,10 @@ Please check the [Contribution guidelines for this project](.github/CONTRIBUTING
 
 
 ## <a name="credits">Credits
-* Icons via [Font Awesome](http://fontawesome.io) (Color: #7f8c8d)
+* Icons via [Font Awesome](http://fontawesome.io)
+  * Colors:
+    * Gray: #7f8c8d
+    * Blue: #3498db
 
 ## <a name="license">License
 [![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](LICENSE)
