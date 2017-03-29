@@ -28,13 +28,13 @@ if [ $? -eq 0 ]; then # it is running
     ACTIVE_APP_WINDOW_TITLE=$(xdotool getwindowfocus getwindowname) # check name of current foreground app
     if [ $ACTIVE_APP_WINDOW_TITLE == 'Apparat' ]; then  #if it is apparat
         xdotool windowminimize $(xdotool getactivewindow) # apparat is active already - minimize it
-        
     else # focus it
         wmctrl -xa $APPARAT_EXECUTABLE
-        exit 1
     fi
+    exit 0
 
 else # apparat is not running -> start it
+    notify-send 'Apparat' 'Started via Hotkey'
     cd "$APPARAT_FOLDER" && python "./apparat.py"
     exit 0
 fi
