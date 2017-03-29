@@ -23,13 +23,13 @@ DEBUG = False
 # -----------------------------------------------------------------------------------------------
 def cmd_exists(cmd):
     """Method to check if a command exists."""
-    print_debug_to_terminal('cmd_exists', 'starting')
+    debug_output('cmd_exists', 'starting')
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
 def check_arguments():
     """Checks if apparat was started with arguments or not"""
-    print_debug_to_terminal('check_arguments', 'starting')
+    debug_output('check_arguments', 'starting')
     # TODO: check getopt
     global DEBUG
     if len(sys.argv) > 2: # too much arguments
@@ -56,11 +56,11 @@ def check_arguments():
         show_help()
         sys.exit()
 
-    print_debug_to_terminal('check_arguments', 'finished')
+    debug_output('check_arguments', 'finished')
 
 
 
-def print_debug_to_terminal(source, message):
+def debug_output(source, message):
     """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         timestamp = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
@@ -68,9 +68,16 @@ def print_debug_to_terminal(source, message):
 
 
 
+def generate_timestamp():
+    """Generates and returns a timestamp in the format: YYYYMMDD__HHMMSS"""
+    timestamp = '{:%Y%m%d__%H%M%S}'.format(datetime.datetime.now())
+    return timestamp
+
+
+
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
-    print_debug_to_terminal('check_linux_requirements', 'starting')
+    debug_output('check_linux_requirements', 'starting')
     ## needed for session commands:
     # - gnome-screensaver-command
     # - gnome-session-quit
@@ -97,20 +104,20 @@ def check_linux_requirements():
         print('Error: xdotool is missing')
         sys.exit()
 
-    print_debug_to_terminal('check_linux_requirements', 'finished')
+    debug_output('check_linux_requirements', 'finished')
 
 
 
 def which(program):
     """Method to check if executable exists"""
-    print_debug_to_terminal('which', 'starting')
+    debug_output('which', 'starting')
     def is_exe(fpath):
         """foo"""
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
     fpath, fname = os.path.split(program)
-    print_debug_to_terminal('which', 'fpath: '+fpath)
-    print_debug_to_terminal('which', 'fname: '+fname)
+    debug_output('which', 'fpath: '+fpath)
+    debug_output('which', 'fname: '+fname)
     if fpath:
         if is_exe(program):
             return program
@@ -120,7 +127,7 @@ def which(program):
             exe_file = os.path.join(path, program)
             if is_exe(exe_file):
                 return exe_file
-    print_debug_to_terminal('which', 'finished')
+    debug_output('which', 'finished')
     return None
 
 
@@ -142,22 +149,22 @@ def show_help():
 
 def check_platform():
     """Method to check the platform (supported or not)"""
-    print_debug_to_terminal('check_platform', 'starting')
+    debug_output('check_platform', 'starting')
 
     ## Linux
     if sys.platform == "linux" or sys.platform == "linux2":
-        print_debug_to_terminal('check_platform', 'Detected linux')
+        debug_output('check_platform', 'Detected linux')
 
     ## Mac OS
     elif sys.platform == "darwin":
-        print_debug_to_terminal('check_platform', 'Detected unsupported platform (darwin)')
+        debug_output('check_platform', 'Detected unsupported platform (darwin)')
         print("Error: Unsupported platform detected")
         sys.exit()
 
     ## Windows
     elif sys.platform == "win32":
-        print_debug_to_terminal('check_platform', 'Detected unsupported platform (windows)')
+        debug_output('check_platform', 'Detected unsupported platform (windows)')
         print("Error: Unsupported platform detected")
         sys.exit()
 
-    print_debug_to_terminal('check_platform', 'finished')
+    debug_output('check_platform', 'finished')

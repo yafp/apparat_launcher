@@ -53,8 +53,8 @@ class PreferenceWindow(wx.Frame):
 
     def close_preference_ui(self, event):
         """Closes the preference window"""
-        tools.print_debug_to_terminal('close_preference_ui', 'starting')
-        tools.print_debug_to_terminal('close_preference_ui', 'Event: '+str(event))
+        tools.debug_output('close_preference_ui', 'starting')
+        tools.debug_output('close_preference_ui', 'Event: '+str(event))
         self.Destroy() # close the pref UI
         # TODO: set focus back to main-window
 
@@ -93,12 +93,12 @@ class UITabGeneral(wx.Panel):
 
     def prefs_general_toggle_hide_ui(self, event):
         """Toggle the general pref: hide_ui"""
-        tools.print_debug_to_terminal('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event))
+        tools.debug_output('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event))
         if self.cb_enable_hide_ui.GetValue() is True:
-            tools.print_debug_to_terminal('prefs_general_toggle_hide_ui', 'Enabled')
+            tools.debug_output('prefs_general_toggle_hide_ui', 'Enabled')
             ini.write_single_value('General', 'hide_ui_after_command_execution', "True") # update preference value
         else:
-            tools.print_debug_to_terminal('prefs_general_toggle_hide_ui', 'Disabled')
+            tools.debug_output('prefs_general_toggle_hide_ui', 'Disabled')
             ini.write_single_value('General', 'hide_ui_after_command_execution', "False") # update preference value
 
 
