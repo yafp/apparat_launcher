@@ -1,8 +1,43 @@
 #!/usr/bin/python
 """apparat - plugin: nautilus"""
 
-import tools
+# general
 import wx
+
+# project
+import tools
+
+
+def prepare_general(current_search_string, main_window):
+    """Prepare General"""
+    tools.debug_output('prepare_general', 'starting')
+
+    if current_search_string.startswith('!goto'):
+        tools.debug_output('prepare_general', 'Case: Goto')
+        prepare_plugin_nautilus_goto(main_window)
+        return
+
+    elif current_search_string == ('!recent'):
+        tools.debug_output('prepare_general', 'Case: Recent')
+        prepare_plugin_nautilus_show_recent(main_window)
+        return
+
+    elif current_search_string == ('!trash'):
+        tools.debug_output('prepare_general', 'Case: Trash')
+        prepare_plugin_nautilus_open_trash(main_window)
+        return
+
+    elif current_search_string == ('!network') or current_search_string == ('!net'):
+        tools.debug_output('prepare_general', 'Case: Network')
+        prepare_plugin_nautilus_show_network_devices(main_window)
+        return
+
+    else:
+        tools.debug_output('prepare_general', 'Error: unexpected nautilus plugin command')
+        return
+
+    tools.debug_output('prepare_general', 'finished')
+
 
 
 def prepare_plugin_nautilus_goto(main_window):

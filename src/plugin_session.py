@@ -1,9 +1,43 @@
 #!/usr/bin/python
 """apparat - plugin: session"""
 
-
-import tools
+# general
 import wx
+
+# project
+import tools
+
+
+def prepare_general(current_search_string, main_window):
+    """Prepare General"""
+    tools.debug_output('prepare_general', 'starting')
+
+    ## Hibernate
+    if current_search_string == '!hibernate' or current_search_string == '!sleep':
+        prepare_plugin_session_hibernate(main_window)
+
+    ## Lock
+    elif current_search_string == '!lock':
+        prepare_plugin_session_lock(main_window)
+
+    ## Logout
+    elif current_search_string == '!logout':
+        prepare_plugin_session_logout(main_window)
+
+    ## Reboot
+    elif current_search_string == '!reboot' or current_search_string == '!restart':
+        prepare_plugin_session_reboot(main_window)
+
+    ## Shutdown
+    elif current_search_string == '!shutdown' or current_search_string == '!halt':
+        prepare_plugin_session_shutdown(main_window)
+
+    else:
+        tools.debug_output('parse_user_search_input', 'Error: Undefined session command')
+        return
+
+    tools.debug_output('prepare_general', 'finished')
+
 
 
 def prepare_plugin_session_hibernate(main_window):

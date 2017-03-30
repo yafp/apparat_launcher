@@ -1,8 +1,12 @@
 #!/usr/bin/python
 """apparat - plugin: search-internet"""
 
-import tools
+# general
 import wx
+
+# project
+import tools
+
 
 def plugin__internet_search_prepare(main_window, current_search_string):
     """Plugin: Internet-Search - Updates the UI on trigger input"""
@@ -27,55 +31,56 @@ def plugin__internet_search_prepare(main_window, current_search_string):
     ## Prepare UI for plugin
     if current_search_string.startswith('!a') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Amazon')
+        main_window.plugin__update_general_ui_information('Internet-Search (Amazon)')
 
     if current_search_string.startswith('!b') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Bandcamp')
+        main_window.plugin__update_general_ui_information('Internet-Search (Bandcamp)')
 
     if current_search_string.startswith('!e') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_stack-exchange_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Stack-Exchange')
+        main_window.plugin__update_general_ui_information('Internet-Search (Stack-Exchange)')
 
     if current_search_string.startswith('!g') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_google_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Google')
+        main_window.plugin__update_general_ui_information('Internet-Search (Google)')
 
     if current_search_string.startswith('!l') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_lastfm_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('LastFM')
+        main_window.plugin__update_general_ui_information('Internet-Search (LastFM)')
 
     if current_search_string.startswith('!m') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_maps_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Google-Maps')
+        main_window.plugin__update_general_ui_information('Internet-Search (Google-Maps)')
 
     if current_search_string.startswith('!o') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_stack-overflow_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Stack-Overflow')
+        main_window.plugin__update_general_ui_information('Internet-Search (Stack-Overflow)')
 
     if current_search_string.startswith('!r') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Reddit')
+        main_window.plugin__update_general_ui_information('Internet-Search (Reddit)')
 
     if current_search_string.startswith('!s') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('SoundCloud')
+        main_window.plugin__update_general_ui_information('Internet-Search (SoundCloud)')
 
     if current_search_string.startswith('!t') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Twitter')
+        main_window.plugin__update_general_ui_information('Internet-Search (Twitter)')
 
     if current_search_string.startswith('!v') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Vimeo')
+        main_window.plugin__update_general_ui_information('Internet-Search (Vimeo)')
 
     if current_search_string.startswith('!w') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Wikipedia')
+        main_window.plugin__update_general_ui_information('Internet-Search (Wikipedia)')
 
     if current_search_string.startswith('!y') is True:
         main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('YouTube')
+        main_window.plugin__update_general_ui_information('Internet-Search (YouTube)')
+
 
     ## for all search plugin cases
     #

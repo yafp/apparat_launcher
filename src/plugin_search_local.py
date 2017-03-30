@@ -1,11 +1,15 @@
 #!/usr/bin/python
 """apparat - plugin: search-internet"""
 
+# general
 import difflib                      # for intelligent list sort
-import os
 import fnmatch
-import tools
+import os
 import wx
+
+# project
+import tools
+
 
 def search_user_files(main_window, current_search_string):
     """Search for user files"""
