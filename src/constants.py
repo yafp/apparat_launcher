@@ -48,7 +48,10 @@ PLUGIN_INTERNET_SEARCH_URL_Y = 'https://www.youtube.com/results?search_query='
 APP_PLUGINS_SEARCH_LOCAL_TRIGGER = ('?')
 
 # Plugin: Misc
-APP_PLUGINS_MISC_TRIGGER = ('!open', '!ss', '!screenshot')
+APP_PLUGINS_MISC_TRIGGER = ('!open')
+
+# Plugin: Screenshot
+APP_PLUGINS_SCREENSHOT_TRIGGER = ('!ss', '!fs')
 
 # Plugin: Nautilus
 APP_PLUGINS_NAUTILUS_TRIGGER = ('!goto', '!recent', '!trash', '!network', '!net')
