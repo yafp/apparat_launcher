@@ -20,7 +20,9 @@ apparat
     * [Internet-Search](#internet-search)
     * [Nautilus](#nautilus)
     * [Session](#session)
+    * [Screenshot](#screenshot)
     * [Misc](#misc)
+
   * [Contributing](#contributing)
   * [Credits](#credits)
   * [License](#license)
@@ -125,11 +127,18 @@ More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-
 | ```!shutdown```  | ```!halt```    |                | shutdown the machine        |
 
 
+#### <a name="screenshot">Screenshot
+| Trigger          | Alias              | Parameter      | Function                              |
+| ---------------- |:------------------ | :--------------|:--------------------------------------|
+| ```!ss```        |                    |                | Selective screenshot (window or area) |
+| ```!fs```        |                    |                | Full screenshot                       |
+
+
 #### <a name="misc">Misc
 | Trigger          | Alias              | Parameter      | Function                         |
 | ---------------- |:------------------ | :--------------|:---------------------------------|
 | ```!open```      |                    | path           | Open using default application   |
-| ```!ss```        | ```!screenshot```  |                | Screenshot function              |
+
 
 
 ## <a name="contributing">Contributing
