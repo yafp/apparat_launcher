@@ -35,6 +35,7 @@ else: # python 2.x
     import tools                        # contains helper-tools
     import plugin_search_local
     import plugin_search_internet
+    import plugin_screenshot
     import plugin_nautilus
     import plugin_session
 
@@ -576,31 +577,6 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
 
-
-    def prepare_plugin_screenshot(self):
-        """Plugin Screenshot"""
-        tools.debug_output('prepare_plugin_screenshot', 'starting')
-
-        ## update plugin info
-        self.plugin__update_general_ui_information('Misc (Screenshot)')
-
-        ## application buttons
-        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/misc/bt_screenshot_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-        self.ui__bt_selected_app.SetToolTipString('Screenshot')
-
-        ## parameter buttons
-        self.ui__bt_selected_parameter.SetToolTipString('Do')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-
-        # set parameter
-        self.ui__txt_selected_parameter.SetValue('')
-
-        ## set command
-        self.ui__txt_selected_app.SetValue('!ss')
-
-
     def prepare_plugin_misc_open(self):
         """Plugin Misc - Open"""
         tools.debug_output('prepare_plugin_misc_open', 'starting')
@@ -672,68 +648,29 @@ class MyFrame(wx.Frame):
                     tools.debug_output('parse_user_search_input', 'Case: Plugin Misc - Open')
                     self.prepare_plugin_misc_open()
                     return
-
-                if  current_search_string == "!ss" or current_search_string == "!screenshot":
-                    tools.debug_output('parse_user_search_input', 'Case: Plugin Misc - Screenshot')
-                    self.prepare_plugin_screenshot()
-                    return
                 else:
                     tools.debug_output('parse_user_search_input', 'Error: unexpected misc plugin command')
                     return
 
+
+            ## Plugin: Screenshot
+            ##
+            if  current_search_string in constants.APP_PLUGINS_SCREENSHOT_TRIGGER:
+                plugin_screenshot.prepare_general(current_search_string, self)
+                return
+
+
             ## Plugin: Nautilus
             ##
             if current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER or current_search_string.startswith('!goto'):
-                tools.debug_output('parse_user_search_input', 'Case: Plugin Nautilus')
-
-                if current_search_string.startswith('!goto'):
-                    plugin_nautilus.prepare_plugin_nautilus_goto(self)
-                    return
-
-                elif current_search_string == ('!recent'):
-                    plugin_nautilus.prepare_plugin_nautilus_show_recent(self)
-                    return
-
-                elif current_search_string == ('!trash'):
-                    plugin_nautilus.prepare_plugin_nautilus_open_trash(self)
-                    return
-
-                elif current_search_string == ('!network') or current_search_string == ('!net'):
-                    plugin_nautilus.prepare_plugin_nautilus_show_network_devices(self)
-                    return
-
-                else:
-                    tools.debug_output('parse_user_search_input', 'Error: unexpected nautilus plugin command')
-                    return
+                plugin_nautilus.prepare_general(current_search_string, self)
+                return
 
 
             ## Plugin: Session
             ##
             if current_search_string in constants.APP_PLUGINS_SESSION_TRIGGER:
-                tools.debug_output('parse_user_search_input', 'Case: Plugin Session')
-
-                ## Hibernate
-                if current_search_string == '!hibernate' or current_search_string == '!sleep':
-                    plugin_session.prepare_plugin_session_hibernate(self)
-
-                ## Lock
-                elif current_search_string == '!lock':
-                    plugin_session.prepare_plugin_session_lock(self)
-
-                ## Logout
-                elif current_search_string == '!logout':
-                    plugin_session.prepare_plugin_session_logout(self)
-
-                ## Reboot
-                elif current_search_string == '!reboot' or current_search_string == '!restart':
-                    plugin_session.prepare_plugin_session_reboot(self)
-
-                ## Shutdown
-                elif current_search_string == '!shutdown' or current_search_string == '!halt':
-                    plugin_session.prepare_plugin_session_shutdown(self)
-
-                else:
-                    tools.debug_output('parse_user_search_input', 'Error: Undefined session command')
+                plugin_session.prepare_general(current_search_string, self)
                 return
 
 
@@ -756,6 +693,7 @@ class MyFrame(wx.Frame):
                 plugin_search_internet.plugin__internet_search_prepare(self, current_search_string)
                 return
 
+
             ## Search for local files
             #
             if current_search_string.startswith(constants.APP_PLUGINS_SEARCH_LOCAL_TRIGGER):
@@ -764,6 +702,7 @@ class MyFrame(wx.Frame):
                 plugin_search_local.search_user_files(self, current_search_string)
                 return
 
+
             ## Search for executables
             #
             self.search_executables(current_search_string)
@@ -771,9 +710,6 @@ class MyFrame(wx.Frame):
 
         else: # search string is empty
             tools.debug_output('parse_user_search_input', 'Empty search string')
-
-
-
 
 
     def search_executables(self, current_search_string):
@@ -860,7 +796,6 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_app.SetValue(search_results[0])
 
 
-
     def do_execute(self):
         """Launches the actual task"""
         # get command and parameter inforations
@@ -872,23 +807,6 @@ class MyFrame(wx.Frame):
             return
 
         tools.debug_output('do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
-
-
-        ## Plugin: Misc - Screenshot
-        ##
-        if self.ui__txt_plugin_information.GetValue() == 'Plugin: Misc (Screenshot)':
-            ## relies on ImageMagick
-            #
-            ## prepare screenshot of single window
-            command = 'import' # area or single window
-
-            ## prepare full screen screenshot
-            # import -window root Pictures/Image5.png
-
-            current_timestamp = tools.generate_timestamp()
-            parameter = os.environ['HOME']+'/'+current_timestamp+'.png'
-
-            # could use: 'gnome-screenshot' as well
 
 
         ## Plugin: Misc - Open
@@ -912,7 +830,7 @@ class MyFrame(wx.Frame):
             return
 
 
-        ## Plugin: Session OR normal application
+        ## Plugin: Session/Screenshot/Nautilus OR normal application
         ##
         if command is not None: # Check if the dropdown contains something at all or not
             tools.debug_output('do_execute', 'Should execute: "'+command+'" with parameter: "'+parameter+'"')
