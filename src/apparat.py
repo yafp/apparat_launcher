@@ -43,9 +43,9 @@ else: # python 2.x
     #
     # Ubuntu (import gtk) vs Fedora (from gi.repository import Gtk)
     if 'Ubuntu' in platform.linux_distribution():
-        pass
         #print ('Ubuntu') # tested on 16.04
-        #import gtk # after wx init
+        import gtk # after wx init
+        gtk.remove_log_handlers()
 
     elif 'Fedora' in platform.linux_distribution():
         #print ('Fedora') # tested on 25
@@ -187,34 +187,27 @@ class MyFrame(wx.Frame):
         # Layout/Sizer
         # ------------------------------------------------
         b_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
-
         b_sizer.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100) # preferences icon button
         b_sizer.AddSpacer(5)
-
         # horizontal sub-item 1
         box1 = wx.BoxSizer(wx.HORIZONTAL)
         box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE) # result counter
         box1.Add(self.ui__cb_search, 0, wx.CENTRE) # combobox
         b_sizer.Add(box1, 0, wx.CENTRE)
         b_sizer.AddSpacer(5)
-
         b_sizer.Add(self.ui__txt_plugin_information, 0, wx.CENTRE) # plugin info
         b_sizer.AddSpacer(5)
-
         # horizontal sub-item 2
         box2 = wx.BoxSizer(wx.HORIZONTAL)
         box2.Add(self.ui__bt_selected_app, 0, wx.CENTRE) # application button
         box2.Add(self.ui__bt_selected_parameter, 0, wx.CENTRE) # parameter button
         b_sizer.Add(box2, 0, wx.CENTRE)
-
         # horizontal sub-item 3
         box3 = wx.BoxSizer(wx.HORIZONTAL)
         box3.Add(self.ui__txt_selected_app, 0, wx.CENTRE) # command
         box3.Add(self.ui__txt_selected_parameter, 0, wx.CENTRE) # parameter
         b_sizer.Add(box3, 0, wx.CENTRE)
-
         b_sizer.AddSpacer(10)
-
         b_sizer.Add(self.ui__txt_version_information, 0, wx.CENTRE) # version
         self.SetSizer(b_sizer)
 
@@ -247,9 +240,9 @@ class MyFrame(wx.Frame):
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
 
-        if 'Ubuntu' in platform.linux_distribution():
-            import gtk
-            global gtk
+        #if 'Ubuntu' in platform.linux_distribution():
+            #import gtk
+            #global gtk
 
 
     def on_key_down(self, event):
@@ -299,7 +292,6 @@ class MyFrame(wx.Frame):
     def on_combobox_text_changed(self, event):
         """Triggered if the combobox text changes"""
         tools.debug_output('on_combobox_text_changed', 'starting with event:'+str(event))
-
         if self.ui__cb_search.GetValue() == '': #searchstring is empty
             tools.debug_output('on_combobox_text_changed', 'Searchstring: <empty>. Nothing do to')
         else:
@@ -311,7 +303,6 @@ class MyFrame(wx.Frame):
     def on_combobox_enter(self, event):
         """Triggered if Enter was pressed in combobox"""
         tools.debug_output('on_combobox_enter', 'starting with event: '+str(event))
-
         if len(self.ui__cb_search.GetValue()) > 0:
             global is_resetted
             is_resetted = False
@@ -325,7 +316,7 @@ class MyFrame(wx.Frame):
                 is_combobox_open = 0    # global var to keep track if dropdown is open or closed
 
                 ## run search again after selecting the desired search string from dropdown
-                self.parse_user_search_input(self.ui__cb_search.GetValue())
+                self.parse_user_input(self.ui__cb_search.GetValue())
         else:
             tools.debug_output('on_combobox_enter', 'Combobox is empty, nothing to do here.')
 
@@ -353,7 +344,6 @@ class MyFrame(wx.Frame):
         self.ui__cb_search.SetSelection(0) # is default
         if 'Ubuntu' in platform.linux_distribution():
             subprocess.Popen(["xdotool", "key", "Down"]) # simulate key press to highlight the choosen value as well
-
         tools.debug_output('on_combobox_popup_open', 'finished')
 
 
@@ -396,7 +386,7 @@ class MyFrame(wx.Frame):
 
         elif current_keycode == 13: # Enter
             tools.debug_output('on_combobox_key_press', 'ENTER was pressed - ignoring it because of "on_combobox_enter"')
-            self.parse_user_search_input(self.ui__cb_search.GetValue())
+            self.parse_user_input(self.ui__cb_search.GetValue())
             is_combobox_open = 0
 
         else:
@@ -406,11 +396,13 @@ class MyFrame(wx.Frame):
                 self.reset_ui()
             else:
                 tools.debug_output('on_combobox_key_press', 'Searching: '+current_search_string)
-                self.parse_user_search_input(current_search_string)
+                self.parse_user_input(current_search_string)
 
 
     def get_icon_for_executable(self, full_executable_name):
-        """Tries to get an icon for an selected executable"""
+        """Tries to get an icon for an executable by name"""
+        tools.debug_output('get_icon_for_executable', 'Starting for: '+full_executable_name)
+
         # Abort if a plugin is activated
         if(self.ui__txt_plugin_information.GetValue() != ''):
             return
@@ -421,6 +413,7 @@ class MyFrame(wx.Frame):
 
         # Ubuntu
         if 'Ubuntu' in platform.linux_distribution():
+            global gtk
             icon_theme = gtk.icon_theme_get_default()
 
         # Fedora
@@ -536,25 +529,13 @@ class MyFrame(wx.Frame):
     def plugin__update_general_ui_information(self, plugin_name):
         """set some general UI values after having a plugin triggered"""
         tools.debug_output('plugin__update_general_ui_information', 'started')
-
         if(plugin_name != ''):
-            # application buttons
-            self.ui__bt_selected_app.Enable(True)
-
-            ## parameter button
+            self.ui__bt_selected_app.Enable(True) # enable application button
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
-
-            ## set result-count
-            self.ui__txt_result_counter.SetValue('1')
-
-            ## update command (Example: !g)
-            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue()[:2])
-
-            # Plugin Name in specific field
-            self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name)
-
+            self.ui__txt_result_counter.SetValue('1') ## set result-count
+            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue()[:2]) ## update command (Example: !g)
+            self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name) # Plugin Name in specific field
             tools.debug_output('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated')
-
         else:
             # application buttons
             self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
@@ -580,9 +561,7 @@ class MyFrame(wx.Frame):
     def prepare_plugin_misc_open(self):
         """Plugin Misc - Open"""
         tools.debug_output('prepare_plugin_misc_open', 'starting')
-
-        ## update plugin info
-        self.plugin__update_general_ui_information('Misc (Open)')
+        self.plugin__update_general_ui_information('Misc (Open)') ## update plugin info
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/misc/bt_open_128.png', wx.BITMAP_TYPE_PNG)
@@ -605,9 +584,7 @@ class MyFrame(wx.Frame):
     def prepare_plugin_shell(self):
         """Plugin Shell"""
         tools.debug_output('prepare_plugin_shell', 'starting')
-
-        ## update plugin info
-        self.plugin__update_general_ui_information('Shell')
+        self.plugin__update_general_ui_information('Shell') ## update plugin info
 
         ## application buttons
         self.ui__bt_selected_app_img = wx.Image('gfx/plugins/shell/bt_shell_128.png', wx.BITMAP_TYPE_PNG)
@@ -625,100 +602,72 @@ class MyFrame(wx.Frame):
         self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[4:])
 
 
-    def parse_user_search_input(self, current_search_string):
+    def parse_user_input(self, current_search_string):
         """Method to search applications and/or plugin commands to fill the results"""
-        tools.debug_output('parse_user_search_input', 'starting')
-
-        #self.SetCursor(wx.StockCursor(wx.CURSOR_WATCH)) # change cursor
-
+        tools.debug_output('parse_user_input', 'starting')
         if current_search_string != '': # if there is a search string
 
             ## Reset UI partly if search is just !
-            #
             if current_search_string == '!':
-                tools.debug_output('parse_user_search_input', 'Case: !')
+                tools.debug_output('parse_user_input', 'Case: !')
                 self.plugin__update_general_ui_information('')
                 return
 
             ## Plugin: Misc
-            ##
             if  current_search_string.startswith(constants.APP_PLUGINS_MISC_TRIGGER):
-                tools.debug_output('parse_user_search_input', 'Case: Plugin Misc')
+                tools.debug_output('parse_user_input', 'Case: Plugin Misc')
                 if current_search_string.startswith('!open'):
-                    tools.debug_output('parse_user_search_input', 'Case: Plugin Misc - Open')
+                    tools.debug_output('parse_user_input', 'Case: Plugin Misc - Open')
                     self.prepare_plugin_misc_open()
                     return
-                else:
-                    tools.debug_output('parse_user_search_input', 'Error: unexpected misc plugin command')
-                    return
-
 
             ## Plugin: Screenshot
-            ##
             if  current_search_string in constants.APP_PLUGINS_SCREENSHOT_TRIGGER:
                 plugin_screenshot.prepare_general(current_search_string, self)
                 return
 
-
             ## Plugin: Nautilus
-            ##
             if current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER or current_search_string.startswith('!goto'):
                 plugin_nautilus.prepare_general(current_search_string, self)
                 return
 
-
             ## Plugin: Session
-            ##
             if current_search_string in constants.APP_PLUGINS_SESSION_TRIGGER:
                 plugin_session.prepare_general(current_search_string, self)
                 return
 
-
             ## Plugin: Shell
-            ##user alias in linux like mac
             if  current_search_string.startswith(constants.APP_PLUGINS_SHELL_TRIGGER):
-                tools.debug_output('parse_user_search_input', 'Case: Plugin Shell')
+                tools.debug_output('parse_user_input', 'Case: Plugin Shell')
                 if current_search_string.startswith('!sh'):
                     self.prepare_plugin_shell()
                     return
-                else:
-                    tools.debug_output('parse_user_search_input', 'Error: unexpected shell plugin command')
-                    return
-
 
             ## Plugin: Internet-Search
-            ##
             if current_search_string.startswith(constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER):
-                tools.debug_output('parse_user_search_input', 'Case: Plugin Internet-Search')
-                plugin_search_internet.plugin__internet_search_prepare(self, current_search_string)
+                tools.debug_output('parse_user_input', 'Case: Plugin Internet-Search')
+                plugin_search_internet.prepare_internet_search(self, current_search_string)
                 return
 
-
             ## Search for local files
-            #
             if current_search_string.startswith(constants.APP_PLUGINS_SEARCH_LOCAL_TRIGGER):
-            #if current_search_string.startswith('?'):
-                tools.debug_output('parse_user_search_input', 'Case: Plugin Local-Search')
+                tools.debug_output('parse_user_input', 'Case: Plugin Local-Search')
                 plugin_search_local.search_user_files(self, current_search_string)
                 return
 
-
             ## Search for executables
-            #
             self.search_executables(current_search_string)
 
-
         else: # search string is empty
-            tools.debug_output('parse_user_search_input', 'Empty search string')
+            tools.debug_output('parse_user_input', 'Empty search string. Doing nothing.')
 
 
     def search_executables(self, current_search_string):
         """Searches for executables"""
-        self.plugin__update_general_ui_information('')
+        self.plugin__update_general_ui_information('') # get rid of all plugin UI-artefacts
 
         tools.debug_output('search_executables', 'Searching executables for the following string: '+current_search_string)
         search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
-
         ## Sort results - http://stackoverflow.com/questions/17903706/how-to-sort-list-of-strings-by-best-match-difflib-ratio
         search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
 
@@ -739,11 +688,9 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
-            ## set command
-            self.ui__txt_selected_app.SetValue('')
+            self.ui__txt_selected_app.SetValue('') ## set command
 
-            ## set parameter
-            self.ui__txt_selected_parameter.SetValue('')
+            self.ui__txt_selected_parameter.SetValue('') ## set parameter
 
         elif len(search_results) == 1: # 1 result
             # combobox - autocomplete if it makes sense
@@ -764,17 +711,13 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
             self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
 
-            ## update command
-            self.ui__txt_selected_app.SetValue(search_results[0])
+            self.ui__txt_selected_app.SetValue(search_results[0]) ## update command
 
-            ## update parameter
-            self.ui__txt_selected_parameter.SetValue('')
+            self.ui__txt_selected_parameter.SetValue('') ## update parameter
 
-            ## Icon search
-            self.get_icon_for_executable(str(search_results[0]))
+            self.get_icon_for_executable(str(search_results[0])) ## Icon search
 
         else: # > 1 search
-
             ## application button
             self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_list_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_app.Enable(True)
@@ -785,15 +728,9 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
             self.ui__bt_selected_parameter.SetToolTipString('Launch')
-
-            ## update parameter
-            self.ui__txt_selected_parameter.SetValue('')
-
-            # get icon for primary search result
-            self.get_icon_for_executable(search_results[0])
-
-            # assume first search result is the way to go
-            self.ui__txt_selected_app.SetValue(search_results[0])
+            self.ui__txt_selected_parameter.SetValue('')             ## update parameter
+            self.get_icon_for_executable(search_results[0]) # get icon for primary search result
+            self.ui__txt_selected_app.SetValue(search_results[0])             # assume first search result is the way to go
 
 
     def do_execute(self):
@@ -810,28 +747,18 @@ class MyFrame(wx.Frame):
 
 
         ## Plugin: Misc - Open
-        ##
         if self.ui__txt_plugin_information.GetValue() == 'Plugin: Misc (Open)':
             if parameter == '':
                 return
 
 
-        ## Plugin: Shell
-        ##
-        #if self.ui__txt_plugin_information.GetValue() == 'Plugin: Shell':
-            #command = command +' '+ parameter
-            #parameter = ''
-
-
         ## Plugin: Internet-Search
-        ##
         if command in constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER:
             self.plugin__internet_search_execute(command, parameter)
             return
 
 
         ## Plugin: Session/Screenshot/Nautilus OR normal application
-        ##
         if command is not None: # Check if the dropdown contains something at all or not
             tools.debug_output('do_execute', 'Should execute: "'+command+'" with parameter: "'+parameter+'"')
 
@@ -892,24 +819,16 @@ class MyFrame(wx.Frame):
         self.ui__cb_search.Clear() # clear all list values
         self.ui__cb_search.SetValue('') # clear search field
 
-        ## reset the applications button
-        self.ui__bt_selected_app.Enable(False)
+        self.ui__bt_selected_app.Enable(False) ## reset the applications button
 
         ## reset the option buttons
         self.ui__bt_selected_parameter.Enable(False)
         self.ui__bt_selected_parameter.SetToolTipString('')
 
-        ## reset txt command
-        self.ui__txt_selected_app.SetValue('')
-
-        ## reset txt parameter
-        self.ui__txt_selected_parameter.SetValue('')
-
-        # reset plugin name field
-        self.ui__txt_plugin_information.SetValue('')
-
-        ## reset the result counter
-        self.ui__txt_result_counter.SetValue('0')
+        self.ui__txt_selected_app.SetValue('') ## reset txt command
+        self.ui__txt_selected_parameter.SetValue('') ## reset txt parameter
+        self.ui__txt_plugin_information.SetValue('') # reset plugin name field
+        self.ui__txt_result_counter.SetValue('0') ## reset the result counter
 
         global is_resetted
         is_resetted = True
@@ -1004,7 +923,6 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
     def on_tray_popup_click_about(self, event):
         """Method to handle click in the 'About' tray menu item"""
         tools.debug_output('on_tray_popup_click_about', 'starting with event: '+str(event))
-
         aboutInfo = wx.AboutDialogInfo()
         aboutInfo.SetName(constants.APP_NAME)
         aboutInfo.SetVersion(config.APP_VERSION)
@@ -1015,7 +933,6 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         aboutInfo.SetIcon(wx.Icon("gfx/core/bt_appIcon_128.png", wx.BITMAP_TYPE_PNG, 128, 128))
         aboutInfo.AddDeveloper("yafp")
         #aboutInfo.AddDeveloper('random example') # additional devs
-
         wx.AboutBox(aboutInfo)
 
 
@@ -1064,7 +981,6 @@ def main():
     frame = MyFrame(None, constants.APP_NAME) # Main UI window
     tools.debug_output('main', 'Frame: '+str(frame))
     app.MainLoop()
-
 
 if __name__ == '__main__':
     tools.debug_output('__main__', 'starting')
