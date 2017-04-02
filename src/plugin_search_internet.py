@@ -8,9 +8,9 @@ import wx
 import tools
 
 
-def plugin__internet_search_prepare(main_window, current_search_string):
-    """Plugin: Internet-Search - Updates the UI on trigger input"""
-    tools.debug_output('plugin__internet_search_prepare', 'starting')
+def prepare_internet_search(main_window, current_search_string):
+    """Updates the UI according to the matching internet-search trigger"""
+    tools.debug_output('prepare_internet_search', 'starting')
 
     ## show searchstring in parameter field
     if(main_window.ui__txt_selected_app.GetValue() != ''):
@@ -19,7 +19,7 @@ def plugin__internet_search_prepare(main_window, current_search_string):
 
     ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
     if(len(current_search_string) >= 3) and (current_search_string[2] != " "):
-        tools.debug_output('plugin__internet_search_prepare', 'No space after trigger - should reset icons')
+        tools.debug_output('prepare_internet_search', 'No space after trigger - should reset icons')
         main_window.plugin__update_general_ui_information('')
         return
 
