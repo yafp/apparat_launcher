@@ -21,11 +21,11 @@ class PreferenceWindow(wx.Frame):
 
     """Class for Preference Window"""
 
-    def __init__(self, parent, id):
+    def __init__(self, parent, idd):
         """Initialize the preference window"""
         ## define style of preference window
         pref_window_style = (wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
-        wx.Frame.__init__(self, parent, id, constants.APP_NAME+' Preferences', size=(600, 700), style=pref_window_style)
+        wx.Frame.__init__(self, parent, idd, constants.APP_NAME+' Preferences', size=(600, 700), style=pref_window_style)
 
         ## Create a panel and notebook (tabs holder)
         p = wx.Panel(self)
@@ -148,7 +148,7 @@ class UITabPluginCommands(wx.Panel):
         # Plugin: Internet search
         plugin_internet_search_headline = wx.StaticText(self, -1, "Internet-Search", (20, 100))
         plugin_internet_search_headline.SetFont(FONT_BIG)
-        plugin_internet_search_details = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
+        plugin_internet_search_details = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!m = Google Maps\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
         plugin_internet_search_details.SetFont(FONT_NORMAL_MONO)
 
         # Plugin: Nautilus
