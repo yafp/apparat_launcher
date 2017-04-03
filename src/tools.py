@@ -165,5 +165,7 @@ def check_platform():
 
 
 def trunc_at(s, d, n=3):
-    "Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."
+    """Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."""
+    debug_output('trunc_at', 'starting')
     return d.join(s.split(d)[:n])
+    debug_output('trunc_at', 'finished')
