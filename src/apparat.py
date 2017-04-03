@@ -39,6 +39,8 @@ else: # python 2.x
     import plugin_nautilus
     import plugin_session
 
+
+    print sys.platform
     ## GTK vs WX is a mess - Issue: #15 - It helps to import GTK after having created the WX app (at least for Ubuntu, not for Fedora)
     #
     # Ubuntu (import gtk) vs Fedora (from gi.repository import Gtk)
@@ -76,7 +78,7 @@ class MyFrame(wx.Frame):
 
     """Class for MainWindow"""
 
-    def __init__(self, parent, title):
+    def __init__(self, parent, title): # pylint:disable=too-many-statements
         """Initialize the MainWindow"""
         ## Update Statistics (ini) - Apparat launched
         tools.debug_output('__init__', 'Updating statistics (apparat_started)')
@@ -285,7 +287,7 @@ class MyFrame(wx.Frame):
     def open_preference_window(self):
         """Opens the preference window"""
         tools.debug_output('open_preference_window', 'starting')
-        self.prefWindow = prefs.PreferenceWindow(parent=None, id=-1)
+        self.prefWindow = prefs.PreferenceWindow(parent=None, idd=-1)
         self.prefWindow.Show()
 
 
@@ -462,68 +464,6 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.Enable(True) # Enable option button
         self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
-
-
-    def plugin__internet_search_execute(self, command, parameter):
-        """Plugin: Internet-Search - Execute the actual internet search call"""
-        tools.debug_output('plugin__internet_search_execute', 'starting')
-
-        if command == '!a':
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_A+parameter
-
-        elif command == ('!b'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_B+parameter
-
-        elif command == ('!e'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_E+parameter
-
-        elif command == ('!g'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_G+parameter
-
-        elif command == ('!l'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_L+parameter
-
-        elif command == ('!m'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_M+parameter
-
-        elif command == ('!o'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_O+parameter
-
-        elif command == ('!r'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_R+parameter
-
-        elif command == ('!s'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_S+parameter
-
-        elif command == ('!t'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_T+parameter
-
-        elif command == ('!v'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_V+parameter
-
-        elif command == ('!w'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_W+parameter
-
-        elif command == ('!y'):
-            remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_Y+parameter
-
-        else:
-            tools.debug_output('plugin__internet_search_execute', 'Error: unexpected case in "plugin__internet_search_execute"')
-
-        ## for all - open the URL
-        webbrowser.open(remote_url)
-
-        ## update usage-statistics
-        tools.debug_output('plugin__internet_search_execute', 'Updating statistics (plugin_executed)')
-        current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
-        ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1)    # update ini +1
-
-        self.reset_ui()
-
-        ## if enabled in ini - hide the Main UI after executing the command
-        cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
-        if cur_ini_value_for_hide_ui_after_command_execution == 'True':
-            self.tbicon.execute_tray_icon_left_click()
 
 
     def plugin__update_general_ui_information(self, plugin_name):
@@ -754,7 +694,7 @@ class MyFrame(wx.Frame):
 
         ## Plugin: Internet-Search
         if command in constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER:
-            self.plugin__internet_search_execute(command, parameter)
+            plugin_search_internet.execute_internet_search(self, command, parameter)
             return
 
 

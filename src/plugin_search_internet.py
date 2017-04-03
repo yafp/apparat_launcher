@@ -2,9 +2,12 @@
 """apparat - plugin: search-internet"""
 
 # general
+import webbrowser
 import wx
 
 # project
+import constants
+import ini
 import tools
 
 
@@ -93,3 +96,73 @@ def prepare_internet_search(main_window, current_search_string):
     main_window.ui__bt_selected_parameter.Enable(True)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
     main_window.ui__bt_selected_parameter.SetToolTipString('Search')
+
+
+
+
+def execute_internet_search(main_window, command, parameter):
+    """Plugin: Internet-Search - Execute the actual internet search call"""
+    tools.debug_output('execute_internet_search', 'starting')
+
+    if command == '!a':
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_A+parameter
+
+    elif command == ('!b'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_B+parameter
+
+    elif command == ('!e'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_E+parameter
+
+    elif command == ('!g'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_G+parameter
+
+    elif command == ('!l'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_L+parameter
+
+    elif command == ('!m'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_M+parameter
+
+    elif command == ('!o'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_O+parameter
+
+    elif command == ('!r'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_R+parameter
+
+    elif command == ('!s'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_S+parameter
+
+    elif command == ('!t'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_T+parameter
+
+    elif command == ('!v'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_V+parameter
+
+    elif command == ('!w'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_W+parameter
+
+    elif command == ('!y'):
+        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_Y+parameter
+
+    else:
+        tools.debug_output('execute_internet_search', 'Error: unexpected case in "plugin__internet_search_execute"')
+
+    # if so searchphrase was supplied - open the main url (Issue #22)
+    if(len(parameter) == 0):
+        tools.debug_output('execute_internet_search', 'No searchphrase supplied, trunc to main-url') # Issue #22
+        remote_url = tools.trunc_at(remote_url, "/")
+
+    ## for all - open the URL
+    webbrowser.open(remote_url)
+
+    ## update usage-statistics
+    tools.debug_output('execute_internet_search', 'Updating statistics (plugin_executed)')
+    current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
+    ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1)    # update ini +1
+
+    # reset the UI
+    main_window.reset_ui()
+
+    ## if enabled in ini - hide the UI after executing the command
+    cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
+    if cur_ini_value_for_hide_ui_after_command_execution == 'True':
+        main_window.tbicon.execute_tray_icon_left_click()
