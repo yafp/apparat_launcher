@@ -30,7 +30,6 @@ def cmd_exists(cmd):
 def check_arguments():
     """Checks if apparat was started with arguments or not"""
     debug_output('check_arguments', 'starting')
-    # TODO: check getopt
     global DEBUG
     if len(sys.argv) > 2: # too much arguments
         print('Error: Unsupported amount of parameters')
@@ -74,7 +73,6 @@ def generate_timestamp():
     return timestamp
 
 
-
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
     debug_output('check_linux_requirements', 'starting')
@@ -107,7 +105,6 @@ def check_linux_requirements():
     debug_output('check_linux_requirements', 'finished')
 
 
-
 def which(program):
     """Method to check if executable exists"""
     debug_output('which', 'starting')
@@ -131,11 +128,9 @@ def which(program):
     return None
 
 
-
 def show_version():
     """Show version"""
     print(config.APP_VERSION)
-
 
 
 def show_help():
@@ -144,7 +139,6 @@ def show_help():
     print("\t-d / --debug\tShow debug output")
     print("\t-h / --help\tShow help")
     print("\t-v / --version\tShow version")
-
 
 
 def check_platform():
@@ -168,3 +162,8 @@ def check_platform():
         sys.exit()
 
     debug_output('check_platform', 'finished')
+
+
+def trunc_at(s, d, n=3):
+    "Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."
+    return d.join(s.split(d)[:n])
