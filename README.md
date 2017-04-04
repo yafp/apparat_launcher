@@ -74,14 +74,14 @@ The following command line parameters are available:
 #### <a name="hotkey">Hotkey
 If you want to use a global hotkey to trigger ```apparat``` consider using ```apparatHotkeyHelper.sh```. Define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
 
-Gnome:
-* Open the Activities overview and start typing Keyboard.
-* Click on Keyboard to open the panel.
-* Select the Shortcuts tab.
-* Select a category in the left pane, and the row for the desired action (launching ```apparatHotkeyHelper.sh```)  on the right. The current shortcut definition will change to New accelerator…
+[Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en).
+* Open the **Activities** overview and start typing Keyboard.
+* Click on **Keyboard** to open the panel.
+* Select the **Shortcuts** tab.
+* Select a category in the left pane, and the row for the desired action (launching ```apparatHotkeyHelper.sh```)  on the right. The current shortcut definition will change to **New accelerator…**
 * Hold down the desired key combination, or press Backspace to clear.
 
-More details about [global hotkeys in Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en).
+
 
 ## <a name="plugins">Plugins
 #### <a name="local-search">Local-Search
