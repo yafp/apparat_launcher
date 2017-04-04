@@ -74,7 +74,7 @@ The following command line parameters are available:
 #### <a name="hotkey">Hotkey
 If you want to use a global hotkey to trigger ```apparat``` consider using ```apparatHotkeyHelper.sh```. Define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
 
-[Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en).
+[Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en)
 * Open the **Activities** overview and start typing Keyboard.
 * Click on **Keyboard** to open the panel.
 * Select the **Shortcuts** tab.
@@ -85,7 +85,7 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 
 ## <a name="plugins">Plugins
 #### <a name="local-search">Local-Search
-| Trigger          | Alias         -| Parameter      | Function                      |
+| Trigger          | Alias          | Parameter      | Function                      |
 | ---------------- |:---------------| :--------------|:----------------------------- |
 | ```?```          |                | _searchstring_ | Filesearch for home directory |
 
