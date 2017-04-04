@@ -3,7 +3,7 @@
 apparat
 ==========
 
-![logo](https://raw.githubusercontent.com/yafp/apparat/master/src/gfx/core/bt_appIcon_128.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/bt_appIcon_128.png)
 
 
 ## Table of Contents
