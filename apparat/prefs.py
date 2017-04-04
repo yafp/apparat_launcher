@@ -9,11 +9,10 @@
 import wx
 #import wx.grid
 
-## projects internal modules
+## apparat
 import constants
 import ini
 import tools
-import version
 
 
 # -----------------------------------------------------------------------------------------------
@@ -143,9 +142,6 @@ class UITabPluginCommands(wx.Panel):
     def __init__(self, parent):
         """Inits the plugin-commands tab"""
         wx.Panel.__init__(self, parent)
-
-        FONT_BIG = wx.Font(18, wx.DECORATIVE, wx.NORMAL, wx.BOLD) # family, style, weight
-        FONT_NORMAL_MONO = wx.Font(10, wx.FONTFAMILY_MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
 
         # Plugin: Local search
         cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
