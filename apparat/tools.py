@@ -5,13 +5,13 @@
 # IMPORTS
 # -----------------------------------------------------------------------------------------------
 
-## built-in modules
+## general
 import datetime                     # for timestamp in debug output
 import os
 import subprocess                   # for checking if cmd_exists
 import sys
 
-## projects internal modules
+## apparat
 import constants
 import config
 
@@ -58,13 +58,11 @@ def check_arguments():
     debug_output('check_arguments', 'finished')
 
 
-
 def debug_output(source, message):
     """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         timestamp = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
         print(constants.APP_NAME+" debug output # "+timestamp+" # "+source+" # "+message)
-
 
 
 def generate_timestamp():
@@ -168,4 +166,3 @@ def trunc_at(s, d, n=3):
     """Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."""
     debug_output('trunc_at', 'starting')
     return d.join(s.split(d)[:n])
-    debug_output('trunc_at', 'finished')

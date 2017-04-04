@@ -7,11 +7,13 @@
 
 ## built-in modules
 import wx
+#import wx.grid
 
 ## projects internal modules
 import constants
 import ini
 import tools
+import version
 
 
 # -----------------------------------------------------------------------------------------------
@@ -39,7 +41,7 @@ class PreferenceWindow(wx.Frame):
         ## Add the windows to tabs and name them.
         nb.AddPage(tab1, "General ")
         nb.AddPage(tab2, "Statistics ")
-        nb.AddPage(tab3, "Plugin Commands ")
+        nb.AddPage(tab3, "Plugins ")
 
         ## Set noteboook in a sizer to create the layout
         sizer = wx.BoxSizer()
@@ -145,48 +147,67 @@ class UITabPluginCommands(wx.Panel):
         FONT_BIG = wx.Font(18, wx.DECORATIVE, wx.NORMAL, wx.BOLD) # family, style, weight
         FONT_NORMAL_MONO = wx.Font(10, wx.FONTFAMILY_MODERN, wx.NORMAL, wx.NORMAL, False, u'Monospace')
 
+        # Plugin: Local search
+        cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
+        cb_enable_plugin_local_search.SetToolTipString(u'Enables search for user home')
+        cb_enable_plugin_local_search.SetValue(True)
+        cb_enable_plugin_local_search.Disable()
+
         # Plugin: Internet search
-        plugin_internet_search_headline = wx.StaticText(self, -1, "Internet-Search", (20, 100))
-        plugin_internet_search_headline.SetFont(FONT_BIG)
-        plugin_internet_search_details = wx.StaticText(self, -1, "!a = Amazon\n!b = Bandcamp\n!e = Stack-Exchange\n!g = Google\n!l = LastFM\n!m = Google Maps\n!o = Stack-Overflow\n!r = Reddit\n!s = SoudCloud\n!t = Twitter\n!v = Vimeo\n!w = Wikipedia\n!y = YouTube", (20, 140))
-        plugin_internet_search_details.SetFont(FONT_NORMAL_MONO)
+        cb_enable_plugin_insernet_search = wx.CheckBox(self, -1, 'Internet-Search', (20, 60))
+        cb_enable_plugin_insernet_search.SetToolTipString(u'Enables search for several popular web-services')
+        cb_enable_plugin_insernet_search.SetValue(True)
+        cb_enable_plugin_insernet_search.Disable()
 
         # Plugin: Nautilus
-        plugin_nautilus_headline = wx.StaticText(self, -1, "Nautilus", (20, 20))
-        plugin_nautilus_headline.SetFont(FONT_BIG)
-        plugin_nautilus_details = wx.StaticText(self, -1, "!network = Show network devices in nautilus\n!goto    = Open custom path in nautilus\n!recent  = Show recent files in nautilus\n!trash   = Show trash in nautilus", (20, 60))
-        plugin_nautilus_details.SetFont(FONT_NORMAL_MONO)
+        cb_enable_plugin_nautilus = wx.CheckBox(self, -1, 'Nautilus', (20, 60))
+        cb_enable_plugin_nautilus.SetToolTipString(u'Enables quick access to some nautilus locations/places')
+        cb_enable_plugin_nautilus.SetValue(True)
+        cb_enable_plugin_nautilus.Disable()
+
+        # Plugin: Screenshot
+        cb_enable_plugin_screenshot = wx.CheckBox(self, -1, 'Screenshot', (20, 60))
+        cb_enable_plugin_screenshot.SetToolTipString(u'Enables simple screenshot functions')
+        cb_enable_plugin_screenshot.SetValue(True)
+        cb_enable_plugin_screenshot.Disable()
 
         # Plugin: Session
-        plugin_session_headline = wx.StaticText(self, -1, "Session", (20, 20))
-        plugin_session_headline.SetFont(FONT_BIG)
-        plugin_session_details = wx.StaticText(self, -1, "!lock      = Lock session\n!logout    = Logout session\n!shutdown  = Shutdown machine\n!hibernate = Hibernate machine\n!reboot    = Reboot machine", (20, 60))
-        plugin_session_details.SetFont(FONT_NORMAL_MONO)
-
-        # Lines
-        line1 = wx.StaticLine(self, -1, (25, 50), (600, 1))
-        line2 = wx.StaticLine(self, -1, (25, 50), (600, 1))
+        cb_enable_plugin_session = wx.CheckBox(self, -1, 'Session', (20, 60))
+        cb_enable_plugin_session.SetToolTipString(u'Enables several session commands')
+        cb_enable_plugin_session.SetValue(True)
+        cb_enable_plugin_session.Disable()
 
         ## Layout
         #
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         pref_sizer.AddSpacer(10)
+
+        # Local search
+        pref_sizer.Add(cb_enable_plugin_local_search, 0, wx.ALL, border=10)
+
+        # Spacer
+        pref_sizer.AddSpacer(5)
+
         # Internet search
-        pref_sizer.Add(plugin_internet_search_headline, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_internet_search_details, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_insernet_search, 0, wx.ALL, border=10)
+
         # Spacer
         pref_sizer.AddSpacer(5)
-        pref_sizer.Add(line1, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(5)
+
         # Nautilus
-        pref_sizer.Add(plugin_nautilus_headline, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_nautilus_details, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_nautilus, 0, wx.ALL, border=10)
+
         # Spacer
         pref_sizer.AddSpacer(5)
-        pref_sizer.Add(line2, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(5)
+
         # Session
-        pref_sizer.Add(plugin_session_headline, 0, wx.ALL, border=10)
-        pref_sizer.Add(plugin_session_details, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_screenshot, 0, wx.ALL, border=10)
+
+        # Spacer
+        pref_sizer.AddSpacer(5)
+
+        # Session
+        pref_sizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10)
+
 
         self.SetSizer(pref_sizer)

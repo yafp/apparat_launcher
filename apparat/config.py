@@ -5,8 +5,7 @@
 # -----------------------------------------------------------------------------------------------
 # CONFIG (DEVELOPER)
 # -----------------------------------------------------------------------------------------------
-APP_VERSION = '20170403.01'
 WINDOW_WIDTH = 650
-WINDOW_HEIGHT = 450
+WINDOW_HEIGHT = 460
 TARGET_ICON_SIZE = 128
 TRANSPARENCY_VALUE = 255                # app TRANSPARENCY_VALUE - Values: 0-255

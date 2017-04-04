@@ -15,7 +15,7 @@
 
 # CONFIG
 #
-APPARAT_FOLDER=$HOME'/Dropbox/Temp/apparat/src/'
+APPARAT_FOLDER=$HOME'/Dropbox/Temp/apparat/apparat/'
 APPARAT_EXECUTABLE='apparat.py'
 
 

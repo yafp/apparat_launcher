@@ -18,7 +18,7 @@ if sys.version_info >= (3, 0):
     sys.exit(1)
 
 else: # python 2.x
-    ## built-in modules
+    ## general
     import difflib                      # for intelligent list sort
     import fnmatch                      # for searching applications
     import os                           # for searching applications
@@ -27,20 +27,19 @@ else: # python 2.x
     import webbrowser                   # for opening urls (example: github project page)
     import wx                           # for all the WX GUI items
 
-    ## projects internal modules
+    ## apparat
     import constants                    # contains some constants
     import config                       # contains some config values
     import ini                          # ini file handling
-    import prefs
+    import prefs                        # preference window
     import tools                        # contains helper-tools
+    import version
     import plugin_search_local
     import plugin_search_internet
     import plugin_screenshot
     import plugin_nautilus
     import plugin_session
 
-
-    print sys.platform
     ## GTK vs WX is a mess - Issue: #15 - It helps to import GTK after having created the WX app (at least for Ubuntu, not for Fedora)
     #
     # Ubuntu (import gtk) vs Fedora (from gi.repository import Gtk)
@@ -101,13 +100,13 @@ class MyFrame(wx.Frame):
         # Define UI Elements
         # ------------------------------------------------
         # Some general bitmaps which might be needed for some button states
-        self.ui_bt_img_search = wx.Bitmap('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_BMP)
-        self.ui_bt_img_blank = wx.Bitmap('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_BMP)
-        self.ui_bt_img_execute_black = wx.Bitmap('gfx/core/bt_execute_128_black.png', wx.BITMAP_TYPE_BMP)
+        self.ui_bt_img_search = wx.Bitmap('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui_bt_img_blank = wx.Bitmap('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui_bt_img_execute_black = wx.Bitmap('gfx/core/bt_execute_128_black.png', wx.BITMAP_TYPE_PNG)
 
         ## Preference button
-        self.ui__bt_prefs_img = wx.Bitmap('gfx/core/bt_prefs_16.png', wx.BITMAP_TYPE_BMP)
-        self.ui__bt_prefs_img_focus = wx.Bitmap('gfx/core/bt_prefs_16_black.png', wx.BITMAP_TYPE_BMP) # #c0392b
+        self.ui__bt_prefs_img = wx.Bitmap('gfx/core/bt_prefs_16.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_prefs_img_focus = wx.Bitmap('gfx/core/bt_prefs_16_black.png', wx.BITMAP_TYPE_PNG) # #c0392b
         self.ui__bt_prefs = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_prefs_img, size=(self.ui__bt_prefs_img.GetWidth()+10, self.ui__bt_prefs_img.GetHeight()+10))
         self.ui__bt_prefs.SetBitmapFocus(self.ui__bt_prefs_img_focus)
         self.ui__bt_prefs.SetBitmapHover(self.ui__bt_prefs_img_focus)
@@ -139,18 +138,18 @@ class MyFrame(wx.Frame):
         self.ui__txt_plugin_information.Enable(False)
         self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
 
-        ## app button
+        ## primary button
         self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_app = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_selected_app.SetBitmapFocus(wx.NullBitmap)
         self.ui__bt_selected_app.SetBitmapHover(wx.NullBitmap)
-        self.ui__bt_selected_app.SetBitmapDisabled(self.ui_bt_img_search)
+        self.ui__bt_selected_app.SetBitmapDisabled(self.ui_bt_img_blank)
         #self.ui__bt_selected_app.SetBitmapSelected(wx.NullBitmap)
         self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
         self.ui__bt_selected_app.SetLabel('Applications')
         self.ui__bt_selected_app.Enable(False)
 
-        ## parameter button
+        ## secondary button
         self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_selected_parameter.SetBitmapFocus(wx.NullBitmap) # image when in focus
@@ -160,26 +159,26 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_parameter.SetLabel('Options')
         self.ui__bt_selected_parameter.Enable(False)
 
-        ## app text
+        ## primary text
         self.ui__txt_selected_app = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
         self.ui__txt_selected_app.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
-        self.ui__txt_selected_app.SetToolTipString(u'Command')
+        #self.ui__txt_selected_app.SetToolTipString(u'Command')
         self.ui__txt_selected_app.SetMinSize(wx.Size(300, 18))
         self.ui__txt_selected_app.SetMaxSize(wx.Size(300, 18))
         self.ui__txt_selected_app.Enable(False)
         self.ui__txt_selected_app.SetBackgroundColour(wx.Colour(237, 237, 237))
 
-        ## parameter text
+        ## secondary text
         self.ui__txt_selected_parameter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
         self.ui__txt_selected_parameter.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
-        self.ui__txt_selected_parameter.SetToolTipString(u'Parameter')
+        #self.ui__txt_selected_parameter.SetToolTipString(u'Parameter')
         self.ui__txt_selected_parameter.SetMinSize(wx.Size(300, 18))
         self.ui__txt_selected_parameter.SetMaxSize(wx.Size(300, 18))
         self.ui__txt_selected_parameter.Enable(False)
         self.ui__txt_selected_parameter.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## Version Information
-        self.ui__txt_version_information = wx.StaticText(self, wx.ID_ANY, ' v'+config.APP_VERSION, wx.DefaultPosition, wx.DefaultSize, 0)
+        self.ui__txt_version_information = wx.StaticText(self, wx.ID_ANY, ' v'+version.APP_VERSION, wx.DefaultPosition, wx.DefaultSize, 0)
         self.ui__txt_version_information.Wrap(-1)
         self.ui__txt_version_information.SetFont(wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_version_information.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
@@ -241,10 +240,6 @@ class MyFrame(wx.Frame):
         self.ui__cb_search.SetFocus()     # set focus to search
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
-
-        #if 'Ubuntu' in platform.linux_distribution():
-            #import gtk
-            #global gtk
 
 
     def on_key_down(self, event):
@@ -418,6 +413,7 @@ class MyFrame(wx.Frame):
             global gtk
             icon_theme = gtk.icon_theme_get_default()
 
+
         # Fedora
         if 'Fedora' in platform.linux_distribution():
             icon_theme = Gtk.IconTheme.get_default()
@@ -437,7 +433,6 @@ class MyFrame(wx.Frame):
             new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
         else:
             icon_path = icon_info.get_filename()
-
             if icon_path != '': # found icon
                 if '.svg' not in icon_path:
                     new_app_icon = wx.Image(icon_path, wx.BITMAP_TYPE_ANY)    # define new image
@@ -477,12 +472,11 @@ class MyFrame(wx.Frame):
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name) # Plugin Name in specific field
             tools.debug_output('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated')
         else:
-            # application buttons
-            self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            # primary buttons
             self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
             self.ui__bt_selected_app.Enable(False)
 
-            ## parameter button
+            ## secondary button
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.SetToolTipString('')
@@ -491,9 +485,10 @@ class MyFrame(wx.Frame):
             ## set result-count
             self.ui__txt_result_counter.SetValue('0')
 
-            # Plugin Name in specific field
+            ## Plugin Name in specific field
             self.ui__txt_plugin_information.SetValue(plugin_name)
 
+            ## reset command and parameter
             self.ui__txt_selected_app.SetValue('')
             self.ui__txt_selected_parameter.SetValue('')
 
@@ -514,7 +509,7 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
-            # set parameter
+            ## set parameter
             self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[6:])
 
         ## set command
@@ -543,7 +538,7 @@ class MyFrame(wx.Frame):
 
 
     def parse_user_input(self, current_search_string):
-        """Method to search applications and/or plugin commands to fill the results"""
+        """Takes the current user input and parses it for matching plugins or general application search"""
         tools.debug_output('parse_user_input', 'starting')
         if current_search_string != '': # if there is a search string
 
@@ -608,23 +603,23 @@ class MyFrame(wx.Frame):
 
         tools.debug_output('search_executables', 'Searching executables for the following string: '+current_search_string)
         search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
-        ## Sort results - http://stackoverflow.com/questions/17903706/how-to-sort-list-of-strings-by-best-match-difflib-ratio
         search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
 
         self.ui__txt_result_counter.SetValue(str(len(search_results))) # update result count
         self.ui__cb_search.SetItems(search_results) # update combobox
 
         tools.debug_output('search_executables', 'Found '+str(len(search_results))+' matching application')
-        if len(search_results) == 0: # 0 result
+        if len(search_results) == 0: # 0 results
             ## update launch button icon
             self.ui__bt_selected_app.Enable(True)
             if current_search_string.startswith('!'): # starting input for plugins
                 self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             else: # no result - so sad
                 self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+
             self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
 
-            ## update option button
+            ## update secondary button
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
@@ -633,7 +628,7 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('') ## set parameter
 
         elif len(search_results) == 1: # 1 result
-            # combobox - autocomplete if it makes sense
+            # combobox - autocomplete if it makes sense (Issue: #11) - Causes issues as it is autocompleting over and over again if user wants to change
             #
             #if(search_results[0].startswith(current_search_string)): # if only result starts with search_string - autocomplete and mark critical completed part
                 #self.ui__cb_search.SetValue(search_results[0])
@@ -641,11 +636,11 @@ class MyFrame(wx.Frame):
                 #self.ui__cb_search.SetMark(len(current_search_string)-1, len(search_results[0]))
                 #self.ui__cb_search.SetMark(len(current_search_string), len(search_results[0]))
 
-            ## application buttons
+            ## primary button
             self.ui__bt_selected_app.Enable(True) # Enable application button
             self.ui__bt_selected_app.SetToolTipString(search_results[0]) # set tooltip
 
-            ## options buttons
+            ## secondary button
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
@@ -657,13 +652,13 @@ class MyFrame(wx.Frame):
 
             self.get_icon_for_executable(str(search_results[0])) ## Icon search
 
-        else: # > 1 search
-            ## application button
+        else: # > 1 results
+            ## primary button
             self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_list_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_app.Enable(True)
             self.ui__bt_selected_app.SetToolTipString(search_results[0])
 
-            # update launch-options button
+            ## secondary button
             self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
@@ -675,12 +670,12 @@ class MyFrame(wx.Frame):
 
     def do_execute(self):
         """Launches the actual task"""
-        # get command and parameter inforations
+        ## get command and parameter informations
         command = self.ui__txt_selected_app.GetValue()
         parameter = self.ui__txt_selected_parameter.GetValue()
 
         if(command == ''):
-            tools.debug_output('do_execute', 'Nothing to do - empty command')
+            tools.debug_output('do_execute', 'Command is empty, nothing to do. Aborting')
             return
 
         tools.debug_output('do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
@@ -726,8 +721,12 @@ class MyFrame(wx.Frame):
                     tools.debug_output('do_execute', 'Executed: "'+command+'"')
 
                 else:
-                    subprocess.Popen([command, parameter])
-                    tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'"')
+                    if(' ' in parameter): # if parameter contains at least 1 space, there are most likely several parameters
+                        subprocess.Popen([command+" "+parameter],shell=True) # using shell=True as hack for handling several parameters (i.e. for !fs)
+                        tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'" (with shell=True)')
+                    else:
+                        subprocess.Popen([command, parameter])
+                        tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'"')
 
                 self.reset_ui()
 
@@ -759,9 +758,9 @@ class MyFrame(wx.Frame):
         self.ui__cb_search.Clear() # clear all list values
         self.ui__cb_search.SetValue('') # clear search field
 
-        self.ui__bt_selected_app.Enable(False) ## reset the applications button
+        self.ui__bt_selected_app.Enable(False) ## reset primary button
 
-        ## reset the option buttons
+        ## reset secondary button
         self.ui__bt_selected_parameter.Enable(False)
         self.ui__bt_selected_parameter.SetToolTipString('')
 
@@ -809,7 +808,6 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
         tools.debug_output('CreatePopupMenu', 'starting')
         menu = wx.Menu()
-        #create_menu_item(menu, 'Show Mainwindow', self.on_app_tray_icon_left_click)
         create_menu_item(menu, 'Show', self.on_tray_popup_left_show)
         menu.AppendSeparator()
         create_menu_item(menu, 'Preferences', self.on_tray_popup_click_preferences)
@@ -865,7 +863,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         tools.debug_output('on_tray_popup_click_about', 'starting with event: '+str(event))
         aboutInfo = wx.AboutDialogInfo()
         aboutInfo.SetName(constants.APP_NAME)
-        aboutInfo.SetVersion(config.APP_VERSION)
+        aboutInfo.SetVersion(version.APP_VERSION)
         aboutInfo.SetDescription((constants.APP_DESCRIPTION))
         #aboutInfo.SetLicense(open("COPYING").read())
         aboutInfo.SetLicense(open("../LICENSE").read())
@@ -915,8 +913,8 @@ def main():
     app = App(False)
     tools.check_arguments() # check launch parameter / arguments
     tools.check_platform() # Check if platform is supported at all, otherwise abort
-    tools.check_linux_requirements()
-    ini.validate()
+    tools.check_linux_requirements() # check if needed linux packages are available/installed
+    ini.validate() # validate ini file
 
     frame = MyFrame(None, constants.APP_NAME) # Main UI window
     tools.debug_output('main', 'Frame: '+str(frame))

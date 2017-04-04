@@ -13,7 +13,6 @@ def prepare_general(current_search_string, main_window):
     """Prepare General"""
     tools.debug_output('prepare_general', 'starting')
 
-
     if  current_search_string == "!ss":
         tools.debug_output('prepare_general', 'Case: Selective Screenshot')
         prepare_selective_screenshot(main_window)
@@ -40,9 +39,9 @@ def prepare_selective_screenshot(main_window):
     main_window.plugin__update_general_ui_information('Screenshot (Selective)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/misc/bt_screenshot_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/screenshot/bt_screenshot_selective_128.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
-    main_window.ui__bt_selected_app.SetToolTipString('Screenshot')
+    main_window.ui__bt_selected_app.SetToolTipString('Selective Screenshot')
 
     ## parameter buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Do')
@@ -52,9 +51,9 @@ def prepare_selective_screenshot(main_window):
     ## set command
     main_window.ui__txt_selected_app.SetValue('import')
 
-    # set parameter
+    ## set parameter
     current_timestamp = tools.generate_timestamp()
-    parameter = os.environ['HOME']+'/'+current_timestamp+'.png'
+    parameter = os.environ['HOME']+'/'+current_timestamp+'_selection.png'
     main_window.ui__txt_selected_parameter.SetValue(parameter)
 
 
@@ -66,9 +65,9 @@ def prepare_full_screenshot(main_window):
     main_window.plugin__update_general_ui_information('Screenshot (Full)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/misc/bt_screenshot_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/screenshot/bt_screenshot_full_128.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
-    main_window.ui__bt_selected_app.SetToolTipString('Screenshot')
+    main_window.ui__bt_selected_app.SetToolTipString('Full Screenshot')
 
     ## parameter buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Do')
@@ -78,7 +77,7 @@ def prepare_full_screenshot(main_window):
     ## set command
     main_window.ui__txt_selected_app.SetValue('import')
 
-    # set parameter
+    ## set parameter
     current_timestamp = tools.generate_timestamp()
-    parameter = '-window root '+os.environ['HOME']+'/'+current_timestamp+'.png'
+    parameter = '-window root '+os.environ['HOME']+'/'+current_timestamp+'_full.png'
     main_window.ui__txt_selected_parameter.SetValue(parameter)
