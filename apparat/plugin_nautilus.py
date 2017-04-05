@@ -4,7 +4,7 @@
 # general
 import wx
 
-# project
+# apparat
 import tools
 
 

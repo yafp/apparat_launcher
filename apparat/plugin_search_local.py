@@ -1,13 +1,13 @@
 #!/usr/bin/python
 """apparat - plugin: search-internet"""
 
-# general
-import difflib                      # for intelligent list sort
+## general
+import difflib # for intelligent list sort
 import fnmatch
 import os
 import wx
 
-# project
+## apparat
 import tools
 
 
@@ -15,7 +15,7 @@ def search_user_files(main_window, current_search_string):
     """Search for user files"""
     tools.debug_output('search_user_files', 'starting')
 
-    # reset combobox
+    ## reset combobox
     search_results = []
     main_window.ui__cb_search.SetItems(search_results) # update combobox
 
@@ -67,12 +67,12 @@ def search_user_files(main_window, current_search_string):
             main_window.ui__txt_result_counter.SetValue(str(len(search_results)))
 
             if(len(search_results) > 1):
-                # update application button
+                ## update application button
                 main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_files_128.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
             elif(len(search_results) == 1):
-                # update application button
+                ## update application button
                 main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_file_128.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
@@ -83,14 +83,14 @@ def search_user_files(main_window, current_search_string):
                 main_window.ui__txt_selected_app.SetValue('xdg-open')
                 main_window.ui__txt_selected_parameter.SetValue(search_results[0])
 
-            else: # no results
+            else: ## no results
                 main_window.ui__txt_result_counter.SetValue('0') # overwrite
 
-                # update application button
+                ## update application button
                 main_window.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
-            # update combobox
+            ## update combobox
             main_window.ui__cb_search.SetItems(search_results) # update combobox
         else:
             tools.debug_output('search_user_files', 'aborting search (string too short)')

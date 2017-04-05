@@ -5,7 +5,7 @@
 import webbrowser
 import wx
 
-# project
+# apparat
 import constants
 import ini
 import tools
@@ -99,50 +99,13 @@ def execute_internet_search(main_window, command, parameter):
     """Plugin: Internet-Search - Execute the actual internet search call"""
     tools.debug_output('execute_internet_search', 'starting')
 
-    if command == '!a':
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_A+parameter
+    # get tuple position of command
+    index = constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER.index(command)
 
-    elif command == ('!b'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_B+parameter
+    # get url based on tuple index
+    remote_url = constants.APP_PLUGINS_INTERNET_SEARCH_URLS[index]
 
-    elif command == ('!e'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_E+parameter
-
-    elif command == ('!g'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_G+parameter
-
-    elif command == ('!l'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_L+parameter
-
-    elif command == ('!m'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_M+parameter
-
-    elif command == ('!o'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_O+parameter
-
-    elif command == ('!r'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_R+parameter
-
-    elif command == ('!s'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_S+parameter
-
-    elif command == ('!t'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_T+parameter
-
-    elif command == ('!v'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_V+parameter
-
-    elif command == ('!w'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_W+parameter
-
-    elif command == ('!y'):
-        remote_url = constants.PLUGIN_INTERNET_SEARCH_URL_Y+parameter
-
-    else:
-        tools.debug_output('execute_internet_search', 'Error: unexpected case in "execute_internet_search"')
-
-    # if so searchphrase/parameter was supplied - open the main url (Issue #22)
-    if(len(parameter) == 0):
+    if(len(parameter) == 0): # if so searchphrase/parameter was supplied - open the main url (Issue #22)
         tools.debug_output('execute_internet_search', 'No searchphrase supplied, trunc to main-url') # Issue #22
         remote_url = tools.trunc_at(remote_url, "/")
 

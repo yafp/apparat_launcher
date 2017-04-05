@@ -5,7 +5,7 @@
 import os
 import wx
 
-# project
+# apparat
 import tools
 
 

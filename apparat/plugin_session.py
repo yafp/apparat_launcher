@@ -4,7 +4,7 @@
 # general
 import wx
 
-# project
+# apparat
 import tools
 
 
@@ -37,7 +37,6 @@ def prepare_general(current_search_string, main_window):
         return
 
     tools.debug_output('prepare_general', 'finished')
-
 
 
 def prepare_plugin_session_hibernate(main_window):
@@ -126,8 +125,6 @@ def prepare_plugin_session_shutdown(main_window):
     ## set command and parameter
     main_window.ui__txt_selected_app.SetValue('gnome-session-quit')
     main_window.ui__txt_selected_parameter.SetValue('--power-off')
-
-
 
 
 def prepare_plugin_session_reboot(main_window):
