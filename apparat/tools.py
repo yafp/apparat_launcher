@@ -13,7 +13,7 @@ import sys
 
 ## apparat
 import constants
-import config
+import version
 
 
 DEBUG = False
@@ -128,7 +128,7 @@ def which(program):
 
 def show_version():
     """Show version"""
-    print(config.APP_VERSION)
+    print(version.APP_VERSION)
 
 
 def show_help():
@@ -146,6 +146,9 @@ def check_platform():
     ## Linux
     if sys.platform == "linux" or sys.platform == "linux2":
         debug_output('check_platform', 'Detected linux')
+        debug_output('check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION')) # Issue: 24
+        if(os.environ.get('DESKTOP_SESSION') != 'gnome'):
+            debug_output('check_platform', 'Here be dragons (untested desktop environment)')
 
     ## Mac OS
     elif sys.platform == "darwin":
