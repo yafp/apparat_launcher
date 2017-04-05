@@ -292,7 +292,7 @@ class MyFrame(wx.Frame):
         if self.ui__cb_search.GetValue() == '': #searchstring is empty
             tools.debug_output('on_combobox_text_changed', 'Searchstring: <empty>. Nothing do to')
         else:
-            tools.debug_output('on_combobox_text_changed', 'Searchstring: '+self.ui__cb_search.GetValue())
+            tools.debug_output('on_combobox_text_changed', 'Searchstring: '+self.ui__cb_search.GetValue().lower())
             global is_resetted
             is_resetted = False
 
@@ -313,7 +313,7 @@ class MyFrame(wx.Frame):
                 is_combobox_open = 0    # global var to keep track if dropdown is open or closed
 
                 ## run search again after selecting the desired search string from dropdown
-                self.parse_user_input(self.ui__cb_search.GetValue())
+                self.parse_user_input(self.ui__cb_search.GetValue().lower())
         else:
             tools.debug_output('on_combobox_enter', 'Combobox is empty, nothing to do here.')
 
@@ -323,10 +323,10 @@ class MyFrame(wx.Frame):
         tools.debug_output('on_combobox_select_item', 'starting with event: '+str(event))
 
         if(self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search'): # Local search is always using xdg-open - special case
-            self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue())   # write command to command text field
+            self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue().lower())   # write command to command text field
         else: # default-case
-            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue())   # write command to command text field
-            self.get_icon_for_executable(self.ui__cb_search.GetValue()) # get icon for selected executable
+            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue().lower())   # write command to command text field
+            self.get_icon(self.ui__cb_search.GetValue().lower) # get icon for selected executable
         self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
         tools.debug_output('on_combobox_select_item', 'finished')
 
@@ -348,7 +348,7 @@ class MyFrame(wx.Frame):
         """If the popup of the combobox is closed"""
         tools.debug_output('on_combobox_popup_close', 'starting with event: '+str(event))
         tools.debug_output('on_combobox_popup_close', 'combobox just got closed')
-        self.get_icon_for_executable(self.ui__cb_search.GetValue()) # get icon for selected executable
+        self.get_icon(self.ui__cb_search.GetValue().lower()) # get icon for selected executable
         global is_combobox_open
         is_combobox_open = False
         tools.debug_output('on_combobox_popup_close', 'finished')
@@ -383,11 +383,11 @@ class MyFrame(wx.Frame):
 
         elif current_keycode == 13: # Enter
             tools.debug_output('on_combobox_key_press', 'ENTER was pressed - ignoring it because of "on_combobox_enter"')
-            self.parse_user_input(self.ui__cb_search.GetValue())
+            self.parse_user_input(self.ui__cb_search.GetValue().lower())
             is_combobox_open = 0
 
         else:
-            current_search_string = self.ui__cb_search.GetValue()
+            current_search_string = self.ui__cb_search.GetValue().lower()
             if len(current_search_string) == 0:
                 tools.debug_output('on_combobox_key_press', 'Searchstring: <empty>. Nothing do to')
                 self.reset_ui()
@@ -396,9 +396,9 @@ class MyFrame(wx.Frame):
                 self.parse_user_input(current_search_string)
 
 
-    def get_icon_for_executable(self, full_executable_name):
+    def get_icon(self, full_executable_name):
         """Tries to get an icon for an executable by name"""
-        tools.debug_output('get_icon_for_executable', 'Starting for: '+full_executable_name)
+        tools.debug_output('get_icon', 'Starting for: '+full_executable_name)
 
         # Abort if a plugin is activated
         if(self.ui__txt_plugin_information.GetValue() != ''):
@@ -413,20 +413,49 @@ class MyFrame(wx.Frame):
             global gtk
             icon_theme = gtk.icon_theme_get_default()
 
-
         # Fedora
         if 'Fedora' in platform.linux_distribution():
             icon_theme = Gtk.IconTheme.get_default()
 
+
+
+
+        print('#####################################################')
+        print('### XDG ICON TEST ###################################')
+        print('#####################################################')
+        import xdg
+        import xdg.IconTheme
+
+        # missing: detect users icontheme-name
+
+        #theme = None
+        theme = 'Paper'
+        if theme == None:
+            theme = xdg.Config.icon_theme # hicolor
+
+        #foo1 = xdg.IconTheme.getIconPath(full_executable_name, size=None, theme=None, extensions=['png', 'svg', 'xpm'])
+        foo1 = xdg.IconTheme.getIconPath(full_executable_name, size=128, theme=theme, extensions=['png', 'xpm'])
+
+        #foo2 = xdg.IconTheme.getIconPath(full_executable_name)
+        print foo1
+        #print foo2
+        print('#####################################################')
+
+
+
+
+
+
         ## check what icon sizes are available and choose best size
         available_icon_sizes = icon_theme.get_icon_sizes(full_executable_name)
         if not available_icon_sizes: # if we got no list of available icon sizes - Fallback: try to get a defined size
+            tools.debug_output('get_icon', 'Warning: found no list of available icon-siozes for: '+full_executable_name)
             max_icon_size = 64
             icon_info = icon_theme.lookup_icon(full_executable_name, max_icon_size, 0)
         else:
-            tools.debug_output('get_icon_for_executable', 'Found several icon sizes: '+str(available_icon_sizes))
+            tools.debug_output('get_icon', 'Found several icon sizes: '+str(available_icon_sizes))
             max_icon_size = max(available_icon_sizes) ## pick the biggest
-            tools.debug_output('get_icon_for_executable', 'Picking the following icon size: '+str(max_icon_size))
+            tools.debug_output('get_icon', 'Picking the following icon size: '+str(max_icon_size))
             icon_info = icon_theme.lookup_icon(full_executable_name, max_icon_size, 0)
 
         if icon_info is None:
@@ -436,18 +465,17 @@ class MyFrame(wx.Frame):
             if icon_path != '': # found icon
                 if '.svg' not in icon_path:
                     new_app_icon = wx.Image(icon_path, wx.BITMAP_TYPE_ANY)    # define new image
-                    #new_app_iconWidth=new_app_icon.GetWidth()                   # get icon width
-                    tools.debug_output('get_icon_for_executable', 'Found icon: '+icon_path+' ('+str(max_icon_size)+'px)')
+                    tools.debug_output('get_icon', 'Found icon: '+icon_path+' ('+str(max_icon_size)+'px)')
                     if config.TARGET_ICON_SIZE == max_icon_size: # if icon has expected size
-                        tools.debug_output('get_icon_for_executable', 'Icon size is as expected')
+                        tools.debug_output('get_icon', 'Icon size is as expected')
                     else: # resize icon
-                        tools.debug_output('get_icon_for_executable', 'Icon size does not match, starting re-scaling to '+str(config.TARGET_ICON_SIZE)+'px')
+                        tools.debug_output('get_icon', 'Icon size does not match, starting re-scaling to '+str(config.TARGET_ICON_SIZE)+'px')
                         new_app_icon.Rescale(config.TARGET_ICON_SIZE, config.TARGET_ICON_SIZE) # rescale image
                 else: # found unsupported icon format
-                    tools.debug_output('get_icon_for_executable', 'SVG icons ('+icon_path+') can not be used so far. Using a dummy icon for now')
+                    tools.debug_output('get_icon', 'SVG icons ('+icon_path+') can not be used so far. Using a dummy icon for now')
                     new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
             else: # no icon
-                tools.debug_output('get_icon_for_executable', 'Found no icon')
+                tools.debug_output('get_icon', 'Found no icon')
                 new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
 
         ## application button
@@ -468,7 +496,7 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_app.Enable(True) # enable application button
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
             self.ui__txt_result_counter.SetValue('1') ## set result-count
-            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue()[:2]) ## update command (Example: !g)
+            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue().lower()[:2]) ## update command (Example: !g)
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name) # Plugin Name in specific field
             tools.debug_output('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated')
         else:
@@ -650,7 +678,7 @@ class MyFrame(wx.Frame):
 
             self.ui__txt_selected_parameter.SetValue('') ## update parameter
 
-            self.get_icon_for_executable(str(search_results[0])) ## Icon search
+            self.get_icon(str(search_results[0])) ## Icon search
 
         else: # > 1 results
             ## primary button
@@ -664,7 +692,7 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
             self.ui__bt_selected_parameter.SetToolTipString('Launch')
             self.ui__txt_selected_parameter.SetValue('')             ## update parameter
-            self.get_icon_for_executable(search_results[0]) # get icon for primary search result
+            self.get_icon(search_results[0]) # get icon for primary search result
             self.ui__txt_selected_app.SetValue(search_results[0])             # assume first search result is the way to go
 
 
@@ -722,7 +750,7 @@ class MyFrame(wx.Frame):
 
                 else:
                     if(' ' in parameter): # if parameter contains at least 1 space, there are most likely several parameters
-                        subprocess.Popen([command+" "+parameter],shell=True) # using shell=True as hack for handling several parameters (i.e. for !fs)
+                        subprocess.Popen([command+" "+parameter], shell=True) # using shell=True as hack for handling several parameters (i.e. for !fs)
                         tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'" (with shell=True)')
                     else:
                         subprocess.Popen([command, parameter])

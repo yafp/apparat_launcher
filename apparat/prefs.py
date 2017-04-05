@@ -57,7 +57,6 @@ class PreferenceWindow(wx.Frame):
         tools.debug_output('close_preference_ui', 'starting')
         tools.debug_output('close_preference_ui', 'Event: '+str(event))
         self.Destroy() # close the pref UI
-        # TODO: set focus back to main-window
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,6 +83,7 @@ class UITabGeneral(wx.Panel):
             self.cb_enable_hide_ui.SetValue(True)
         wx.EVT_CHECKBOX(self, self.cb_enable_hide_ui.GetId(), self.prefs_general_toggle_hide_ui)
 
+        ## Layout
         general_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         general_sizer.AddSpacer(10)
         general_sizer.Add(t, 0, wx.ALL, border=10)
@@ -137,73 +137,71 @@ class UITabStatistics(wx.Panel):
 
 class UITabPluginCommands(wx.Panel):
 
-    """Preference Window - Tab: Commands- Shows available plugin commands"""
+    """Preference Window - Tab: Commands- Shows available plugins"""
 
     def __init__(self, parent):
         """Inits the plugin-commands tab"""
         wx.Panel.__init__(self, parent)
 
-        # Plugin: Local search
+        ## Plugin: Local search
         cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
         cb_enable_plugin_local_search.SetToolTipString(u'Enables search for user home')
         cb_enable_plugin_local_search.SetValue(True)
         cb_enable_plugin_local_search.Disable()
 
-        # Plugin: Internet search
+        ## Plugin: Internet search
         cb_enable_plugin_insernet_search = wx.CheckBox(self, -1, 'Internet-Search', (20, 60))
         cb_enable_plugin_insernet_search.SetToolTipString(u'Enables search for several popular web-services')
         cb_enable_plugin_insernet_search.SetValue(True)
         cb_enable_plugin_insernet_search.Disable()
 
-        # Plugin: Nautilus
+        ## Plugin: Nautilus
         cb_enable_plugin_nautilus = wx.CheckBox(self, -1, 'Nautilus', (20, 60))
         cb_enable_plugin_nautilus.SetToolTipString(u'Enables quick access to some nautilus locations/places')
         cb_enable_plugin_nautilus.SetValue(True)
         cb_enable_plugin_nautilus.Disable()
 
-        # Plugin: Screenshot
+        ## Plugin: Screenshot
         cb_enable_plugin_screenshot = wx.CheckBox(self, -1, 'Screenshot', (20, 60))
         cb_enable_plugin_screenshot.SetToolTipString(u'Enables simple screenshot functions')
         cb_enable_plugin_screenshot.SetValue(True)
         cb_enable_plugin_screenshot.Disable()
 
-        # Plugin: Session
+        ## Plugin: Session
         cb_enable_plugin_session = wx.CheckBox(self, -1, 'Session', (20, 60))
         cb_enable_plugin_session.SetToolTipString(u'Enables several session commands')
         cb_enable_plugin_session.SetValue(True)
         cb_enable_plugin_session.Disable()
 
+        ## Link to plugin commands description
+        wxHyperlinkCtrl = wx.HyperlinkCtrl(self, -1, 'Plugin command listing', constants.APP_URL+'#plugins')
+
+
         ## Layout
-        #
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         pref_sizer.AddSpacer(10)
 
-        # Local search
+        ## Local search
         pref_sizer.Add(cb_enable_plugin_local_search, 0, wx.ALL, border=10)
-
-        # Spacer
         pref_sizer.AddSpacer(5)
 
-        # Internet search
+        ## Internet search
         pref_sizer.Add(cb_enable_plugin_insernet_search, 0, wx.ALL, border=10)
-
-        # Spacer
         pref_sizer.AddSpacer(5)
 
-        # Nautilus
+        ## Nautilus
         pref_sizer.Add(cb_enable_plugin_nautilus, 0, wx.ALL, border=10)
-
-        # Spacer
         pref_sizer.AddSpacer(5)
 
-        # Session
+        ## Session
         pref_sizer.Add(cb_enable_plugin_screenshot, 0, wx.ALL, border=10)
-
-        # Spacer
         pref_sizer.AddSpacer(5)
 
-        # Session
+        ## Session
         pref_sizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(20)
 
+        ## Hyperlink to docs
+        pref_sizer.Add(wxHyperlinkCtrl, 0, wx.ALL, border=10)
 
         self.SetSizer(pref_sizer)

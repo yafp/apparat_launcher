@@ -6,11 +6,11 @@
 # IMPORTS
 # -----------------------------------------------------------------------------------------------
 
-# built-in modules
+# general
 import os
 import ConfigParser                 # to handle .ini/configuration files
 
-## projects internal modules
+## apparat
 import constants
 import tools
 
