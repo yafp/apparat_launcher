@@ -6,9 +6,9 @@
 # -----------------------------------------------------------------------------------------------
 
 ## general
-import datetime                     # for timestamp in debug output
+import datetime # for timestamp in debug output
 import os
-import subprocess                   # for checking if cmd_exists
+import subprocess # for checking if cmd_exists
 import sys
 
 ## apparat
@@ -37,7 +37,7 @@ def check_arguments():
         sys.exit()
 
     elif len(sys.argv) == 1: # no user argument available
-        DEBUG = False
+        pass
 
     elif (sys.argv[1] in ("-d", "--debug")):
         DEBUG = True

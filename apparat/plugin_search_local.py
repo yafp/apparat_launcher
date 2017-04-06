@@ -8,6 +8,7 @@ import os
 import wx
 
 ## apparat
+import config
 import tools
 
 
@@ -23,12 +24,12 @@ def search_user_files(main_window, current_search_string):
     main_window.plugin__update_general_ui_information('Local Search')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/'+str(config.TARGET_ICON_SIZE)+'/search.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Search local user files')
 
     ## parameter buttons
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
     main_window.ui__bt_selected_parameter.SetToolTipString('Search local user files')
 
@@ -52,9 +53,7 @@ def search_user_files(main_window, current_search_string):
             exclude = set(['.cache', '.dbus', '.dropbox', '.dropbox-dist', '.local/share/Trash']) # exclude list for file search in home dir
             for root, dirs, files in os.walk(root):
                 dirs[:] = [d for d in dirs if d not in exclude]
-                #for filename in fnmatch.filter(files, pattern):
                 for filename in fnmatch.filter(files, pattern):
-                    #print( os.path.join(root, filename))
                     result = os.path.join(root, filename) # append to list
                     search_results.append(result)
 
@@ -68,16 +67,16 @@ def search_user_files(main_window, current_search_string):
 
             if(len(search_results) > 1):
                 ## update application button
-                main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_files_128.png', wx.BITMAP_TYPE_PNG)
+                main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/'+str(config.TARGET_ICON_SIZE)+'/files.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
             elif(len(search_results) == 1):
                 ## update application button
-                main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/bt_file_128.png', wx.BITMAP_TYPE_PNG)
+                main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_local/'+str(config.TARGET_ICON_SIZE)+'/file.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
                 ## parameter buttons
-                main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+                main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
                 main_window.ui__txt_selected_app.SetValue('xdg-open')
@@ -87,7 +86,7 @@ def search_user_files(main_window, current_search_string):
                 main_window.ui__txt_result_counter.SetValue('0') # overwrite
 
                 ## update application button
-                main_window.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+                main_window.ui__bt_selected_app_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/noResult.png', wx.BITMAP_TYPE_PNG)
                 main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
             ## update combobox

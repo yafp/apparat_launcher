@@ -6,6 +6,7 @@ import webbrowser
 import wx
 
 # apparat
+import config
 import constants
 import ini
 import tools
@@ -31,65 +32,25 @@ def prepare_internet_search(main_window, current_search_string):
     if(len(current_search_string) > 2):
         return # we can stop here - nothing more to do as plugin should be already activated
 
-    ## Prepare UI for plugin
-    if current_search_string.startswith('!a') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_amazon_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Amazon)')
+    # get tuple position of command
+    index = constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER.index(current_search_string)
 
-    if current_search_string.startswith('!b') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_bandcamp_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Bandcamp)')
+    # get icon-name based on tuple index
+    icon = 'gfx/plugins/search_internet/'+str(config.TARGET_ICON_SIZE)+'/'+constants.APP_PLUGINS_INTERNET_SEARCH_ICONS[index]
 
-    if current_search_string.startswith('!e') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_stack-exchange_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Stack-Exchange)')
+    # get description based on tuple index
+    description = constants.APP_PLUGINS_INTERNET_SEARCH_DESCRIPTIONS[index]
 
-    if current_search_string.startswith('!g') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_google_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Google)')
-
-    if current_search_string.startswith('!l') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_lastfm_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (LastFM)')
-
-    if current_search_string.startswith('!m') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_maps_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Google-Maps)')
-
-    if current_search_string.startswith('!o') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_stack-overflow_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Stack-Overflow)')
-
-    if current_search_string.startswith('!r') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_reddit_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Reddit)')
-
-    if current_search_string.startswith('!s') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_soundcloud_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (SoundCloud)')
-
-    if current_search_string.startswith('!t') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_twitter_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Twitter)')
-
-    if current_search_string.startswith('!v') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_vimeo_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Vimeo)')
-
-    if current_search_string.startswith('!w') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_wikipedia_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (Wikipedia)')
-
-    if current_search_string.startswith('!y') is True:
-        main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/search_internet/bt_youtube_128.png', wx.BITMAP_TYPE_PNG)
-        main_window.plugin__update_general_ui_information('Internet-Search (YouTube)')
+    # update UI with icon and description
+    main_window.ui__bt_selected_app_img = wx.Image(icon, wx.BITMAP_TYPE_PNG)
+    main_window.plugin__update_general_ui_information(description)
 
     ## update application button
     main_window.ui__bt_selected_app.Enable(True)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
 
     ## update option button
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/search.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.Enable(True)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
     main_window.ui__bt_selected_parameter.SetToolTipString('Search')

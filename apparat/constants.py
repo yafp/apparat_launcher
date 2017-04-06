@@ -17,7 +17,7 @@ APP_DESCRIPTION = 'An application launcher for linux'
 APP_URL = 'https://github.com/yafp/apparat'
 APP_LICENSE = 'GPL3'
 APP_TRAY_TOOLTIP = 'apparat'
-APP_TRAY_ICON = 'gfx/core/bt_appIcon_16.png'
+APP_TRAY_ICON = 'gfx/core/16/appIcon.png'
 APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat/'
 APP_INI_PATH = APP_INI_FOLDER+'apparat.ini'
 
@@ -43,6 +43,36 @@ APP_PLUGINS_INTERNET_SEARCH_URLS = (
     'https://vimeo.com/search?q=',
     'https://en.wikipedia.org/w/index.php?search=',
     'https://www.youtube.com/results?search_query='
+)
+APP_PLUGINS_INTERNET_SEARCH_ICONS = (
+    'amazon.png',
+    'bandcamp.png',
+    'stack-exchange.png',
+    'google.png',
+    'lastfm.png',
+    'maps.png',
+    'stack-overflow.png',
+    'reddit.png',
+    'soundcloud.png',
+    'twitter.png',
+    'vimeo.png',
+    'wikipedia.png',
+    'youtube.png'
+)
+APP_PLUGINS_INTERNET_SEARCH_DESCRIPTIONS = (
+    'Internet-Search (Amazon)',
+    'Internet-Search (Bandcamp)',
+    'Internet-Search (Stack-Exchange)',
+    'Internet-Search (Google)',
+    'Internet-Search (LastFM)',
+    'Internet-Search (Google-Maps)',
+    'Internet-Search (Stack-Overflow)',
+    'Internet-Search (Reddit)',
+    'Internet-Search (SoundCloud)',
+    'Internet-Search (Twitter)',
+    'Internet-Search (Vimeo)',
+    'Internet-Search (Wikipedia)',
+    'Internet-Search (YouTube)'
 )
 
 # Plugin: Local search

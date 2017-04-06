@@ -5,6 +5,7 @@
 import wx
 
 # apparat
+import config
 import tools
 
 
@@ -48,13 +49,13 @@ def prepare_plugin_nautilus_goto(main_window):
     main_window.plugin__update_general_ui_information('Nautilus (GoTo)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_goto_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/'+str(config.TARGET_ICON_SIZE)+'/goto.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Go to folder')
 
     ## parameter buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Open')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command
@@ -72,13 +73,13 @@ def prepare_plugin_nautilus_show_network_devices(main_window):
     main_window.plugin__update_general_ui_information('Nautilus (Network)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_network_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/'+str(config.TARGET_ICON_SIZE)+'/network.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Show network devices')
 
     ## parameter buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Open')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter
@@ -94,13 +95,13 @@ def prepare_plugin_nautilus_show_recent(main_window):
     main_window.plugin__update_general_ui_information('Nautilus (Recent)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_recent_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/'+str(config.TARGET_ICON_SIZE)+'/recent.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Show recent files')
 
     ## parameter buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Open')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter
@@ -116,13 +117,13 @@ def prepare_plugin_nautilus_open_trash(main_window):
     main_window.plugin__update_general_ui_information('Nautilus (Trash)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/bt_trash_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/nautilus/'+str(config.TARGET_ICON_SIZE)+'/trash.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Open Trash')
 
     ## parameter buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Open')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter

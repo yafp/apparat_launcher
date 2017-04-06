@@ -5,6 +5,7 @@
 import wx
 
 # apparat
+import config
 import tools
 
 
@@ -44,16 +45,16 @@ def prepare_plugin_session_hibernate(main_window):
     tools.debug_output('prepare_plugin_session_hibernate', 'starting')
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Hibernate')
+    main_window.plugin__update_general_ui_information('Session (Hibernate)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_hibernate_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/hibernate.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Hibernate machine')
 
     ## option buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Launch')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter
@@ -66,16 +67,16 @@ def prepare_plugin_session_lock(main_window):
     tools.debug_output('prepare_plugin_session_lock', 'starting')
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Lock')
+    main_window.plugin__update_general_ui_information('Session (Lock)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_lock_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/lock.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Lock Session')
 
     ## option buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Launch')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter
@@ -88,16 +89,16 @@ def prepare_plugin_session_logout(main_window):
     tools.debug_output('prepare_plugin_session_logout', 'starting')
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Logout')
+    main_window.plugin__update_general_ui_information('Session (Logout)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_logout_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/logout.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Logout Session')
 
     ## option buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Launch')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter
@@ -110,16 +111,16 @@ def prepare_plugin_session_shutdown(main_window):
     tools.debug_output('prepare_plugin_session_shutdown', 'starting')
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Shutdown')
+    main_window.plugin__update_general_ui_information('Session (Shutdown)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_shutdown_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/shutdown.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Shutdown machine')
 
     ## option buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Launch')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter
@@ -132,16 +133,16 @@ def prepare_plugin_session_reboot(main_window):
     tools.debug_output('prepare_plugin_session_reboot', 'starting')
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Reboot')
+    main_window.plugin__update_general_ui_information('Session (Reboot)')
 
     ## application buttons
-    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/bt_reboot_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/reboot.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
     main_window.ui__bt_selected_app.SetToolTipString('Reboot machine')
 
     ## option buttons
     main_window.ui__bt_selected_parameter.SetToolTipString('Launch')
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
 
     ## set command and parameter

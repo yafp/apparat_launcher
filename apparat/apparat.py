@@ -93,20 +93,20 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.on_close_application)
 
         ## define and set an application icon
-        app_icon = wx.Icon('gfx/core/bt_appIcon_16.png', wx.BITMAP_TYPE_PNG)
+        app_icon = wx.Icon('gfx/core/16/appIcon.png', wx.BITMAP_TYPE_PNG)
         self.SetIcon(app_icon)
 
         # ------------------------------------------------
         # Define UI Elements
         # ------------------------------------------------
         # Some general bitmaps which might be needed for some button states
-        self.ui_bt_img_search = wx.Bitmap('gfx/core/bt_search_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui_bt_img_blank = wx.Bitmap('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui_bt_img_execute_black = wx.Bitmap('gfx/core/bt_execute_128_black.png', wx.BITMAP_TYPE_PNG)
+        self.ui_bt_img_search = wx.Bitmap('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/search.png', wx.BITMAP_TYPE_PNG)
+        self.ui_bt_img_blank = wx.Bitmap('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
+        self.ui_bt_img_execute_black = wx.Bitmap('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute_black.png', wx.BITMAP_TYPE_PNG)
 
         ## Preference button
-        self.ui__bt_prefs_img = wx.Bitmap('gfx/core/bt_prefs_16.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_prefs_img_focus = wx.Bitmap('gfx/core/bt_prefs_16_black.png', wx.BITMAP_TYPE_PNG) # #c0392b
+        self.ui__bt_prefs_img = wx.Bitmap('gfx/core/16/prefs.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_prefs_img_focus = wx.Bitmap('gfx/core/16/prefs_black.png', wx.BITMAP_TYPE_PNG) # #c0392b
         self.ui__bt_prefs = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_prefs_img, size=(self.ui__bt_prefs_img.GetWidth()+10, self.ui__bt_prefs_img.GetHeight()+10))
         self.ui__bt_prefs.SetBitmapFocus(self.ui__bt_prefs_img_focus)
         self.ui__bt_prefs.SetBitmapHover(self.ui__bt_prefs_img_focus)
@@ -139,7 +139,7 @@ class MyFrame(wx.Frame):
         self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## primary button
-        self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_app_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_app = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_selected_app.SetBitmapFocus(wx.NullBitmap)
         self.ui__bt_selected_app.SetBitmapHover(wx.NullBitmap)
@@ -150,7 +150,7 @@ class MyFrame(wx.Frame):
         self.ui__bt_selected_app.Enable(False)
 
         ## secondary button
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_selected_parameter.SetBitmapFocus(wx.NullBitmap) # image when in focus
         self.ui__bt_selected_parameter.SetBitmapHover(self.ui_bt_img_execute_black) # image on hover
@@ -410,7 +410,7 @@ class MyFrame(wx.Frame):
 
         # Ubuntu
         if 'Ubuntu' in platform.linux_distribution():
-            global gtk
+            #global gtk
             icon_theme = gtk.icon_theme_get_default()
 
         # Fedora
@@ -430,7 +430,7 @@ class MyFrame(wx.Frame):
 
         #theme = None
         theme = 'Paper'
-        if theme == None:
+        if theme is None:
             theme = xdg.Config.icon_theme # hicolor
 
         #foo1 = xdg.IconTheme.getIconPath(full_executable_name, size=None, theme=None, extensions=['png', 'svg', 'xpm'])
@@ -459,7 +459,7 @@ class MyFrame(wx.Frame):
             icon_info = icon_theme.lookup_icon(full_executable_name, max_icon_size, 0)
 
         if icon_info is None:
-            new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
+            new_app_icon = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/missingAppIcon.png', wx.BITMAP_TYPE_PNG)
         else:
             icon_path = icon_info.get_filename()
             if icon_path != '': # found icon
@@ -473,17 +473,17 @@ class MyFrame(wx.Frame):
                         new_app_icon.Rescale(config.TARGET_ICON_SIZE, config.TARGET_ICON_SIZE) # rescale image
                 else: # found unsupported icon format
                     tools.debug_output('get_icon', 'SVG icons ('+icon_path+') can not be used so far. Using a dummy icon for now')
-                    new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
+                    new_app_icon = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/missingAppIcon.png', wx.BITMAP_TYPE_PNG)
             else: # no icon
                 tools.debug_output('get_icon', 'Found no icon')
-                new_app_icon = wx.Image('gfx/core/bt_missingAppIcon_128.png', wx.BITMAP_TYPE_PNG)
+                new_app_icon = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/missingAppIcon.png', wx.BITMAP_TYPE_PNG)
 
         ## application button
         self.ui__bt_selected_app.SetBitmap(new_app_icon.ConvertToBitmap()) # set icon to button
         self.ui__bt_selected_app.Enable(True) # Enable the Button
 
         ## option buttons
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.Enable(True) # Enable option button
         self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
@@ -505,7 +505,7 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_app.Enable(False)
 
             ## secondary button
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.SetToolTipString('')
             self.ui__bt_selected_parameter.Enable(False) # Enable option button
@@ -534,7 +534,7 @@ class MyFrame(wx.Frame):
         if(self.ui__cb_search.GetValue()[6:] != ''):
             ## parameter buttons
             self.ui__bt_selected_parameter.SetToolTipString('Open')
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
             ## set parameter
@@ -556,7 +556,7 @@ class MyFrame(wx.Frame):
 
         ## parameter buttons
         self.ui__bt_selected_parameter.SetToolTipString('Open')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
         ## set command and parameter
@@ -641,14 +641,14 @@ class MyFrame(wx.Frame):
             ## update launch button icon
             self.ui__bt_selected_app.Enable(True)
             if current_search_string.startswith('!'): # starting input for plugins
-                self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_selected_app_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
             else: # no result - so sad
-                self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_result_sad_128.png', wx.BITMAP_TYPE_PNG)
+                self.ui__bt_selected_app_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/noResult.png', wx.BITMAP_TYPE_PNG)
 
             self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
 
             ## update secondary button
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
 
             self.ui__txt_selected_app.SetValue('') ## set command
@@ -669,7 +669,7 @@ class MyFrame(wx.Frame):
             self.ui__bt_selected_app.SetToolTipString(search_results[0]) # set tooltip
 
             ## secondary button
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_execute_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
             self.ui__bt_selected_parameter.SetToolTipString('Launch') # set tooltip
@@ -682,12 +682,12 @@ class MyFrame(wx.Frame):
 
         else: # > 1 results
             ## primary button
-            self.ui__bt_selected_app_img = wx.Image('gfx/core/bt_list_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_app_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/list.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_app.Enable(True)
             self.ui__bt_selected_app.SetToolTipString(search_results[0])
 
             ## secondary button
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/bt_blank_128.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/blank.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
             self.ui__bt_selected_parameter.Enable(False)                                  # Enable option button
             self.ui__bt_selected_parameter.SetToolTipString('Launch')
@@ -708,18 +708,15 @@ class MyFrame(wx.Frame):
 
         tools.debug_output('do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"')
 
-
         ## Plugin: Misc - Open
         if self.ui__txt_plugin_information.GetValue() == 'Plugin: Misc (Open)':
             if parameter == '':
                 return
 
-
         ## Plugin: Internet-Search
         if command in constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER:
             plugin_search_internet.execute_internet_search(self, command, parameter)
             return
-
 
         ## Plugin: Session/Screenshot/Nautilus OR normal application
         if command is not None: # Check if the dropdown contains something at all or not
@@ -896,7 +893,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame):
         #aboutInfo.SetLicense(open("COPYING").read())
         aboutInfo.SetLicense(open("../LICENSE").read())
         aboutInfo.SetWebSite(constants.APP_URL)
-        aboutInfo.SetIcon(wx.Icon("gfx/core/bt_appIcon_128.png", wx.BITMAP_TYPE_PNG, 128, 128))
+        aboutInfo.SetIcon(wx.Icon('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/appIcon.png', wx.BITMAP_TYPE_PNG, 128, 128))
         aboutInfo.AddDeveloper("yafp")
         #aboutInfo.AddDeveloper('random example') # additional devs
         wx.AboutBox(aboutInfo)

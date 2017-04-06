@@ -3,7 +3,7 @@
 apparat
 ==========
 
-![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/bt_appIcon_128.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
 
 ## Table of Contents
@@ -86,13 +86,13 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 ## <a name="plugins">Plugins
 #### <a name="local-search">Local-Search
 | Trigger          | Alias          | Parameter      | Function                      |
-| ---------------- |:---------------| :--------------|:----------------------------- |
+|------------------|:---------------|:---------------|:----------------------------- |
 | ```?```          |                | _searchstring_ | Filesearch for home directory |
 
 
 #### <a name="internet-search">Internet-Search
 | Trigger          | Alias          | Parameter      | Function       |
-| ---------------- |:---------------| :--------------|:-------------- |
+|------------------|:---------------|:---------------|:-------------- |
 | ```!a```         |                | _searchstring_ | Amazon         |
 | ```!b```         |                | _searchstring_ | Bandcamp       |
 | ```!e```         |                | _searchstring_ | Stack-Exchange |
@@ -110,7 +110,7 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 
 #### <a name="nautilus">Nautilus
 | Trigger          | Alias          | Parameter      | Function                         |
-| ---------------- |:-------------- | :--------------|:---------------------------------|
+|------------------|:-------------- |:---------------|:---------------------------------|
 | ```!goto```      |                | _path_         | Open directory in nautilus       |
 | ```!network```   | ```!net```     |                | Show network devices in nautilus |
 | ```!recent```    |                |                | Show recent files in nautilus    |
@@ -119,7 +119,7 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 
 #### <a name="session">Session
 | Trigger          | Alias          | Parameter      | Function                    |
-| ---------------- |:-------------- | :--------------|:----------------------------|
+|------------------|:-------------- |:---------------|:----------------------------|
 | ```!hibernate``` | ```!sleep```   |                | hibernate the machine       |
 | ```!lock```      |                |                | locks the current session   |
 | ```!logout```    |                |                | logout from current session |
@@ -129,14 +129,14 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 
 #### <a name="screenshot">Screenshot
 | Trigger          | Alias              | Parameter      | Function                              |
-| ---------------- |:------------------ | :--------------|:--------------------------------------|
+|------------------|:------------------ |:---------------|:--------------------------------------|
 | ```!ss```        |                    |                | Selective screenshot (window or area) |
 | ```!fs```        |                    |                | Full screenshot                       |
 
 
 #### <a name="misc">Misc
 | Trigger          | Alias              | Parameter      | Function                         |
-| ---------------- |:------------------ | :--------------|:---------------------------------|
+|------------------|:------------------ |:---------------|:---------------------------------|
 | ```!open```      |                    | path           | Open using default application   |
 
 
@@ -145,11 +145,13 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
 
 
+
 ## <a name="credits">Credits
-* Icons via [Font Awesome](http://fontawesome.io)
-  * Colors:
-    * Gray: #7f8c8d
-    * Blue: #3498db
+* Icons
+  * [Font Awesome](http://fontawesome.io)
+  * [FA2PNG](http://fa2png.io/)
+  * Color: Gray: #7f8c8d
+
 
 ## <a name="license">License
 [![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](LICENSE)
