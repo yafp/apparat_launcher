@@ -173,6 +173,21 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_session.SetValue(True)
         cb_enable_plugin_session.Disable()
 
+        ## Plugin: Shell
+        cb_enable_plugin_shell = wx.CheckBox(self, -1, 'Shell', (20, 60))
+        cb_enable_plugin_shell.SetToolTipString(u'Enable executing shell commands')
+        cb_enable_plugin_shell.SetValue(True)
+        cb_enable_plugin_shell.Disable()
+
+        ## Plugin: Misc
+        cb_enable_plugin_misc = wx.CheckBox(self, -1, 'Misc', (20, 60))
+        cb_enable_plugin_misc.SetToolTipString(u'Enable other stuff')
+        cb_enable_plugin_misc.SetValue(True)
+        cb_enable_plugin_misc.Disable()
+
+
+
+
         ## Link to plugin commands description
         wxHyperlinkCtrl = wx.HyperlinkCtrl(self, -1, 'Plugin command listing', constants.APP_URL+'#plugins')
 
@@ -199,6 +214,14 @@ class UITabPluginCommands(wx.Panel):
 
         ## Session
         pref_sizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(5)
+        
+        ## Shell
+        pref_sizer.Add(cb_enable_plugin_shell, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(5)
+        
+        ## Misc
+        pref_sizer.Add(cb_enable_plugin_misc, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(20)
 
         ## Hyperlink to docs

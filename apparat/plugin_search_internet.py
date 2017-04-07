@@ -7,10 +7,68 @@ import wx
 
 # apparat
 import config
-import constants
 import ini
 import tools
 
+
+# -----------------------------------------------------------------------------------------------
+# CONSTANTS
+# -----------------------------------------------------------------------------------------------
+
+TRIGGER = ('!a', '!b', '!e', '!g', '!l', '!m', '!o', '!r', '!s', '!t', '!v', '!w', '!y')
+
+URLS = (
+    'https://www.amazon.de/s/field-keywords=',
+    'https://bandcamp.com/search?q=',
+    'https://stackexchange.com/search?q=',
+    'https://www.google.com/search?q=',
+    'https://www.last.fm/search?q=',
+    'http://www.maps.google.de/maps/place/',
+    'https://stackoverflow.com/search?q=',
+    'https://www.reddit.com/search?q=',
+    'https://soundcloud.com/search?q=',
+    'https://twitter.com/search?q=',
+    'https://vimeo.com/search?q=',
+    'https://en.wikipedia.org/w/index.php?search=',
+    'https://www.youtube.com/results?search_query='
+)
+
+ICONS = (
+    'amazon.png',
+    'bandcamp.png',
+    'stack-exchange.png',
+    'google.png',
+    'lastfm.png',
+    'maps.png',
+    'stack-overflow.png',
+    'reddit.png',
+    'soundcloud.png',
+    'twitter.png',
+    'vimeo.png',
+    'wikipedia.png',
+    'youtube.png'
+)
+
+DESCRIPTIONS = (
+    'Internet-Search (Amazon)',
+    'Internet-Search (Bandcamp)',
+    'Internet-Search (Stack-Exchange)',
+    'Internet-Search (Google)',
+    'Internet-Search (LastFM)',
+    'Internet-Search (Google-Maps)',
+    'Internet-Search (Stack-Overflow)',
+    'Internet-Search (Reddit)',
+    'Internet-Search (SoundCloud)',
+    'Internet-Search (Twitter)',
+    'Internet-Search (Vimeo)',
+    'Internet-Search (Wikipedia)',
+    'Internet-Search (YouTube)'
+)
+
+
+# -----------------------------------------------------------------------------------------------
+# FUNCTIONS
+# -----------------------------------------------------------------------------------------------
 
 def prepare_internet_search(main_window, current_search_string):
     """Updates the UI according to the matching internet-search trigger"""
@@ -33,13 +91,13 @@ def prepare_internet_search(main_window, current_search_string):
         return # we can stop here - nothing more to do as plugin should be already activated
 
     # get tuple position of command
-    index = constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER.index(current_search_string)
+    index = TRIGGER.index(current_search_string)
 
     # get icon-name based on tuple index
-    icon = 'gfx/plugins/search_internet/'+str(config.TARGET_ICON_SIZE)+'/'+constants.APP_PLUGINS_INTERNET_SEARCH_ICONS[index]
+    icon = 'gfx/plugins/search_internet/'+str(config.TARGET_ICON_SIZE)+'/'+ICONS[index]
 
     # get description based on tuple index
-    description = constants.APP_PLUGINS_INTERNET_SEARCH_DESCRIPTIONS[index]
+    description = DESCRIPTIONS[index]
 
     # update UI with icon and description
     main_window.ui__bt_selected_app_img = wx.Image(icon, wx.BITMAP_TYPE_PNG)
@@ -61,10 +119,10 @@ def execute_internet_search(main_window, command, parameter):
     tools.debug_output('execute_internet_search', 'starting')
 
     # get tuple position of command
-    index = constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER.index(command)
+    index = TRIGGER.index(command)
 
     # get url based on tuple index
-    remote_url = constants.APP_PLUGINS_INTERNET_SEARCH_URLS[index]
+    remote_url = URLS[index]
 
     if(len(parameter) == 0): # if so searchphrase/parameter was supplied - open the main url (Issue #22)
         tools.debug_output('execute_internet_search', 'No searchphrase supplied, trunc to main-url') # Issue #22

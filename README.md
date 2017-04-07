@@ -21,8 +21,8 @@ apparat
     * [Nautilus](#nautilus)
     * [Session](#session)
     * [Screenshot](#screenshot)
+    * [Shell](#shell)
     * [Misc](#misc)
-
   * [Contributing](#contributing)
   * [Credits](#credits)
   * [License](#license)
@@ -34,7 +34,7 @@ __apparat__ is an application launcher for linux. It is developed and tested for
 
 
 ## <a name="screenshot">Screenshot
-![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshot_ui.png)
+![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
 
 
 ## <a name="installation">Installation
@@ -47,11 +47,12 @@ There is no installation routine so far.
 - python-wxtools
 
 ##### Linux packages
-- gnome-screensaver-command
-- gnome-session-quit
-- systemctl
-- xdg-open
-- xdotool
+The following packages are needed:
+- ```gnome-screensaver-command```
+- ```gnome-session-quit```
+- ```systemctl```
+- ```xdg-open```
+- ```xdotool```
 
 
 ## <a name="usage">Usage
@@ -118,13 +119,14 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 
 
 #### <a name="session">Session
-| Trigger          | Alias          | Parameter      | Function                    |
-|------------------|:-------------- |:---------------|:----------------------------|
-| ```!hibernate``` | ```!sleep```   |                | hibernate the machine       |
-| ```!lock```      |                |                | locks the current session   |
-| ```!logout```    |                |                | logout from current session |
-| ```!reboot```    | ```!restart``` |                | reboot the machine          |
-| ```!shutdown```  | ```!halt```    |                | shutdown the machine        |
+| Trigger            | Alias          | Parameter      | Function                    |
+|--------------------|:-------------- |:---------------|:----------------------------|
+| ```!hibernate```   | ```!sleep```   |                | hibernate the machine       |
+| ```!lock```        |                |                | locks the current session   |
+| ```!logout```      |                |                | logout from current session |
+| ```!reboot```      | ```!restart``` |                | reboot the machine          |
+| ```!shutdown```    | ```!halt```    |                | shutdown the machine        |
+| ```!screensaver``` | ```!saver```   |                | start screensaver           |
 
 
 #### <a name="screenshot">Screenshot
@@ -134,10 +136,19 @@ If you want to use a global hotkey to trigger ```apparat``` consider using ```ap
 | ```!fs```        |                    |                | Full screenshot                       |
 
 
+#### <a name="shell">Shell
+| Trigger          | Alias              | Parameter      | Function                            |
+|------------------|:------------------ |:---------------|:------------------------------------|
+| ```!sh```        |                    | path           | Run terminal commands in new window |
+
+
 #### <a name="misc">Misc
-| Trigger          | Alias              | Parameter      | Function                         |
-|------------------|:------------------ |:---------------|:---------------------------------|
-| ```!open```      |                    | path           | Open using default application   |
+| Trigger            | Alias              | Parameter      | Function                         |
+|--------------------|:------------------ |:---------------|:---------------------------------|
+| ```!help```        |                    |                | Open apparat online help         |
+| ```!open```        |                    | path           | Open using default application   |
+| ```!preferences``` | ```!prefs```       |                | Open apparat preferences         |
+
 
 
 

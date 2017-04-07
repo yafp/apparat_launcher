@@ -9,6 +9,11 @@ import config
 import tools
 
 
+
+# Plugin: Session
+TRIGGER = ('!hibernate', '!sleep', '!lock', '!logout', '!reboot', '!restart', '!shutdown', '!halt', 'screensaver', '!saver')
+
+
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
     tools.debug_output('prepare_general', 'starting')
@@ -32,6 +37,10 @@ def prepare_general(current_search_string, main_window):
     ## Shutdown
     elif current_search_string == '!shutdown' or current_search_string == '!halt':
         prepare_plugin_session_shutdown(main_window)
+
+    ## Screensaver
+    elif current_search_string == '!screensaver' or current_search_string == '!saver':
+        prepare_plugin_session_screensaver(main_window)
 
     else:
         tools.debug_output('parse_user_search_input', 'Error: Undefined session command')
@@ -148,3 +157,25 @@ def prepare_plugin_session_reboot(main_window):
     ## set command and parameter
     main_window.ui__txt_selected_app.SetValue('gnome-session-quit')
     main_window.ui__txt_selected_parameter.SetValue('--reboot')
+
+
+def prepare_plugin_session_screensaver(main_window):
+    """Plugin Session - Screensaver"""
+    tools.debug_output('prepare_plugin_session_screensaver', 'starting')
+
+    ## update plugin info
+    main_window.plugin__update_general_ui_information('Session (Screensaver)')
+
+    ## application buttons
+    main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/screensaver.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
+    main_window.ui__bt_selected_app.SetToolTipString('Start screensaver')
+
+    ## option buttons
+    main_window.ui__bt_selected_parameter.SetToolTipString('Launch')
+    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
+
+    ## set command and parameter
+    main_window.ui__txt_selected_app.SetValue('xdg-screensaver')
+    main_window.ui__txt_selected_parameter.SetValue('activate')

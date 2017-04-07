@@ -32,13 +32,16 @@ else: # python 2.x
     import config                       # contains some config values
     import ini                          # ini file handling
     import prefs                        # preference window
+    import plugin_misc
+    import plugin_nautilus
+    import plugin_screenshot
+    import plugin_search_internet
+    import plugin_search_local
+    import plugin_session
+    import plugin_shell
     import tools                        # contains helper-tools
     import version
-    import plugin_search_local
-    import plugin_search_internet
-    import plugin_screenshot
-    import plugin_nautilus
-    import plugin_session
+
 
     ## GTK vs WX is a mess - Issue: #15 - It helps to import GTK after having created the WX app (at least for Ubuntu, not for Fedora)
     #
@@ -73,7 +76,7 @@ is_resetted = True
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MAIN-WINDOW
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class MyFrame(wx.Frame):
+class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes
 
     """Class for MainWindow"""
 
@@ -128,7 +131,6 @@ class MyFrame(wx.Frame):
         combo_box_style = wx.TE_PROCESS_ENTER
         self.ui__cb_search = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
         self.ui__cb_search.SetFont(wx.Font(24, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
-        # TODO: check if wx.ComboCtrl is better
 
         ## Plugin Information
         self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
@@ -396,7 +398,7 @@ class MyFrame(wx.Frame):
                 self.parse_user_input(current_search_string)
 
 
-    def get_icon(self, full_executable_name):
+    def get_icon(self, full_executable_name): # pylint:disable=too-many-branches,too-many-statements
         """Tries to get an icon for an executable by name"""
         tools.debug_output('get_icon', 'Starting for: '+full_executable_name)
 
@@ -521,51 +523,8 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_parameter.SetValue('')
 
 
-    def prepare_plugin_misc_open(self):
-        """Plugin Misc - Open"""
-        tools.debug_output('prepare_plugin_misc_open', 'starting')
-        self.plugin__update_general_ui_information('Misc (Open)') ## update plugin info
 
-        ## application buttons
-        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/misc/bt_open_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-        self.ui__bt_selected_app.SetToolTipString('Open')
-
-        if(self.ui__cb_search.GetValue()[6:] != ''):
-            ## parameter buttons
-            self.ui__bt_selected_parameter.SetToolTipString('Open')
-            self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
-            self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-
-            ## set parameter
-            self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[6:])
-
-        ## set command
-        self.ui__txt_selected_app.SetValue('xdg-open')
-
-
-    def prepare_plugin_shell(self):
-        """Plugin Shell"""
-        tools.debug_output('prepare_plugin_shell', 'starting')
-        self.plugin__update_general_ui_information('Shell') ## update plugin info
-
-        ## application buttons
-        self.ui__bt_selected_app_img = wx.Image('gfx/plugins/shell/bt_shell_128.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_selected_app.SetBitmap(self.ui__bt_selected_app_img.ConvertToBitmap())
-        self.ui__bt_selected_app.SetToolTipString('Lock Session')
-
-        ## parameter buttons
-        self.ui__bt_selected_parameter.SetToolTipString('Open')
-        self.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
-
-        ## set command and parameter
-        ## http://askubuntu.com/questions/484993/run-command-on-anothernew-terminal-window
-        self.ui__txt_selected_app.SetValue('xterm')
-        self.ui__txt_selected_parameter.SetValue(self.ui__cb_search.GetValue()[4:])
-
-
-    def parse_user_input(self, current_search_string):
+    def parse_user_input(self, current_search_string): # pylint:disable=too-many-return-statements
         """Takes the current user input and parses it for matching plugins or general application search"""
         tools.debug_output('parse_user_input', 'starting')
         if current_search_string != '': # if there is a search string
@@ -577,43 +536,38 @@ class MyFrame(wx.Frame):
                 return
 
             ## Plugin: Misc
-            if  current_search_string.startswith(constants.APP_PLUGINS_MISC_TRIGGER):
-                tools.debug_output('parse_user_input', 'Case: Plugin Misc')
-                if current_search_string.startswith('!open'):
-                    tools.debug_output('parse_user_input', 'Case: Plugin Misc - Open')
-                    self.prepare_plugin_misc_open()
-                    return
+            if  current_search_string.startswith(plugin_misc.TRIGGER):
+                plugin_misc.prepare_general(current_search_string, self)
+                return
 
             ## Plugin: Screenshot
-            if  current_search_string in constants.APP_PLUGINS_SCREENSHOT_TRIGGER:
+            if  current_search_string in plugin_screenshot.TRIGGER:
                 plugin_screenshot.prepare_general(current_search_string, self)
                 return
 
             ## Plugin: Nautilus
-            if current_search_string in constants.APP_PLUGINS_NAUTILUS_TRIGGER or current_search_string.startswith('!goto'):
+            if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
                 plugin_nautilus.prepare_general(current_search_string, self)
                 return
 
             ## Plugin: Session
-            if current_search_string in constants.APP_PLUGINS_SESSION_TRIGGER:
+            if current_search_string in plugin_session.TRIGGER:
                 plugin_session.prepare_general(current_search_string, self)
                 return
 
             ## Plugin: Shell
-            if  current_search_string.startswith(constants.APP_PLUGINS_SHELL_TRIGGER):
-                tools.debug_output('parse_user_input', 'Case: Plugin Shell')
-                if current_search_string.startswith('!sh'):
-                    self.prepare_plugin_shell()
-                    return
+            if  current_search_string.startswith(plugin_shell.TRIGGER):
+                plugin_shell.prepare_general(current_search_string, self)
+                return
 
             ## Plugin: Internet-Search
-            if current_search_string.startswith(constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER):
+            if current_search_string.startswith(plugin_search_internet.TRIGGER):
                 tools.debug_output('parse_user_input', 'Case: Plugin Internet-Search')
                 plugin_search_internet.prepare_internet_search(self, current_search_string)
                 return
 
             ## Search for local files
-            if current_search_string.startswith(constants.APP_PLUGINS_SEARCH_LOCAL_TRIGGER):
+            if current_search_string.startswith(plugin_search_local.TRIGGER):
                 tools.debug_output('parse_user_input', 'Case: Plugin Local-Search')
                 plugin_search_local.search_user_files(self, current_search_string)
                 return
@@ -696,7 +650,7 @@ class MyFrame(wx.Frame):
             self.ui__txt_selected_app.SetValue(search_results[0])             # assume first search result is the way to go
 
 
-    def do_execute(self):
+    def do_execute(self): # pylint:disable=too-many-branches
         """Launches the actual task"""
         ## get command and parameter informations
         command = self.ui__txt_selected_app.GetValue()
@@ -714,7 +668,7 @@ class MyFrame(wx.Frame):
                 return
 
         ## Plugin: Internet-Search
-        if command in constants.APP_PLUGINS_INTERNET_SEARCH_TRIGGER:
+        if command in plugin_search_internet.TRIGGER:
             plugin_search_internet.execute_internet_search(self, command, parameter)
             return
 
@@ -815,7 +769,7 @@ def create_menu_item(menu, label, func):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # APP_TRAY_ICON
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class TaskBarIcon(wx.TaskBarIcon, MyFrame):
+class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
 
     """Class for the Task Bar Icon"""
 
