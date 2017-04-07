@@ -1,8 +1,7 @@
 #!/usr/bin/python
-"""apparat - plugin: search-internet"""
+"""apparat - plugin: shell"""
 
 ## general
-
 import wx
 
 ## apparat

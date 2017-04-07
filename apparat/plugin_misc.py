@@ -1,12 +1,10 @@
 #!/usr/bin/python
-"""apparat - plugin: search-internet"""
+"""apparat - plugin: misc"""
 
 ## general
-
 import wx
 
 ## apparat
-import apparat
 import config
 import tools
 
