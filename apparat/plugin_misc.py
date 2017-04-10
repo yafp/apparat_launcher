@@ -1,11 +1,13 @@
 #!/usr/bin/python
-"""apparat - plugin: misc"""
+"""apparat - plugin: search-internet"""
 
 ## general
+
 import wx
 
 ## apparat
 import config
+import ini
 import tools
 
 
@@ -32,6 +34,11 @@ def prepare_general(current_search_string, main_window):
     if  current_search_string == '!help':
         tools.debug_output('prepare_general', 'Case: Help')
         main_window.open_app_url()
+        # hide UI
+        cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
+        if cur_ini_value_for_hide_ui_after_command_execution == 'True':
+            tools.debug_output('do_execute', 'Hide Main UI after executing a command')
+            main_window.tbicon.execute_tray_icon_left_click()
         main_window.reset_ui()
         return
 
@@ -42,7 +49,8 @@ def prepare_general(current_search_string, main_window):
         return
 
     else:
-        tools.debug_output('prepare_general', 'Error: unexpected misc plugin command')
+        tools.debug_output('prepare_general', 'Error: Unexpected misc plugin command')
+        main_window.display_error_notification('Unexpected misc plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished')
