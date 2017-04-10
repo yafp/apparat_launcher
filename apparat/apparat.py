@@ -43,30 +43,7 @@ else: # python 2.x
     import plugin_session
     import plugin_shell
     import tools                        # contains helper-tools
-    import version
-
-
-    ## GTK vs WX is a mess - Issue: #15 - It helps to import GTK after having created the WX app (at least for Ubuntu, not for Fedora)
-    #
-    # Ubuntu (import gtk) vs Fedora (from gi.repository import Gtk)
-    """
-    if 'Ubuntu' in platform.linux_distribution():
-        import gtk # after wx init
-        gtk.remove_log_handlers()
-
-    elif 'Fedora' in platform.linux_distribution():
-        #gi.require_version('Gtk', '3.0')
-        from gi.repository import Gtk
-
-    elif os.path.exists('/etc/arch-release'): # platform.linux_distribution doesnt work for arch linux
-        import gtk
-        gtk.remove_log_handlers()
-
-    else:
-        print('Here be dragons (untested distribution)')
-    """
-
-
+    import version                      # defines the appat version
 
 
 # -----------------------------------------------------------------------------------------------
@@ -630,7 +607,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes
 
 
     def check_for_existing_app_instances(self, application_name):
-        """checks if there are alrady existing instances of an given app"""
+        """checks if there are already existing instances/processes of an given app - to decide if launching or focusing makes more sense"""
         for pid in psutil.pids():
             p = psutil.Process(pid)
             if p.name() == application_name:
