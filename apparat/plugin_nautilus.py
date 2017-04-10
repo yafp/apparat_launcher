@@ -43,7 +43,8 @@ def prepare_general(current_search_string, main_window):
         return
 
     else:
-        tools.debug_output('prepare_general', 'Error: unexpected nautilus plugin command')
+        tools.debug_output('prepare_general', 'Error: Unexpected nautilus plugin command')
+        main_window.display_error_notification('Unexpected nautilus plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished')

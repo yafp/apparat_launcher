@@ -34,7 +34,8 @@ def prepare_general(current_search_string, main_window):
         return
 
     else:
-        tools.debug_output('prepare_general', 'Error: unexpected screenshot plugin command')
+        tools.debug_output('prepare_general', 'Error: Unexpected screenshot plugin command')
+        main_window.display_error_notification('Unexpected screenshot plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished')

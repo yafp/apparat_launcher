@@ -43,7 +43,8 @@ def prepare_general(current_search_string, main_window):
         prepare_plugin_session_screensaver(main_window)
 
     else:
-        tools.debug_output('parse_user_search_input', 'Error: Undefined session command')
+        tools.debug_output('parse_user_search_input', 'Error: Unexpected session command')
+        main_window.display_error_notification('Unexpected session plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished')

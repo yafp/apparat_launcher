@@ -185,12 +185,8 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_misc.SetValue(True)
         cb_enable_plugin_misc.Disable()
 
-
-
-
         ## Link to plugin commands description
         wxHyperlinkCtrl = wx.HyperlinkCtrl(self, -1, 'Plugin command listing', constants.APP_URL+'#plugins')
-
 
         ## Layout
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
@@ -215,11 +211,11 @@ class UITabPluginCommands(wx.Panel):
         ## Session
         pref_sizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
-        
+
         ## Shell
         pref_sizer.Add(cb_enable_plugin_shell, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
-        
+
         ## Misc
         pref_sizer.Add(cb_enable_plugin_misc, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(20)

@@ -29,7 +29,8 @@ def prepare_general(current_search_string, main_window):
         return
 
     else:
-        tools.debug_output('prepare_general', 'Error: unexpected shell plugin command')
+        tools.debug_output('prepare_general', 'Error: Unexpected shell plugin command')
+        main_window.display_error_notification('Unexpected shell plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished')

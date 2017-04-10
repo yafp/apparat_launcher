@@ -148,21 +148,15 @@ def check_platform():
         debug_output('check_platform', 'Detected linux')
         debug_output('check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION')) # Issue: 24
         if(os.environ.get('DESKTOP_SESSION') != 'gnome'):
-            debug_output('check_platform', 'Here be dragons (untested desktop environment)')
+            debug_output('check_platform', 'Here be dragons (Untested desktop environment)')
+        return
 
-    ## Mac OS
-    elif sys.platform == "darwin":
-        debug_output('check_platform', 'Detected unsupported platform (darwin)')
-        print("Error: Unsupported platform detected")
+    else:
+        # darwin = Mac OS
+        # win32 = windows
+        debug_output('check_platform', 'Detected unsupported platform.')
+        print("Error: Unsupported platform detected. Aborting ...")
         sys.exit()
-
-    ## Windows
-    elif sys.platform == "win32":
-        debug_output('check_platform', 'Detected unsupported platform (windows)')
-        print("Error: Unsupported platform detected")
-        sys.exit()
-
-    debug_output('check_platform', 'finished')
 
 
 def trunc_at(s, d, n=3):
