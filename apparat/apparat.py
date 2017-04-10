@@ -436,14 +436,14 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes
         theme = os.popen('gsettings get org.gnome.desktop.interface icon-theme').read() # via: https://ubuntuforums.org/showthread.php?t=2100795
         theme = theme.partition("'")[-1].rpartition("'")[0] # build substring
 
-        if theme is None:
+        if theme is None: # fallback to hicolor icon theme if none was detected
             theme = xdg.Config.icon_theme # hicolor
 
-        #foo1 = xdg.IconTheme.getIconPath(full_executable_name, size=None, theme=None, extensions=['png', 'svg', 'xpm'])
-        icon = xdg.IconTheme.getIconPath(full_executable_name, size=128, theme=theme, extensions=['png', 'xpm'])
-        #print icon
+        tools.debug_output('get_icon', 'Icon Theme: '+theme)
 
-        if(icon is None): # use default dummy icon
+        icon = xdg.IconTheme.getIconPath(full_executable_name, size=config.TARGET_ICON_SIZE, theme=theme, extensions=['png', 'xpm'])
+
+        if(icon is None): # use default icon
             new_app_icon = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/missingAppIcon.png', wx.BITMAP_TYPE_PNG)
         else:
             new_app_icon = wx.Image(icon, wx.BITMAP_TYPE_ANY)    # define new image

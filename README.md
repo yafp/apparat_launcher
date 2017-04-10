@@ -35,17 +35,27 @@ __apparat__ is an application launcher for linux. It is developed and tested for
 
 ## <a name="screenshots">Screenshots
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
+*User-Interace*
 
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_trayicon.png)
+*Tray-Icon in Gnome*
 
 ## <a name="installation">Installation
 There is no installation routine so far.
 
 #### <a name="requirements">Requirements
-##### Python
-- gtk
-- python2
-- python-wxtools
+##### Python modules
+- ```sys```
+- ```difflib```
+- ```fnmatch```
+- ```os```
+- ```platform```
+- ```psutil```
+- ```subprocess```
+- ```webbrowser```
+- ```wx```
+- ```xdg```
+- ```xdg.IconTheme```
 
 ##### Linux packages
 The following packages are needed:
