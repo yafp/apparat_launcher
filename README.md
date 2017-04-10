@@ -1,15 +1,15 @@
-[![Code Health](https://landscape.io/github/yafp/apparat/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat/master)
+# <a name="top"> apparat
 
-apparat
-==========
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
+[![Code Health](https://landscape.io/github/yafp/apparat/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat/master)
 
-## Table of Contents
+
+## <a name="toc">Table of Contents
 
   * [Description](#description)
-  * [Screenshot](#screenshot)
+  * [Screenshots](#screenshots)
   * [Installation](#installation)
     * [Requirements](rRequirements)
   * [Usage](#usage)
@@ -33,9 +33,10 @@ apparat
 __apparat__ is an application launcher for linux. It is developed and tested for Gnome Desktop environments.
 
 
-## <a name="screenshot">Screenshot
+## <a name="screenshots">Screenshots
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
 
+![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_trayicon.png)
 
 ## <a name="installation">Installation
 There is no installation routine so far.
@@ -73,9 +74,9 @@ The following command line parameters are available:
 
 
 #### <a name="hotkey">Hotkey
-If you want to use a global hotkey to trigger ```apparat``` consider using ```apparatHotkeyHelper.sh```. Define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
+If you want to use a global/system-wide hotkey to trigger ```apparat``` (starting, focusing and minimizing) consider using the script ```apparatHotkeyHelper.sh```. Simply define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
 
-[Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en)
+Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en)
 * Open the **Activities** overview and start typing Keyboard.
 * Click on **Keyboard** to open the panel.
 * Select the **Shortcuts** tab.
@@ -161,7 +162,10 @@ Please check the [Contribution guidelines for this project](.github/CONTRIBUTING
 * Icons
   * [Font Awesome](http://fontawesome.io)
   * [FA2PNG](http://fa2png.io/)
-  * Color: Gray: #7f8c8d
+  * Color:
+    * Gray: #7f8c8d
+    * Red: #b92c0c
+    * Green: #269c58
 
 
 ## <a name="license">License
