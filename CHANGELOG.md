@@ -3,6 +3,12 @@ apparat changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
+# 20170410
+* Replaced Gtk/gtk with xdg (icon search)                                               Issue: #15
+* Adding status notifier to main ui                                                     Issue: #29
+* Plugins: Internet-Search. Bugfix regarding missing searchparameter                    Issue: #30
+* Plugins: Misc. Closing UI if configured after running ! help                          Issue: #31
+
 
 # 20170407
 * Plugins: Moved plugin-specific constants from constant.py to plugin_PLUGINNAME.py
