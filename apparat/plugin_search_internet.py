@@ -122,7 +122,7 @@ def execute_internet_search(main_window, command, parameter):
     index = TRIGGER.index(command)
 
     # get url based on tuple index
-    remote_url = URLS[index]
+    remote_url = URLS[index]+parameter
 
     if(len(parameter) == 0): # if so searchphrase/parameter was supplied - open the main url (Issue #22)
         tools.debug_output('execute_internet_search', 'No searchphrase supplied, trunc to main-url') # Issue #22
