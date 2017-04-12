@@ -23,14 +23,14 @@ DEBUG = False
 # -----------------------------------------------------------------------------------------------
 def cmd_exists(cmd):
     """Method to check if a command exists."""
-    debug_output('cmd_exists', 'starting')
+    debug_output('cmd_exists', 'starting', 1)
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
 def check_arguments():
     """Checks if apparat was started with arguments or not"""
-    debug_output('check_arguments', 'starting')
-    global DEBUG
+    debug_output('check_arguments', 'starting', 1)
+    global DEBUG # pylint:disable=global-statement
     if len(sys.argv) > 2: # too much arguments
         print('Error: Unsupported amount of parameters')
         show_help()
@@ -55,14 +55,31 @@ def check_arguments():
         show_help()
         sys.exit()
 
-    debug_output('check_arguments', 'finished')
+    debug_output('check_arguments', 'finished', 1)
 
 
-def debug_output(source, message):
+def debug_output(source, message, message_type=0):
     """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         timestamp = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
-        print(constants.APP_NAME+" debug output # "+timestamp+" # "+source+" # "+message)
+        source = source.ljust(40) # Add spaces to source until it has length of 40 chars (readability)
+
+        # colorize the message
+        if(message_type == 1): # Info
+            text_color = constants.C_GREEN
+            message_type_class = ' I '
+        elif(message_type == 2): # Warning
+            text_color = constants.C_YELLOW
+            message_type_class = ' W '
+        elif(message_type == 3): # Error
+            text_color = constants.C_RED
+            message_type_class = ' E '
+        else: # Other = default value for message type
+            text_color = constants.C_BLUE_LIGHT
+            message_type_class = ' O '
+
+        ## format: time + message_type_class + source + message
+        print(timestamp+" # "+text_color+message_type_class+constants.C_DEFAULT+" # "+source+" # "+text_color+message+constants.C_DEFAULT)
 
 
 def generate_timestamp():
@@ -73,7 +90,7 @@ def generate_timestamp():
 
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
-    debug_output('check_linux_requirements', 'starting')
+    debug_output('check_linux_requirements', 'starting', 0)
     ## needed for session commands:
     # - gnome-screensaver-command
     # - gnome-session-quit
@@ -81,38 +98,38 @@ def check_linux_requirements():
     # - xdg-open
     # - xdotool
     if which('gnome-screensaver-command') is None:
-        print('Error: gnome-screensaver-command is missing')
+        debug_output('check_linux_requirements', 'Error: gnome-screensaver-command is missing', 3)
         sys.exit()
 
     if which('gnome-session-quit') is None:
-        print('Error: gnome-session-quit is missing')
+        debug_output('check_linux_requirements', 'Error: gnome-session-quit is missing', 3)
         sys.exit()
 
     if which('systemctl') is None:
-        print('Error: systemctl is missing')
+        debug_output('check_linux_requirements', 'Error: systemctl is missing', 3)
         sys.exit()
 
     if which('xdg-open') is None:
-        print('Error: xdg-open is missing')
+        debug_output('check_linux_requirements', 'Error: xdg-open is missing', 3)
         sys.exit()
 
     if which('xdotool') is None:
-        print('Error: xdotool is missing')
+        debug_output('check_linux_requirements', 'Error: xdotool is missing', 3)
         sys.exit()
 
-    debug_output('check_linux_requirements', 'finished')
+    debug_output('check_linux_requirements', 'finished', 1)
 
 
 def which(program):
     """Method to check if executable exists"""
-    debug_output('which', 'starting')
+    debug_output('which', 'starting', 0)
     def is_exe(fpath):
         """foo"""
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
     fpath, fname = os.path.split(program)
-    debug_output('which', 'fpath: '+fpath)
-    debug_output('which', 'fname: '+fname)
+    #debug_output('which', 'fpath: '+fpath, 1)
+    debug_output('which', 'fname: '+fname, 1)
     if fpath:
         if is_exe(program):
             return program
@@ -122,7 +139,7 @@ def which(program):
             exe_file = os.path.join(path, program)
             if is_exe(exe_file):
                 return exe_file
-    debug_output('which', 'finished')
+    debug_output('which', 'finished', 1)
     return None
 
 
@@ -141,25 +158,25 @@ def show_help():
 
 def check_platform():
     """Method to check the platform (supported or not)"""
-    debug_output('check_platform', 'starting')
+    debug_output('check_platform', 'starting', 0)
 
     ## Linux
     if sys.platform == "linux" or sys.platform == "linux2":
-        debug_output('check_platform', 'Detected linux')
-        debug_output('check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION')) # Issue: 24
+        debug_output('check_platform', 'Detected linux', 1)
+        debug_output('check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION'), 1) # Issue: 24
         if(os.environ.get('DESKTOP_SESSION') != 'gnome'):
-            debug_output('check_platform', 'Here be dragons (Untested desktop environment)')
+            debug_output('check_platform', 'Here be dragons (Untested desktop environment)', 2)
         return
 
     else:
         # darwin = Mac OS
         # win32 = windows
-        debug_output('check_platform', 'Detected unsupported platform.')
+        debug_output('check_platform', 'Detected unsupported platform.', 3)
         print("Error: Unsupported platform detected. Aborting ...")
         sys.exit()
 
 
 def trunc_at(s, d, n=3):
     """Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."""
-    debug_output('trunc_at', 'starting')
+    debug_output('trunc_at', 'starting', 0)
     return d.join(s.split(d)[:n])
