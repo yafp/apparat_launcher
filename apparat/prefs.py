@@ -54,8 +54,8 @@ class PreferenceWindow(wx.Frame):
 
     def close_preference_ui(self, event):
         """Closes the preference window"""
-        tools.debug_output('close_preference_ui', 'starting')
-        tools.debug_output('close_preference_ui', 'Event: '+str(event))
+        tools.debug_output('close_preference_ui', 'starting', 1)
+        tools.debug_output('close_preference_ui', 'Event: '+str(event), 1)
         self.Destroy() # close the pref UI
 
 
@@ -94,12 +94,12 @@ class UITabGeneral(wx.Panel):
 
     def prefs_general_toggle_hide_ui(self, event):
         """Toggle the general pref: hide_ui"""
-        tools.debug_output('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event))
+        tools.debug_output('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event), 1)
         if self.cb_enable_hide_ui.GetValue() is True:
-            tools.debug_output('prefs_general_toggle_hide_ui', 'Enabled')
+            tools.debug_output('prefs_general_toggle_hide_ui', 'Enabled', 1)
             ini.write_single_value('General', 'hide_ui_after_command_execution', "True") # update preference value
         else:
-            tools.debug_output('prefs_general_toggle_hide_ui', 'Disabled')
+            tools.debug_output('prefs_general_toggle_hide_ui', 'Disabled', 1)
             ini.write_single_value('General', 'hide_ui_after_command_execution', "False") # update preference value
 
 
@@ -139,58 +139,65 @@ class UITabPluginCommands(wx.Panel):
 
     """Preference Window - Tab: Commands- Shows available plugins"""
 
-    def __init__(self, parent):
+    def __init__(self, parent): # pylint:disable=too-many-statements
         """Inits the plugin-commands tab"""
         wx.Panel.__init__(self, parent)
 
+        plugin_info = wx.StaticText(self, -1, "The following plugins exist so far (can't be disabled):", (20, 20))
+
         ## Plugin: Local search
         cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
-        cb_enable_plugin_local_search.SetToolTipString(u'Enables search for user home')
+        cb_enable_plugin_local_search.SetToolTipString(u'Enables search for files and folders in users home directory')
         cb_enable_plugin_local_search.SetValue(True)
-        cb_enable_plugin_local_search.Disable()
+        cb_enable_plugin_local_search.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Plugin: Internet search
         cb_enable_plugin_insernet_search = wx.CheckBox(self, -1, 'Internet-Search', (20, 60))
         cb_enable_plugin_insernet_search.SetToolTipString(u'Enables search for several popular web-services')
         cb_enable_plugin_insernet_search.SetValue(True)
-        cb_enable_plugin_insernet_search.Disable()
+        cb_enable_plugin_insernet_search.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Plugin: Nautilus
         cb_enable_plugin_nautilus = wx.CheckBox(self, -1, 'Nautilus', (20, 60))
         cb_enable_plugin_nautilus.SetToolTipString(u'Enables quick access to some nautilus locations/places')
         cb_enable_plugin_nautilus.SetValue(True)
-        cb_enable_plugin_nautilus.Disable()
+        cb_enable_plugin_nautilus.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Plugin: Screenshot
         cb_enable_plugin_screenshot = wx.CheckBox(self, -1, 'Screenshot', (20, 60))
         cb_enable_plugin_screenshot.SetToolTipString(u'Enables simple screenshot functions')
         cb_enable_plugin_screenshot.SetValue(True)
-        cb_enable_plugin_screenshot.Disable()
+        cb_enable_plugin_screenshot.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Plugin: Session
         cb_enable_plugin_session = wx.CheckBox(self, -1, 'Session', (20, 60))
         cb_enable_plugin_session.SetToolTipString(u'Enables several session commands')
         cb_enable_plugin_session.SetValue(True)
-        cb_enable_plugin_session.Disable()
+        cb_enable_plugin_session.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Plugin: Shell
         cb_enable_plugin_shell = wx.CheckBox(self, -1, 'Shell', (20, 60))
         cb_enable_plugin_shell.SetToolTipString(u'Enable executing shell commands')
         cb_enable_plugin_shell.SetValue(True)
-        cb_enable_plugin_shell.Disable()
+        cb_enable_plugin_shell.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Plugin: Misc
         cb_enable_plugin_misc = wx.CheckBox(self, -1, 'Misc', (20, 60))
         cb_enable_plugin_misc.SetToolTipString(u'Enable other stuff')
         cb_enable_plugin_misc.SetValue(True)
-        cb_enable_plugin_misc.Disable()
+        cb_enable_plugin_misc.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # Prevent changing state of enabled checkbox
 
         ## Link to plugin commands description
-        wxHyperlinkCtrl = wx.HyperlinkCtrl(self, -1, 'Plugin command listing', constants.APP_URL+'#plugins')
+        wxHyperlinkCtrl = wx.HyperlinkCtrl(self, -1, 'Plugin command details', constants.APP_URL+'#plugins')
 
         ## Layout
+        ##
         pref_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         pref_sizer.AddSpacer(10)
+
+        ## general info
+        pref_sizer.Add(plugin_info, 0, wx.ALL, border=10)
+        pref_sizer.AddSpacer(5)
 
         ## Local search
         pref_sizer.Add(cb_enable_plugin_local_search, 0, wx.ALL, border=10)
@@ -224,3 +231,10 @@ class UITabPluginCommands(wx.Panel):
         pref_sizer.Add(wxHyperlinkCtrl, 0, wx.ALL, border=10)
 
         self.SetSizer(pref_sizer)
+
+
+    def on_plugin_checkbox_click(self, evt):
+        """Handle plugin checkbox click - prevent changing values"""
+        e_obj = evt.GetEventObject()
+        e_obj.SetValue(not e_obj.GetValue()) # plugin checkboxes are always TRUE/checked
+        wx.MessageBox(constants.APP_NAME+' plugins can not be disabled', 'Error', wx.OK | wx.ICON_WARNING)
