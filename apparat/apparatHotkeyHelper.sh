@@ -35,6 +35,6 @@ if [ $? -eq 0 ]; then # it is running
 
 else # apparat is not running -> start it
     notify-send 'Apparat' 'Started via Hotkey'
-    cd "$APPARAT_FOLDER" && python "./apparat.py"
+    cd "$APPARAT_FOLDER" && python2 "./apparat.py"
     exit 0
 fi

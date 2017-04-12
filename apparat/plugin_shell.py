@@ -21,24 +21,24 @@ TRIGGER = ('!sh')
 # -----------------------------------------------------------------------------------------------
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting')
+    tools.debug_output('prepare_general', 'starting', 1)
 
     if  current_search_string.startswith("!sh"):
-        tools.debug_output('prepare_general', 'Case: Shell')
+        tools.debug_output('prepare_general', 'Case: Shell', 1)
         prepare_plugin_shell(main_window)
         return
 
     else:
-        tools.debug_output('prepare_general', 'Error: Unexpected shell plugin command')
+        tools.debug_output('prepare_general', 'Error: Unexpected shell plugin command', 3)
         main_window.display_error_notification('Unexpected shell plugin command')
         return
 
-    tools.debug_output('prepare_general', 'finished')
+    tools.debug_output('prepare_general', 'finished', 1)
 
 
 def prepare_plugin_shell(main_window):
     """Plugin Shell"""
-    tools.debug_output('prepare_plugin_shell', 'starting')
+    tools.debug_output('prepare_plugin_shell', 'starting', 1)
     main_window.plugin__update_general_ui_information('Shell') ## update plugin info
 
     ## application buttons

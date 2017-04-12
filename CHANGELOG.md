@@ -3,11 +3,19 @@ apparat changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
+# 20170412
+* Preferences: Checkboxes on plugin-tab are not longer disabled,
+    but state can't be changed. All plugins are always enabled.                         Issue: #33
+* Ini: Added basic validation (existing sections and options)                           Issue: #13
+* Tools: Enhanced readability of debug output by adding spaces to source (same width)   Issue: #34
+* Tools: Add support for colored debug output                                           Issue: #32
+
+
 # 20170410
 * Replaced Gtk/gtk with xdg (icon search)                                               Issue: #15
 * Adding status notifier to main ui                                                     Issue: #29
-* Plugins: Internet-Search. Bugfix regarding missing searchparameter                    Issue: #30
-* Plugins: Misc. Closing UI if configured after running ! help                          Issue: #31
+* Plugin Internet-Search: Bugfix regarding missing searchparameter                      Issue: #30
+* Plugin Misc: Closing UI if configured after running ! help                            Issue: #31
 
 
 # 20170407

@@ -16,7 +16,7 @@ TRIGGER = ('!hibernate', '!sleep', '!lock', '!logout', '!reboot', '!restart', '!
 
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting')
+    tools.debug_output('prepare_general', 'starting', 1)
 
     ## Hibernate
     if current_search_string == '!hibernate' or current_search_string == '!sleep':
@@ -43,19 +43,19 @@ def prepare_general(current_search_string, main_window):
         prepare_plugin_session_screensaver(main_window)
 
     else:
-        tools.debug_output('parse_user_search_input', 'Error: Unexpected session command')
+        tools.debug_output('parse_user_search_input', 'Error: Unexpected session command', 3)
         main_window.display_error_notification('Unexpected session plugin command')
         return
 
-    tools.debug_output('prepare_general', 'finished')
+    tools.debug_output('prepare_general', 'finished', 1)
 
 
 def prepare_plugin_session_hibernate(main_window):
     """Plugin Session - Hibernate"""
-    tools.debug_output('prepare_plugin_session_hibernate', 'starting')
+    tools.debug_output('prepare_plugin_session_hibernate', 'starting', 1)
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Session (Hibernate)')
+    main_window.plugin__update_general_ui_information('Session (Hibernate)', 1)
 
     ## application buttons
     main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/hibernate.png', wx.BITMAP_TYPE_PNG)
@@ -74,7 +74,7 @@ def prepare_plugin_session_hibernate(main_window):
 
 def prepare_plugin_session_lock(main_window):
     """Plugin Session - Lock"""
-    tools.debug_output('prepare_plugin_session_lock', 'starting')
+    tools.debug_output('prepare_plugin_session_lock', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Lock)')
@@ -96,7 +96,7 @@ def prepare_plugin_session_lock(main_window):
 
 def prepare_plugin_session_logout(main_window):
     """Plugin Session - Logout"""
-    tools.debug_output('prepare_plugin_session_logout', 'starting')
+    tools.debug_output('prepare_plugin_session_logout', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Logout)')
@@ -118,7 +118,7 @@ def prepare_plugin_session_logout(main_window):
 
 def prepare_plugin_session_shutdown(main_window):
     """Plugin Session - Shutdown"""
-    tools.debug_output('prepare_plugin_session_shutdown', 'starting')
+    tools.debug_output('prepare_plugin_session_shutdown', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Shutdown)')
@@ -140,7 +140,7 @@ def prepare_plugin_session_shutdown(main_window):
 
 def prepare_plugin_session_reboot(main_window):
     """Plugin Session - Reboot"""
-    tools.debug_output('prepare_plugin_session_reboot', 'starting')
+    tools.debug_output('prepare_plugin_session_reboot', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Reboot)')
@@ -162,7 +162,7 @@ def prepare_plugin_session_reboot(main_window):
 
 def prepare_plugin_session_screensaver(main_window):
     """Plugin Session - Screensaver"""
-    tools.debug_output('prepare_plugin_session_screensaver', 'starting')
+    tools.debug_output('prepare_plugin_session_screensaver', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Screensaver)')
