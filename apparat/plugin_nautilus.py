@@ -2,6 +2,7 @@
 """apparat - plugin: nautilus"""
 
 # general
+import os
 import wx
 
 # apparat
@@ -21,6 +22,9 @@ TRIGGER = ('!goto', '!recent', '!trash', '!network', '!net')
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
     tools.debug_output('prepare_general', 'starting', 1)
+
+    # Reset status notification back to OK
+    main_window.status_notification_reset()
 
     if current_search_string.startswith('!goto'):
         tools.debug_output('prepare_general', 'Case: Goto', 1)
@@ -44,11 +48,10 @@ def prepare_general(current_search_string, main_window):
 
     else:
         tools.debug_output('prepare_general', 'Error: Unexpected nautilus plugin command', 3)
-        main_window.display_error_notification('Unexpected nautilus plugin command')
+        main_window.status_notification_display_error('Unexpected nautilus plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished')
-
 
 
 def prepare_plugin_nautilus_goto(main_window):
@@ -71,8 +74,14 @@ def prepare_plugin_nautilus_goto(main_window):
     ## set command
     main_window.ui__txt_selected_app.SetValue('nautilus')
 
-    # set parameter
-    main_window.ui__txt_selected_parameter.SetValue(main_window.ui__cb_search.GetValue()[6:])
+    ## set parameter
+    #main_window.ui__txt_selected_parameter.SetValue(main_window.ui__cb_search.GetValue()[6:])
+    if (main_window.ui__cb_search.GetValue()[6:7] == '~'):
+        tools.debug_output('prepare_plugin_nautilus_goto', 'Replacing ~', 1)
+        home = os.environ['HOME']
+        main_window.ui__txt_selected_parameter.SetValue(home+main_window.ui__cb_search.GetValue()[7:]) # possible parameter
+    else:
+        main_window.ui__txt_selected_parameter.SetValue(main_window.ui__cb_search.GetValue()[6:]) # possible parameter
 
 
 def prepare_plugin_nautilus_show_network_devices(main_window):
