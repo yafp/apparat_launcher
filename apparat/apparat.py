@@ -151,7 +151,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_selected_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         #self.ui__bt_selected_parameter.SetBitmapFocus(self.ui__bt_img_search) # image when in focus
         self.ui__bt_selected_parameter.SetBitmapFocus(wx.NullBitmap) # image when in focus
-        self.ui__bt_selected_parameter.SetBitmapHover(self.ui__bt_img_execute_black) # image on hover
+        #self.ui__bt_selected_parameter.SetBitmapHover(self.ui__bt_img_execute_black) # image on hover
         self.ui__bt_selected_parameter.SetBitmapDisabled(self.ui__bt_img_blank)
         self.ui__bt_selected_parameter.SetBitmap(self.ui__bt_selected_parameter_img.ConvertToBitmap())
         self.ui__bt_selected_parameter.SetLabel('Options')
@@ -246,31 +246,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__cb_search.SetFocus()     # set focus to search
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
-
-        ## ------------------------------------------------
-        ## Fade In
-        ## ------------------------------------------------
-        ## 
-        ## config
-        self.amount = 5
-        self.delta = 5
-        self.SetTransparent(self.amount)
-
-        ## Fader Timer
-        self.timer = wx.Timer(self, wx.ID_ANY)
-        self.timer.Start(5)
-        self.Bind(wx.EVT_TIMER, self.AlphaCycle)
-
-
-    def AlphaCycle(self, evt):
-        """Used for transparency & fade-in/out tests"""
-        self.amount += self.delta
-        if self.amount >= 255:
-            #self.delta = -self.delta
-            self.amount = 255
-        if self.amount <= 0:
-            self.amount = 0
-        self.SetTransparent(self.amount)
 
 
     def on_key_down(self, event):
@@ -446,9 +421,14 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         tools.debug_output('get_icon', 'Icon Theme: '+theme, 1)
 
-        icon = xdg.IconTheme.getIconPath(full_executable_name, size=config.TARGET_ICON_SIZE, theme=theme, extensions=['png', 'xpm'])
+        icon = xdg.IconTheme.getIconPath(full_executable_name, size=config.TARGET_ICON_SIZE, theme=theme, extensions=['png'])
 
-        if(icon is None): # use default icon
+        # it might happen that we still got an .svg image which we can not use
+        if ".svg" in icon: 
+            tools.debug_output('get_icon', 'Got an .svg image which can not be used. Using: DEFAULT', 2)
+            icon = ""
+
+        if(icon is None) or (icon is ""): # use default icon
             new_app_icon = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/missingAppIcon.png', wx.BITMAP_TYPE_PNG)
             tools.debug_output('get_icon', 'Selected icon: DEFAULT', 2)
         else:
@@ -504,57 +484,66 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         tools.debug_output('parse_user_input', 'starting', 0)
         if current_search_string != '': # if there is a search string
 
-            ## Reset UI partly if search is just !
-            if current_search_string == '!':
-                tools.debug_output('parse_user_input', 'Case: !', 1)
-                self.plugin__update_general_ui_information('')
-                return
-
-            ## Plugin: Misc
-            if  current_search_string.startswith(plugin_misc.TRIGGER):
-                plugin_misc.prepare_general(current_search_string, self)
-                return
-
-            ## Plugin: Screenshot
-            if  current_search_string in plugin_screenshot.TRIGGER:
-                plugin_screenshot.prepare_general(current_search_string, self)
-                return
-
-            ## Plugin: Nautilus
-            if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
-                plugin_nautilus.prepare_general(current_search_string, self)
-                return
-
-            ## Plugin: Session
-            if current_search_string in plugin_session.TRIGGER:
-                plugin_session.prepare_general(current_search_string, self)
-                return
-
-            ## Plugin: Shell
-            if  current_search_string.startswith(plugin_shell.TRIGGER):
-                plugin_shell.prepare_general(current_search_string, self)
-                return
-
-            ## Plugin: Internet-Search
-            if current_search_string.startswith(plugin_search_internet.TRIGGER):
-                tools.debug_output('parse_user_input', 'Case: Plugin Internet-Search', 1)
-                plugin_search_internet.prepare_internet_search(self, current_search_string)
-                return
-
-            ## Search for local files
-            if current_search_string.startswith(plugin_search_local.TRIGGER):
-                tools.debug_output('parse_user_input', 'Case: Plugin Local-Search', 1)
-                plugin_search_local.search_user_files(self, current_search_string)
-                return
-
-            ## Search for executables
-            if current_search_string[:1] != '!':
+            ## Search for executables - core-launcher-task
+            if current_search_string[:1] != '!' and current_search_string[:1] != '?':
                 self.search_executables(current_search_string)
                 return
 
+            else: # Looks like it is a plugin
+
+                ## Reset UI partly if search is just !
+                if current_search_string == '!':
+                    tools.debug_output('parse_user_input', 'Case: !', 1)
+                    self.plugin__update_general_ui_information('')
+                    return
+
+                ## Plugin: Misc
+                if  current_search_string.startswith(plugin_misc.TRIGGER):
+                    plugin_misc.prepare_general(current_search_string, self)
+                    return
+
+                ## Plugin: Screenshot
+                if  current_search_string in plugin_screenshot.TRIGGER:
+                    plugin_screenshot.prepare_general(current_search_string, self)
+                    return
+
+                ## Plugin: Nautilus
+                if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
+                    plugin_nautilus.prepare_general(current_search_string, self)
+                    return
+
+                ## Plugin: Session
+                if current_search_string in plugin_session.TRIGGER:
+                    plugin_session.prepare_general(current_search_string, self)
+                    return
+
+                ## Plugin: Shell
+                if  current_search_string.startswith(plugin_shell.TRIGGER):
+                    plugin_shell.prepare_general(current_search_string, self)
+                    return
+
+                ## Plugin: Internet-Search
+                #if current_search_string.startswith(plugin_search_internet.TRIGGER):
+                if current_search_string[0:2] in plugin_search_internet.TRIGGER:
+                    tools.debug_output('parse_user_input', 'Case: Plugin Internet-Search', 1)
+                    plugin_search_internet.prepare_internet_search(self, current_search_string)
+                    return
+
+                ## Search for local files
+                if current_search_string.startswith(plugin_search_local.TRIGGER):
+                    tools.debug_output('parse_user_input', 'Case: Plugin Local-Search', 1)
+                    plugin_search_local.search_user_files(self, current_search_string)
+                    return
+
+                ## Most likely a wrong plugin command as nothing matches so far in this case
+                ##
+                self.status_notification_display_error('Invalid or incomplete input')
+                tools.debug_output('parse_user_input', 'User input didnt match any plugin trigger', 2)
+                return
+
             ## Nothing matched (no plugin and no executable -> display error
-            if(len(current_search_string) > 2):
-                self.status_notification_display_error('Invalid input')
+            self.status_notification_display_error('Invalid or incomplete input')
+            tools.debug_output('parse_user_input', 'User input didnt match any trigger at all', 2)
 
         else: ## search string is empty
             tools.debug_output('parse_user_input', 'Empty search string. Doing nothing.', 1)
@@ -647,6 +636,14 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             p = psutil.Process(pid)
             if p.name() == application_name:
                 tools.debug_output('check_for_existing_app_instances', "Found instance of: "+ str(p.cmdline())+" ### Details: "+str(p), 1)
+                tools.debug_output('check_for_existing_app_instances', "Name: "+str(p.name()), 1)
+                tools.debug_output('check_for_existing_app_instances', "PID: "+str(p.pid), 1)
+
+                ## focus app
+                #
+                #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" --name "+str(p.name())+" windowactivate"], shell=True)
+                #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" windowactivate"], shell=True)
+                #subprocess.Popen(["xdotool search --name "+str(p.name())+" windowactivate"], shell=True)
 
 
     def do_execute(self): # pylint:disable=too-many-branches
@@ -691,7 +688,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 tools.debug_output('do_execute', 'Executable: "'+command+'" exists', 1)
 
                 ## update usage-statistics
-                #
+
                 ## commands executed
                 tools.debug_output('do_execute', 'Updating statistics (command_executed)', 1)
                 current_commands_executed_count = ini.read_single_value('Statistics', 'command_executed')          # get current value from ini
@@ -703,16 +700,17 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                     current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed')          # get current value from ini
                     ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
 
+                ## Start subprocess
+                ##
                 if parameter == '':
-                    #subprocess.Popen(["rm","-r","some.file"])
                     subprocess.Popen([command])
                     tools.debug_output('do_execute', 'Executed: "'+command+'"', 1)
 
-                else:
+                else: # there is at least 1 parameter
                     if(' ' in parameter): # if parameter contains at least 1 space, there are most likely several parameters
                         subprocess.Popen([command+" "+parameter], shell=True) # using shell=True as hack for handling several parameters (i.e. for !fs)
                         tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'" (with shell=True)', 1)
-                    else:
+                    else: # single parameter
                         subprocess.Popen([command, parameter])
                         tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'"', 1)
 
@@ -732,7 +730,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def status_notification_display_error(self, error_string):
         """displays an error string and symbol in the status area"""
-        tools.debug_output('status_notification_display_error', 'Show error: '+error_string, 3)
+        tools.debug_output('status_notification_display_error', 'Error: '+error_string, 3)
         self.ui__bt_status.SetToolTipString(error_string)
         self.ui__bt_status_img = wx.Bitmap('gfx/core/16/status_error_red.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_status.SetBitmap(self.ui__bt_status_img)
@@ -740,7 +738,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
 
     def status_notification_reset(self):
-        """resets the status notification """
+        """resets the status notification back to default/ok"""
         tools.debug_output('status_notification_reset', 'Reset notification area back to OK', 0)
         self.ui__bt_status.SetToolTipString('Status OK')
         self.ui__bt_status_img = wx.Bitmap('gfx/core/16/status_ok_green.png', wx.BITMAP_TYPE_PNG)
@@ -807,7 +805,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
 
     def __init__(self, frame):
         """Method to initialize the tray icon"""
-        tools.debug_output('__init__ (TaskBarIcon)', 'starting', 1)
+        tools.debug_output('__init__ (TaskBarIcon)', 'starting', 0)
         self.frame = frame
         super(TaskBarIcon, self).__init__()
         self.set_tray_icon(constants.APP_TRAY_ICON)
@@ -817,7 +815,7 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
 
     def CreatePopupMenu(self):
         """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
-        tools.debug_output('CreatePopupMenu', 'starting', 1)
+        tools.debug_output('CreatePopupMenu', 'starting', 0)
         menu = wx.Menu()
         create_menu_item(menu, 'Show', self.on_tray_popup_left_show)
         menu.AppendSeparator()

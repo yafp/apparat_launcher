@@ -34,14 +34,14 @@ __apparat__ is an application launcher for linux. It is developed and tested for
 
 
 ## <a name="screenshots">Screenshots
+<p align="center">
+*Launcher UI*<br>
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
+<br><br>
 
-*User-Interace*
-
-
+*Tray-Icon (Gnome)*<br>
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_trayicon.png)
-
-*Tray-Icon in Gnome*
+</p>
 
 ## <a name="installation">Installation
 There is no installation routine so far.
@@ -159,11 +159,11 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 #### <a name="misc">Misc
-| Trigger            | Alias              | Parameter      | Function                         |
-|--------------------|:------------------ |:---------------|:---------------------------------|
-| ```!help```        |                    |                | Open apparat online help         |
-| ```!open```        |                    | path           | Open using default application   |
-| ```!preferences``` | ```!prefs```       |                | Open apparat preferences         |
+| Trigger            | Alias              | Parameter      | Function                                        |
+|--------------------|:------------------ |:---------------|:------------------------------------------------|
+| ```!help```        |                    |                | Open apparat online documentation               |
+| ```!open```        |                    | path           | Open file or folder using default application   |
+| ```!preferences``` | ```!prefs```       |                | Open apparat preferences                        |
 
 
 

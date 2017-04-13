@@ -5,7 +5,7 @@
 # IMPORTS
 # -----------------------------------------------------------------------------------------------
 # general
-import os # for searching applications and file/folder/path handling
+import os # for home folder
 
 
 

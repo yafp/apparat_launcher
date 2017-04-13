@@ -3,6 +3,14 @@ apparat changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
+
+# 20170413
+* Plugin Misc: Added ~ support for !open command
+* Plugin Nautilus: Added ~ support for !goto command
+* Improved check for required linux packages
+* Improved get_icon method in case of .svg results
+
+
 # 20170412
 * Preferences: Checkboxes on plugin-tab are not longer disabled,
     but state can't be changed. All plugins are always enabled.                         Issue: #33

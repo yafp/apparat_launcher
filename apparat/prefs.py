@@ -72,7 +72,13 @@ class UITabGeneral(wx.Panel):
 
         ## show language
         cur_ini_value_for_language = ini.read_single_value('Language', 'lang')          # get current value from ini
-        t = wx.StaticText(self, -1, "Language: "+cur_ini_value_for_language, (20, 20))
+        t = wx.StaticText(self, -1, "Language: ", (20, 20))
+
+        languages = [cur_ini_value_for_language]
+        combo_box_style = wx.CB_READONLY
+        ui__cb_languages = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(100, 30), languages, style=combo_box_style)
+        ui__cb_languages.SetFont(wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        ui__cb_languages.SetValue(languages[0])
 
         ## Hide UI
         self.cb_enable_hide_ui = wx.CheckBox(self, -1, 'Hide UI after command execution ', (20, 60))
@@ -87,6 +93,7 @@ class UITabGeneral(wx.Panel):
         general_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         general_sizer.AddSpacer(10)
         general_sizer.Add(t, 0, wx.ALL, border=10)
+        general_sizer.Add(ui__cb_languages, 0, wx.ALL, border=10)
         general_sizer.AddSpacer(10)
         general_sizer.Add(self.cb_enable_hide_ui, 0, wx.ALL, border=10)
         self.SetSizer(general_sizer)

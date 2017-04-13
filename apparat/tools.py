@@ -29,7 +29,6 @@ def cmd_exists(cmd):
 
 def check_arguments():
     """Checks if apparat was started with arguments or not"""
-    debug_output('check_arguments', 'starting', 1)
     global DEBUG # pylint:disable=global-statement
     if len(sys.argv) > 2: # too much arguments
         print('Error: Unsupported amount of parameters')
@@ -79,7 +78,7 @@ def debug_output(source, message, message_type=0):
             message_type_class = ' O '
 
         ## format: time + message_type_class + source + message
-        print(timestamp+" # "+text_color+message_type_class+constants.C_DEFAULT+" # "+source+" # "+text_color+message+constants.C_DEFAULT)
+        print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source+" "+text_color+message+constants.C_DEFAULT)
 
 
 def generate_timestamp():
@@ -91,31 +90,19 @@ def generate_timestamp():
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
     debug_output('check_linux_requirements', 'starting', 0)
+
     ## needed for session commands:
     # - gnome-screensaver-command
     # - gnome-session-quit
     # - systemctl
     # - xdg-open
     # - xdotool
-    if which('gnome-screensaver-command') is None:
-        debug_output('check_linux_requirements', 'Error: gnome-screensaver-command is missing', 3)
-        sys.exit()
+    REQUIRED_LINUX_PACKAGES = ('gnome-screensaver-command', 'gnome-session-quit', 'systemctl', 'xdg-open', 'xdotool')
 
-    if which('gnome-session-quit') is None:
-        debug_output('check_linux_requirements', 'Error: gnome-session-quit is missing', 3)
-        sys.exit()
-
-    if which('systemctl') is None:
-        debug_output('check_linux_requirements', 'Error: systemctl is missing', 3)
-        sys.exit()
-
-    if which('xdg-open') is None:
-        debug_output('check_linux_requirements', 'Error: xdg-open is missing', 3)
-        sys.exit()
-
-    if which('xdotool') is None:
-        debug_output('check_linux_requirements', 'Error: xdotool is missing', 3)
-        sys.exit()
+    for i, (a) in enumerate(REQUIRED_LINUX_PACKAGES):
+        if which(REQUIRED_LINUX_PACKAGES[i]) is None:
+            debug_output('check_linux_requirements', 'Error: '+REQUIRED_LINUX_PACKAGES[i]+' is missing', 3)
+            sys.exit()
 
     debug_output('check_linux_requirements', 'finished', 1)
 
@@ -168,9 +155,7 @@ def check_platform():
             debug_output('check_platform', 'Here be dragons (Untested desktop environment)', 2)
         return
 
-    else:
-        # darwin = Mac OS
-        # win32 = windows
+    else: # anything else (darwin = Mac OS, win32 = windows)
         debug_output('check_platform', 'Detected unsupported platform.', 3)
         print("Error: Unsupported platform detected. Aborting ...")
         sys.exit()

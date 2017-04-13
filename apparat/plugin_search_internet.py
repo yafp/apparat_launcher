@@ -74,6 +74,9 @@ def prepare_internet_search(main_window, current_search_string):
     """Updates the UI according to the matching internet-search trigger"""
     tools.debug_output('prepare_internet_search', 'starting', 1)
 
+    # Reset status notification back to OK
+    main_window.status_notification_reset()
+
     ## show searchstring in parameter field
     if(main_window.ui__txt_selected_app.GetValue() != ''):
         cur_searchphrase_parameter = current_search_string[3:] # remove trigger - example: '!y '
@@ -83,6 +86,7 @@ def prepare_internet_search(main_window, current_search_string):
     if(len(current_search_string) >= 3) and (current_search_string[2] != " "):
         tools.debug_output('prepare_internet_search', 'No space after trigger - should reset icons', 1)
         main_window.plugin__update_general_ui_information('')
+        main_window.status_notification_display_error('Invalid input')
         return
 
     ## If search-string > 2 - abort - as all the work is already done

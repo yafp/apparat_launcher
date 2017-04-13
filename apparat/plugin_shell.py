@@ -23,14 +23,24 @@ def prepare_general(current_search_string, main_window):
     """Prepare General"""
     tools.debug_output('prepare_general', 'starting', 1)
 
+    # Reset status notification back to OK
+    main_window.status_notification_reset()
+
     if  current_search_string.startswith("!sh"):
         tools.debug_output('prepare_general', 'Case: Shell', 1)
         prepare_plugin_shell(main_window)
+
+        if (len(current_search_string) > 3):
+            if current_search_string.startswith("!sh "):
+                prepare_plugin_shell(main_window)
+            else:
+                main_window.plugin__update_general_ui_information('')
+                tools.debug_output('prepare_general', 'Aborting shell', 2)
         return
 
     else:
         tools.debug_output('prepare_general', 'Error: Unexpected shell plugin command', 3)
-        main_window.display_error_notification('Unexpected shell plugin command')
+        main_window.status_notification_display_error('Unexpected shell plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished', 1)

@@ -94,7 +94,6 @@ def check_if_ini_exists():
 def validate():
     """Validate the entire ini"""
     check_if_ini_exists()
-    # https://gist.github.com/tsuriga/5bc5bbfaf21c6a51cda7
     # https://pymotw.com/3/configparser/
     tools.debug_output('validate', 'Validating ini ('+constants.APP_INI_PATH+') for existing sections and options', 0)
 
@@ -120,7 +119,7 @@ def validate():
 
 
 def validate_single_section(sections, options):
-    "Validates a given ini section for a defined amount of options"
+    """Validates a given ini section for a defined amount of options"""
     tools.debug_output('validate_single_section', 'Validating ini ('+constants.APP_INI_PATH+') for section'+str(sections), 0)
     config = ConfigParser.ConfigParser()
     config.read(constants.APP_INI_PATH)
@@ -139,3 +138,5 @@ def validate_single_section(sections, options):
                 tools.debug_output('validate_single_section', '{}.{:<12}  : {}'.format(section, candidate, has_option), 1)
             else:
                 tools.debug_output('validate_single_section', '{}.{:<12}  : {}'.format(section, candidate, has_option), 3)
+
+    tools.debug_output('validate_single_section', 'Validating ini ('+constants.APP_INI_PATH+') for section'+str(sections)+' finished', 0)

@@ -18,6 +18,9 @@ def prepare_general(current_search_string, main_window):
     """Prepare General"""
     tools.debug_output('prepare_general', 'starting', 1)
 
+    # Reset status notification back to OK
+    main_window.status_notification_reset()
+
     ## Hibernate
     if current_search_string == '!hibernate' or current_search_string == '!sleep':
         prepare_plugin_session_hibernate(main_window)
@@ -44,7 +47,7 @@ def prepare_general(current_search_string, main_window):
 
     else:
         tools.debug_output('parse_user_search_input', 'Error: Unexpected session command', 3)
-        main_window.display_error_notification('Unexpected session plugin command')
+        main_window.status_notification_display_error('Unexpected session plugin command')
         return
 
     tools.debug_output('prepare_general', 'finished', 1)
@@ -55,7 +58,7 @@ def prepare_plugin_session_hibernate(main_window):
     tools.debug_output('prepare_plugin_session_hibernate', 'starting', 1)
 
     ## update plugin info
-    main_window.plugin__update_general_ui_information('Session (Hibernate)', 1)
+    main_window.plugin__update_general_ui_information('Session (Hibernate)')
 
     ## application buttons
     main_window.ui__bt_selected_app_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/hibernate.png', wx.BITMAP_TYPE_PNG)

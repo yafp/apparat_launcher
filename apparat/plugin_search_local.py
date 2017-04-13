@@ -27,6 +27,9 @@ def search_user_files(main_window, current_search_string):
     """Search for user files"""
     tools.debug_output('search_user_files', 'starting', 1)
 
+    # Reset status notification back to OK
+    main_window.status_notification_reset()
+
     ## reset combobox
     search_results = []
     main_window.ui__cb_search.SetItems(search_results) # update combobox
