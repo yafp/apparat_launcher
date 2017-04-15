@@ -65,7 +65,3 @@ def prepare_plugin_shell(main_window):
     ## http://askubuntu.com/questions/484993/run-command-on-anothernew-terminal-window
     main_window.ui__txt_selected_app.SetValue('xterm')
     main_window.ui__txt_selected_parameter.SetValue(main_window.ui__cb_search.GetValue()[4:])
-
-
-
-

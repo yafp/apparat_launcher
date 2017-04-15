@@ -16,13 +16,14 @@
     * [Parameter](#parameter)
     * [Hotkey](#hotkey)
   * [Plugins](#plugins)
-    * [Local-Search](#local-search)
-    * [Internet-Search](#internet-search)
-    * [Nautilus](#nautilus)
-    * [Session](#session)
-    * [Screenshot](#screenshot)
-    * [Shell](#shell)
+    * [Core](#core)
     * [Misc](#misc)
+    * [Nautilus](#nautilus)
+    * [Screenshot](#screenshot)
+    * [Search-Internet](#search-internet)
+    * [Search-Local](#search-local)
+    * [Session](#session)
+    * [Shell](#shell)
   * [Contributing](#contributing)
   * [Credits](#credits)
   * [License](#license)
@@ -101,13 +102,36 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 ## <a name="plugins">Plugins
-#### <a name="local-search">Local-Search
-| Trigger          | Alias          | Parameter      | Function                      |
-|------------------|:---------------|:---------------|:----------------------------- |
-| ```?```          |                | _searchstring_ | Filesearch for home directory |
+#### <a name="core">Core
+| Trigger            | Alias              | Parameter      | Function                                        |
+|--------------------|:------------------ |:---------------|:------------------------------------------------|
+| ```!help```        |                    |                | Open apparat online documentation               |
+| ```!preferences``` | ```!prefs```       |                | Open apparat preferences                        |
 
 
-#### <a name="internet-search">Internet-Search
+#### <a name="misc">Misc
+| Trigger            | Alias              | Parameter      | Function                                        |
+|--------------------|:------------------ |:---------------|:------------------------------------------------|
+| ```!open```        |                    | path           | Open file or folder using default application   |
+
+
+#### <a name="nautilus">Nautilus
+| Trigger          | Alias          | Parameter      | Function                         |
+|------------------|:-------------- |:---------------|:---------------------------------|
+| ```!goto```      |                | _path_         | Open directory in nautilus       |
+| ```!network```   | ```!net```     |                | Show network devices in nautilus |
+| ```!recent```    |                |                | Show recent files in nautilus    |
+| ```!trash```     |                |                | Show trash in nautilus           |
+
+
+#### <a name="screenshot">Screenshot
+| Trigger          | Alias              | Parameter      | Function                              |
+|------------------|:------------------ |:---------------|:--------------------------------------|
+| ```!ss```        |                    |                | Selective screenshot (window or area) |
+| ```!fs```        |                    |                | Full screenshot                       |
+
+
+#### <a name="search-internet">Search-Internet
 | Trigger          | Alias          | Parameter      | Function       |
 |------------------|:---------------|:---------------|:-------------- |
 | ```!a```         |                | _searchstring_ | Amazon         |
@@ -124,14 +148,10 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 | ```!w```         |                | _searchstring_ | Wikipedia      |
 | ```!y```         |                | _searchstring_ | YouTube        |
 
-
-#### <a name="nautilus">Nautilus
-| Trigger          | Alias          | Parameter      | Function                         |
-|------------------|:-------------- |:---------------|:---------------------------------|
-| ```!goto```      |                | _path_         | Open directory in nautilus       |
-| ```!network```   | ```!net```     |                | Show network devices in nautilus |
-| ```!recent```    |                |                | Show recent files in nautilus    |
-| ```!trash```     |                |                | Show trash in nautilus           |
+#### <a name="search-local">Search-Local
+| Trigger          | Alias          | Parameter      | Function                      |
+|------------------|:---------------|:---------------|:----------------------------- |
+| ```?```          |                | _searchstring_ | Filesearch for home directory |
 
 
 #### <a name="session">Session
@@ -145,26 +165,10 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 | ```!screensaver``` | ```!saver```   |                | start screensaver           |
 
 
-#### <a name="screenshot">Screenshot
-| Trigger          | Alias              | Parameter      | Function                              |
-|------------------|:------------------ |:---------------|:--------------------------------------|
-| ```!ss```        |                    |                | Selective screenshot (window or area) |
-| ```!fs```        |                    |                | Full screenshot                       |
-
-
 #### <a name="shell">Shell
 | Trigger          | Alias              | Parameter      | Function                            |
 |------------------|:------------------ |:---------------|:------------------------------------|
 | ```!sh```        |                    | path           | Run terminal commands in new window |
-
-
-#### <a name="misc">Misc
-| Trigger            | Alias              | Parameter      | Function                                        |
-|--------------------|:------------------ |:---------------|:------------------------------------------------|
-| ```!help```        |                    |                | Open apparat online documentation               |
-| ```!open```        |                    | path           | Open file or folder using default application   |
-| ```!preferences``` | ```!prefs```       |                | Open apparat preferences                        |
-
 
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - plugin: search-internet"""
+"""apparat - plugin: misc"""
 
 ## general
 import os
@@ -15,8 +15,7 @@ import tools
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
-
-TRIGGER = ('!open', '!help', '!preferences', '!prefs')
+TRIGGER = ('!open')
 
 
 # -----------------------------------------------------------------------------------------------
@@ -29,32 +28,13 @@ def prepare_general(current_search_string, main_window):
     # Reset status notification back to OK
     main_window.status_notification_reset()
 
-    if  current_search_string.startswith('!open'):
+    if current_search_string.startswith('!open'):
         tools.debug_output('prepare_general', 'Case: Open', 1)
         prepare_plugin_misc_open(main_window)
-        return
-
-    if  current_search_string == '!help': # opens online documentation of apparat
-        tools.debug_output('prepare_general', 'Case: Help', 1)
-        main_window.open_app_url()
-        # hide UI
-        cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
-        if cur_ini_value_for_hide_ui_after_command_execution == 'True':
-            tools.debug_output('do_execute', 'Hide Main UI after executing a command', 1)
-            main_window.tbicon.execute_tray_icon_left_click()
-        main_window.reset_ui()
-        return
-
-    if  current_search_string == '!preferences' or current_search_string == '!prefs': # opens apparat preferences
-        tools.debug_output('prepare_general', 'Case: Preferences', 1)
-        main_window.open_preference_window()
-        main_window.reset_ui()
-        return
 
     else:
         tools.debug_output('prepare_general', 'Error: Unexpected misc plugin command', 3)
         main_window.status_notification_display_error('Unexpected misc plugin command')
-        return
 
     tools.debug_output('prepare_general', 'finished', 1)
 

@@ -30,9 +30,8 @@ def read_single_value(section_name, key_name):
         tools.debug_output('read_single_value', 'Section: '+section_name, 1)
         tools.debug_output('read_single_value', 'Key: '+key_name, 1)
         tools.debug_output('read_single_value', 'Value: '+value, 1)
-    except ConfigParser.ParsingError:
-        # Issue: #13 - Create key if it doesnt exist already
-        print('read_single_ini_value', 'key '+key_name+' does not exist. Should create the key with a default value in this case - see #13')
+    except ConfigParser.NoOptionError:
+        print('-----------------------------------------------')
         tools.debug_output('read_single_value', 'key '+key_name+' does not exist. Should create the key with a default value in this case - see #13', 2)
         if(key_name == 'apparat_started') or (key_name == 'command_executed') or (key_name == 'plugin_executed'):
             value = '0'
@@ -40,8 +39,14 @@ def read_single_value(section_name, key_name):
             value = 'True'
         elif (key_name == 'lang'):
             value = 'EN'
+        elif (key_name == 'enable_plugin_misc') or (key_name == 'enable_plugin_nautilus') or (key_name == 'enable_plugin_screenshot') or (key_name == 'enable_plugin_search_internet') or (key_name == 'enable_plugin_search_local') or (key_name == 'enable_plugin_session') or (key_name == 'enable_plugin_shell'):
+            value = 'False'
+            print('blub')
         write_single_value(section_name, key_name, value)
+        tools.debug_output('read_single_value', 'key '+key_name+' written with value: '+value, 1)
         return
+    except ConfigParser.ParsingError:
+        print('foobar')
     return value
 
 
@@ -88,6 +93,14 @@ def check_if_ini_exists():
             f.write('apparat_started = 0\n')
             f.write('command_executed = 0\n')
             f.write('plugin_executed = 0\n')
+            f.write('[Plugins]\n')
+            f.write('enable_plugin_misc = False\n')
+            f.write('enable_plugin_nautilus = False\n')
+            f.write('enable_plugin_screenshot = False\n')
+            f.write('enable_plugin_search_internet = False\n')
+            f.write('enable_plugin_search_local = False\n')
+            f.write('enable_plugin_session = False\n')
+            f.write('enable_plugin_shell = False\n')
         tools.debug_output('check_if_ini_exists', 'Finished ini file creation', 1)
 
 
@@ -115,6 +128,12 @@ def validate():
     OPTIONS = ['apparat_started', 'command_executed', 'plugin_executed']
     validate_single_section(SECTIONS, OPTIONS)
 
+    # Section: Plugins
+    #
+    SECTIONS = ['Plugins']
+    OPTIONS = ['enable_plugin_misc', 'enable_plugin_nautilus', 'enable_plugin_screenshot', 'enable_plugin_search_internet', 'enable_plugin_search_local', 'enable_plugin_session', 'enable_plugin_shell']
+    validate_single_section(SECTIONS, OPTIONS)
+
     tools.debug_output('validate', 'Finished validating complete ini ('+constants.APP_INI_PATH+')', 0)
 
 
@@ -131,6 +150,12 @@ def validate_single_section(sections, options):
             tools.debug_output('validate_single_section', '{} section exists: {}'.format(section, has_section), 1)
         else:
             tools.debug_output('validate_single_section', '{} section is missing: {}'.format(section, has_section), 3)
+
+            # create the missing section
+            config.add_section(section)
+            tools.debug_output('validate_single_section', 'Created new section '+section, 1)
+            with open(constants.APP_INI_PATH, 'wb') as configfile:
+                config.write(configfile)
         # options
         for candidate in options:
             has_option = config.has_option(section, candidate)

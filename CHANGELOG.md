@@ -4,9 +4,14 @@ apparat changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
 
+# 20170415
+* Prefs: Plugins can now be enabled or disabled.                                        Issue: #37
+* Plugins: Create new plugin core which handles !prefs, !preferences and !helper        Issue: #38
+
+
 # 20170413
-* Plugin Misc: Added ~ support for !open command
-* Plugin Nautilus: Added ~ support for !goto command
+* Plugin Misc: Added ~ support for !open command                                        Issue: #35
+* Plugin Nautilus: Added ~ support for !goto command                                    Issue: #36
 * Improved check for required linux packages
 * Improved get_icon method in case of .svg results
 

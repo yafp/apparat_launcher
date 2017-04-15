@@ -27,20 +27,17 @@ def prepare_general(current_search_string, main_window):
     # Reset status notification back to OK
     main_window.status_notification_reset()
 
-    if  current_search_string == "!ss":
+    if current_search_string == "!ss":
         tools.debug_output('prepare_general', 'Case: Selective Screenshot', 1)
         prepare_selective_screenshot(main_window)
-        return
 
-    if  current_search_string == "!fs":
+    elif current_search_string == "!fs":
         tools.debug_output('prepare_general', 'Case: Full Screenshot', 1)
         prepare_full_screenshot(main_window)
-        return
 
     else:
         tools.debug_output('prepare_general', 'Error: Unexpected screenshot plugin command', 3)
         main_window.status_notification_display_error('Unexpected screenshot plugin command')
-        return
 
     tools.debug_output('prepare_general', 'finished', 1)
 

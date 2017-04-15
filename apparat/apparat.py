@@ -36,6 +36,7 @@ else: # python 2.x
     import config                       # contains some config values
     import ini                          # ini file handling
     import prefs                        # preference window
+    import plugin_core
     import plugin_misc
     import plugin_nautilus
     import plugin_screenshot
@@ -424,7 +425,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         icon = xdg.IconTheme.getIconPath(full_executable_name, size=config.TARGET_ICON_SIZE, theme=theme, extensions=['png'])
 
         # it might happen that we still got an .svg image which we can not use
-        if ".svg" in icon: 
+        if '.svg' in icon:
             tools.debug_output('get_icon', 'Got an .svg image which can not be used. Using: DEFAULT', 2)
             icon = ""
 
@@ -497,43 +498,59 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                     self.plugin__update_general_ui_information('')
                     return
 
-                ## Plugin: Misc
-                if  current_search_string.startswith(plugin_misc.TRIGGER):
-                    plugin_misc.prepare_general(current_search_string, self)
+                ## Plugin: Core (can not be disabled)
+                if  current_search_string.startswith(plugin_core.TRIGGER):
+                    plugin_core.prepare_general(current_search_string, self)
                     return
+
+                ## Plugin: Misc
+                cur_ini_value_for_plugin_misc = ini.read_single_value('Plugins', 'enable_plugin_misc')          # get current value from ini
+                if cur_ini_value_for_plugin_misc == 'True':
+                    if  current_search_string.startswith(plugin_misc.TRIGGER):
+                        plugin_misc.prepare_general(current_search_string, self)
+                        return
 
                 ## Plugin: Screenshot
-                if  current_search_string in plugin_screenshot.TRIGGER:
-                    plugin_screenshot.prepare_general(current_search_string, self)
-                    return
+                cur_ini_value_for_plugin_screenshot = ini.read_single_value('Plugins', 'enable_plugin_screenshot')          # get current value from ini
+                if cur_ini_value_for_plugin_screenshot == 'True':
+                    if  current_search_string in plugin_screenshot.TRIGGER:
+                        plugin_screenshot.prepare_general(current_search_string, self)
+                        return
 
                 ## Plugin: Nautilus
-                if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
-                    plugin_nautilus.prepare_general(current_search_string, self)
-                    return
+                cur_ini_value_for_plugin_nautilus = ini.read_single_value('Plugins', 'enable_plugin_nautilus')          # get current value from ini
+                if cur_ini_value_for_plugin_nautilus == 'True':
+                    if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
+                        plugin_nautilus.prepare_general(current_search_string, self)
+                        return
 
                 ## Plugin: Session
-                if current_search_string in plugin_session.TRIGGER:
-                    plugin_session.prepare_general(current_search_string, self)
-                    return
+                cur_ini_value_for_plugin_session = ini.read_single_value('Plugins', 'enable_plugin_session')          # get current value from ini
+                if cur_ini_value_for_plugin_session == 'True':
+                    if current_search_string in plugin_session.TRIGGER:
+                        plugin_session.prepare_general(current_search_string, self)
+                        return
 
                 ## Plugin: Shell
-                if  current_search_string.startswith(plugin_shell.TRIGGER):
-                    plugin_shell.prepare_general(current_search_string, self)
-                    return
+                cur_ini_value_for_plugin_shell = ini.read_single_value('Plugins', 'enable_plugin_shell')          # get current value from ini
+                if cur_ini_value_for_plugin_shell == 'True':
+                    if  current_search_string.startswith(plugin_shell.TRIGGER):
+                        plugin_shell.prepare_general(current_search_string, self)
+                        return
 
                 ## Plugin: Internet-Search
-                #if current_search_string.startswith(plugin_search_internet.TRIGGER):
-                if current_search_string[0:2] in plugin_search_internet.TRIGGER:
-                    tools.debug_output('parse_user_input', 'Case: Plugin Internet-Search', 1)
-                    plugin_search_internet.prepare_internet_search(self, current_search_string)
-                    return
+                cur_ini_value_for_plugin_internet_search = ini.read_single_value('Plugins', 'enable_plugin_search_internet')          # get current value from ini
+                if cur_ini_value_for_plugin_internet_search == 'True':
+                    if current_search_string[0:2] in plugin_search_internet.TRIGGER:
+                        plugin_search_internet.prepare_internet_search(self, current_search_string)
+                        return
 
                 ## Search for local files
-                if current_search_string.startswith(plugin_search_local.TRIGGER):
-                    tools.debug_output('parse_user_input', 'Case: Plugin Local-Search', 1)
-                    plugin_search_local.search_user_files(self, current_search_string)
-                    return
+                cur_ini_value_for_plugin_local_search = ini.read_single_value('Plugins', 'enable_plugin_search_local')          # get current value from ini
+                if cur_ini_value_for_plugin_local_search == 'True':
+                    if current_search_string.startswith(plugin_search_local.TRIGGER):
+                        plugin_search_local.search_user_files(self, current_search_string)
+                        return
 
                 ## Most likely a wrong plugin command as nothing matches so far in this case
                 ##
