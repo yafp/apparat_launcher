@@ -113,7 +113,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 #### <a name="misc">Misc
 | Trigger            | Alias              | Parameter      | Function                                        |
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
-| ```!open```        |                    | path           | Open file or folder using default application   |
+| ```!open```        |                    | _path_         | Open file or folder using default application   |
 
 
 #### <a name="nautilus">Nautilus
@@ -169,7 +169,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 #### <a name="shell">Shell
 | Trigger          | Alias              | Parameter      | Function                            |
 |------------------|:------------------ |:---------------|:------------------------------------|
-| ```!sh```        |                    | path           | Run terminal commands in new window |
+| ```!sh```        |                    | _path_         | Run terminal commands in new window |
 
 
 

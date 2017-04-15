@@ -31,22 +31,21 @@ def read_single_value(section_name, key_name):
         tools.debug_output('read_single_value', 'Key: '+key_name, 1)
         tools.debug_output('read_single_value', 'Value: '+value, 1)
     except ConfigParser.NoOptionError:
-        print('-----------------------------------------------')
         tools.debug_output('read_single_value', 'key '+key_name+' does not exist. Should create the key with a default value in this case - see #13', 2)
-        if(key_name == 'apparat_started') or (key_name == 'command_executed') or (key_name == 'plugin_executed'):
+        if \
+        (key_name == 'apparat_started') or \
+        (key_name == 'command_executed') or \
+        (key_name == 'plugin_executed'):
             value = '0'
         elif (key_name == 'hide_ui_after_command_execution'):
             value = 'True'
         elif (key_name == 'lang'):
             value = 'EN'
-        elif (key_name == 'enable_plugin_misc') or (key_name == 'enable_plugin_nautilus') or (key_name == 'enable_plugin_screenshot') or (key_name == 'enable_plugin_search_internet') or (key_name == 'enable_plugin_search_local') or (key_name == 'enable_plugin_session') or (key_name == 'enable_plugin_shell'):
+        elif key_name.startswith('enable_plugin'): # any plugin
             value = 'False'
-            print('blub')
         write_single_value(section_name, key_name, value)
         tools.debug_output('read_single_value', 'key '+key_name+' written with value: '+value, 1)
-        return
-    except ConfigParser.ParsingError:
-        print('foobar')
+        return value
     return value
 
 
@@ -150,7 +149,6 @@ def validate_single_section(sections, options):
             tools.debug_output('validate_single_section', '{} section exists: {}'.format(section, has_section), 1)
         else:
             tools.debug_output('validate_single_section', '{} section is missing: {}'.format(section, has_section), 3)
-
             # create the missing section
             config.add_section(section)
             tools.debug_output('validate_single_section', 'Created new section '+section, 1)

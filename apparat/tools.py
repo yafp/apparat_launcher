@@ -92,14 +92,10 @@ def check_linux_requirements():
     debug_output('check_linux_requirements', 'starting', 0)
 
     ## needed for session commands:
-    # - gnome-screensaver-command
-    # - gnome-session-quit
-    # - systemctl
-    # - xdg-open
-    # - xdotool
     REQUIRED_LINUX_PACKAGES = ('gnome-screensaver-command', 'gnome-session-quit', 'systemctl', 'xdg-open', 'xdotool')
 
     for i, (a) in enumerate(REQUIRED_LINUX_PACKAGES):
+        debug_output('check_linux_requirements', 'Checking '+a, 0)
         if which(REQUIRED_LINUX_PACKAGES[i]) is None:
             debug_output('check_linux_requirements', 'Error: '+REQUIRED_LINUX_PACKAGES[i]+' is missing', 3)
             sys.exit()
@@ -109,7 +105,6 @@ def check_linux_requirements():
 
 def which(program):
     """Method to check if executable exists"""
-    debug_output('which', 'starting', 0)
     def is_exe(fpath):
         """foo"""
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
