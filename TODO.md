@@ -1,4 +1,4 @@
-apparat todo
+todo
 ==========
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)

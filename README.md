@@ -35,14 +35,15 @@ __apparat__ is an application launcher for linux. It is developed and tested for
 
 
 ## <a name="screenshots">Screenshots
-<p align="center">
-*Launcher UI*<br>
-![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
-<br><br>
+*Launcher UI*
 
-*Tray-Icon (Gnome)*<br>
+![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
+
+
+*Tray-Icon (Gnome)*
+
 ![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_trayicon.png)
-</p>
+
 
 ## <a name="installation">Installation
 There is no installation routine so far.
@@ -173,7 +174,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 ## <a name="contributing">Contributing
-Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
+Please check the [Contribution guidelines for this project](CONTRIBUTING.md)
 
 
 
