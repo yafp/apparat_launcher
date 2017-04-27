@@ -1,7 +1,7 @@
 apparat notes
 ==========
 
-![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat-launcher/master/apparat-launcher/gfx/core/128/appIcon.png)
 
 
 # Check scripts using pylint

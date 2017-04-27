@@ -1,7 +1,7 @@
 # <a name="top"> apparat-launcher
 
 
-![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat-launcher/master/apparat-launcher/gfx/core/128/appIcon.png)
 
 [![Code Health](https://landscape.io/github/yafp/apparat/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat/master)
 
@@ -37,12 +37,12 @@ __apparat-launcher__ is an application launcher for linux. It is developed and t
 ## <a name="screenshots">Screenshots
 *Launcher UI*
 
-![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_ui.png)
+![screenshot](https://raw.githubusercontent.com/yafp/apparat-launcher/master/docs/screenshots_ui/screenshot_ui.png)
 
 
 *Tray-Icon (Gnome)*
 
-![screenshot](https://raw.githubusercontent.com/yafp/apparat/master/docs/screenshots_ui/screenshot_trayicon.png)
+![screenshot](https://raw.githubusercontent.com/yafp/apparat-launcher/master/docs/screenshots_ui/screenshot_trayicon.png)
 
 
 ## <a name="installation">Installation
