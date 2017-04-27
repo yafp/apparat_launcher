@@ -135,22 +135,22 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 #### <a name="search-internet">Search-Internet
 | Trigger          | Alias          | Parameter      | Function               |
 |------------------|:---------------|:---------------|:---------------------- |
-| ```!am```        |                | _searchstring_ | __Am__azon             |
-| ```!au```        |                | _searchstring_ | __A__sk __U__buntu     |
-| ```!bc```        |                | _searchstring_ | __B__and__C__amp       |
-| ```!fb```        |                | _searchstring_ | __F__ace__B__ook       |
-| ```!gh```        |                | _searchstring_ | __G__it__H__ub         |
-| ```!gm```        |                | _searchstring_ | __G__oogle-__M__aps    |
-| ```!go```        |                | _searchstring_ | __Go__ogle             |
-| ```!la```        |                | _searchstring_ | __La__stFM             |
-| ```!re```        |                | _searchstring_ | __Re__ddit             |
-| ```!sc```        |                | _searchstring_ | __S__ound__C__loud     |
-| ```!se```        |                | _searchstring_ | __S__tack-__E__xchange |
-| ```!so```        |                | _searchstring_ | __S__tack-__O__verflow |
-| ```!tw```        |                | _searchstring_ | __Tw__itter            |
-| ```!vi```        |                | _searchstring_ | __Vi__meo              |
-| ```!wi```        |                | _searchstring_ | __Wi__kipedia          |
-| ```!yt```        |                | _searchstring_ | __Y__ou__T__ube        |
+| ```!am```        |                | _searchstring_ | Amazon                 |
+| ```!au```        |                | _searchstring_ | Ask Ubuntu             |
+| ```!bc```        |                | _searchstring_ | BandCamp               |
+| ```!fb```        |                | _searchstring_ | FaceBook               |
+| ```!gh```        |                | _searchstring_ | GitHub                 |
+| ```!gm```        |                | _searchstring_ | Google-Maps            |
+| ```!go```        |                | _searchstring_ | Google                 |
+| ```!la```        |                | _searchstring_ | LastFM                 |
+| ```!re```        |                | _searchstring_ | Reddit                 |
+| ```!sc```        |                | _searchstring_ | SoundCloud             |
+| ```!se```        |                | _searchstring_ | Stack-Exchange         |
+| ```!so```        |                | _searchstring_ | Stack-Overflow         |
+| ```!tw```        |                | _searchstring_ | Twitter                |
+| ```!vi```        |                | _searchstring_ | Vimeo                  |
+| ```!wi```        |                | _searchstring_ | Wikipedia              |
+| ```!yt```        |                | _searchstring_ | YouTube                |
 
 #### <a name="search-local">Search-Local
 | Trigger          | Alias          | Parameter      | Function                      |
