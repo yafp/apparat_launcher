@@ -45,7 +45,7 @@ ICONS = (
     'amazon.png',
     'stack-exchange.png',
     'bandcamp.png',
-    'search.png',
+    'duckduckgo.png',
     'facebook.png',
     'flickr.png',
     'github.png',
