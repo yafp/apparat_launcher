@@ -4,6 +4,15 @@ Changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
 
+# 20170428
+* Add requirements check to apparatHotkeyHelper.sh
+* Plugin Internet Search: Move from single to dual-letter triggers                      (Issue: #40)
+* Plugin Internet Search: Add support for Ask Ubuntu via !au                            (Issue: #41)
+* Plugin Internet Search: Add support for GitHub via !gh                                (Issue: #39)
+* Plugin Internet Search: Add support for Facebook via !fb                              (Issue: #43)
+* Renamed project from apparat to apparat-launcher                                      (Issue: #42)
+
+
 # 20170415
 * Prefs: Plugins can now be enabled or disabled.                                        (Issue: #37)
 * Plugins: Create new plugin core which handles !prefs, !preferences and !helper        (Issue: #38)

@@ -15,18 +15,21 @@ import tools
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
 
-TRIGGER = ('!a', '!b', '!e', '!g', '!l', '!m', '!o', '!r', '!s', '!t', '!v', '!w', '!y')
+TRIGGER = ('!am', '!au', '!bc', '!fb', '!gh', '!gm', '!go', '!la', '!re', '!sc', '!se', '!so', '!tw', '!vi', '!wi', '!yt')
 
 URLS = (
     'https://www.amazon.de/s/field-keywords=',
+    'https://askubuntu.com/search?q=',
     'https://bandcamp.com/search?q=',
-    'https://stackexchange.com/search?q=',
+    'https://m.facebook.com/search/?&query=',
+    'https://github.com/search?q=',
+    'http://www.maps.google.de/maps/place/',
     'https://www.google.com/search?q=',
     'https://www.last.fm/search?q=',
-    'http://www.maps.google.de/maps/place/',
-    'https://stackoverflow.com/search?q=',
     'https://www.reddit.com/search?q=',
     'https://soundcloud.com/search?q=',
+    'https://stackexchange.com/search?q=',
+    'https://stackoverflow.com/search?q=',
     'https://twitter.com/search?q=',
     'https://vimeo.com/search?q=',
     'https://en.wikipedia.org/w/index.php?search=',
@@ -35,14 +38,17 @@ URLS = (
 
 ICONS = (
     'amazon.png',
-    'bandcamp.png',
     'stack-exchange.png',
+    'bandcamp.png',
+    'facebook.png',
+    'github.png',
+    'maps.png',
     'google.png',
     'lastfm.png',
-    'maps.png',
-    'stack-overflow.png',
     'reddit.png',
     'soundcloud.png',
+    'stack-exchange.png',
+    'stack-overflow.png',
     'twitter.png',
     'vimeo.png',
     'wikipedia.png',
@@ -51,14 +57,17 @@ ICONS = (
 
 DESCRIPTIONS = (
     'Internet-Search (Amazon)',
-    'Internet-Search (Bandcamp)',
-    'Internet-Search (Stack-Exchange)',
+    'Internet-Search (Ask Ubuntu)',
+    'Internet-Search (BandCamp)',
+    'Internet-Search (FaceBook)',
+    'Internet-Search (GitHub)',
+    'Internet-Search (Google-Maps)',
     'Internet-Search (Google)',
     'Internet-Search (LastFM)',
-    'Internet-Search (Google-Maps)',
-    'Internet-Search (Stack-Overflow)',
     'Internet-Search (Reddit)',
     'Internet-Search (SoundCloud)',
+    'Internet-Search (Stack-Exchange)',
+    'Internet-Search (Stack-Overflow)',
     'Internet-Search (Twitter)',
     'Internet-Search (Vimeo)',
     'Internet-Search (Wikipedia)',
@@ -83,15 +92,15 @@ def prepare_internet_search(main_window, current_search_string):
         main_window.ui__txt_selected_parameter.SetValue(cur_searchphrase_parameter)
 
     ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
-    if(len(current_search_string) >= 3) and (current_search_string[2] != " "):
+    if(len(current_search_string) >= 4) and (current_search_string[3] != " "):
         tools.debug_output('prepare_internet_search', 'No space after trigger - should reset icons', 1)
         main_window.plugin__update_general_ui_information('')
         main_window.status_notification_display_error('Invalid input')
         return
 
-    ## If search-string > 2 - abort - as all the work is already done
+    ## If search-string > 3 - abort - as all the work is already done
     #
-    if(len(current_search_string) > 2):
+    if(len(current_search_string) > 3):
         return # we can stop here - nothing more to do as plugin should be already activated
 
     # get tuple position of command
