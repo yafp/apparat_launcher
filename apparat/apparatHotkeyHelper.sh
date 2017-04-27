@@ -13,14 +13,38 @@
 # - wmctrl
 
 
+# ---------------------------------------------------------
 # CONFIG
-#
+# ---------------------------------------------------------
 APPARAT_FOLDER=$HOME'/Dropbox/Temp/apparat/apparat/'
-APPARAT_EXECUTABLE='apparat.py'
+APPARAT_EXECUTABLE='apparat-launcher.py'
 
 
-# MAIN
+
+# ---------------------------------------------------------
+# CHECK REQUIREMENTS
+# ---------------------------------------------------------
 #
+# xdotool
+if hash xdotool 2>/dev/null; then
+    echo "Found required package xdotool"
+else
+    echo "xdotool missing"
+    exit
+fi
+
+# wmctrl
+if hash wmctrl 2>/dev/null; then
+    echo "Found required package wmctrl"
+else
+    echo "wmctrl missing"
+    exit
+fi
+
+
+# ---------------------------------------------------------
+# MAIN
+# ---------------------------------------------------------
 wmctrl -lx | awk '{print $3}' | grep -i "$APPARAT_EXECUTABLE" # check if apparat.py is running right now
 
 if [ $? -eq 0 ]; then # it is running

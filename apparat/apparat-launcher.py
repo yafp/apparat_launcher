@@ -455,7 +455,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__bt_selected_app.Enable(True) # enable application button
             self.ui__bt_selected_parameter.Enable(True) # Enable option button
             self.ui__txt_result_counter.SetValue('1') ## set result-count
-            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue().lower()[:2]) ## update command (Example: !g)
+            self.ui__txt_selected_app.SetValue(self.ui__cb_search.GetValue().lower()[:3]) ## update command (Example: !g)
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name) # Plugin Name in specific field
             tools.debug_output('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated', 1)
         else:
@@ -541,7 +541,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 ## Plugin: Internet-Search
                 cur_ini_value_for_plugin_internet_search = ini.read_single_value('Plugins', 'enable_plugin_search_internet')          # get current value from ini
                 if cur_ini_value_for_plugin_internet_search == 'True':
-                    if current_search_string[0:2] in plugin_search_internet.TRIGGER:
+                    if current_search_string[0:3] in plugin_search_internet.TRIGGER:
                         plugin_search_internet.prepare_internet_search(self, current_search_string)
                         return
 
