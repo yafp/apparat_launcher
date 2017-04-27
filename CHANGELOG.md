@@ -4,13 +4,19 @@ Changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat/master/apparat/gfx/core/128/appIcon.png)
 
 
-# 20170428
+# 20170427
 * Add requirements check to apparatHotkeyHelper.sh
 * Plugin Internet Search: Move from single to dual-letter triggers                      (Issue: #40)
 * Plugin Internet Search: Add support for Ask Ubuntu via !au                            (Issue: #41)
 * Plugin Internet Search: Add support for GitHub via !gh                                (Issue: #39)
 * Plugin Internet Search: Add support for Facebook via !fb                              (Issue: #43)
 * Renamed project from apparat to apparat-launcher                                      (Issue: #42)
+* Plugin Internet Search: Add support for Flickr via !fl                                (Issue: #44)
+* Plugin Internet Search: Add support for Google Images via !gi                         (Issue: #45)
+* Plugin Internet Search: Add support for Google News via !gn                           (Issue: #46)
+* Plugin Internet Search: Add support for DuckDuckGo Search via !dd                     (Issue: #47)
+* Plugin Internet Search: Add support for tumblr via !tu                                (Issue: #48)
+* Preferences: Add description text for each plugin on plugin-preference-tab1           (Issue: #49)
 
 
 # 20170415

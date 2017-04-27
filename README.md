@@ -138,15 +138,20 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 | ```!am```        |                | _searchstring_ | Amazon                 |
 | ```!au```        |                | _searchstring_ | Ask Ubuntu             |
 | ```!bc```        |                | _searchstring_ | BandCamp               |
+| ```!dd```        |                | _searchstring_ | DuckDuckGo             |
 | ```!fb```        |                | _searchstring_ | FaceBook               |
+| ```!fl```        |                | _searchstring_ | Flickr                 |
 | ```!gh```        |                | _searchstring_ | GitHub                 |
-| ```!gm```        |                | _searchstring_ | Google-Maps            |
+| ```!gi```        |                | _searchstring_ | Google Images          |
+| ```!gm```        |                | _searchstring_ | Google Maps            |
+| ```!gn```        |                | _searchstring_ | Google News            |
 | ```!go```        |                | _searchstring_ | Google                 |
 | ```!la```        |                | _searchstring_ | LastFM                 |
 | ```!re```        |                | _searchstring_ | Reddit                 |
 | ```!sc```        |                | _searchstring_ | SoundCloud             |
 | ```!se```        |                | _searchstring_ | Stack-Exchange         |
 | ```!so```        |                | _searchstring_ | Stack-Overflow         |
+| ```!tu```        |                | _searchstring_ | Tumblr                 |
 | ```!tw```        |                | _searchstring_ | Twitter                |
 | ```!vi```        |                | _searchstring_ | Vimeo                  |
 | ```!wi```        |                | _searchstring_ | Wikipedia              |
