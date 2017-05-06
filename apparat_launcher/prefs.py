@@ -169,7 +169,7 @@ class UITabPluginCommands(wx.Panel):
 
     """Preference Window - Tab: Commands- Shows available plugins"""
 
-    def __init__(self, parent): # pylint:disable=too-many-statements, too-many-branches
+    def __init__(self, parent): # pylint:disable=too-many-statements, too-many-branches, too-many-locals
         """Inits the plugin-commands tab"""
         wx.Panel.__init__(self, parent)
 
