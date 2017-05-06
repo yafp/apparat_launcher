@@ -106,14 +106,14 @@ def prepare_plugin_nautilus_show_recent(main_window, icon_size):
     main_window.plugin__update_general_ui_information('Nautilus (Recent)')
 
     ## command button & txt
-    main_window.ui__bt_command_img = wx.Image('gfx/plugins/nautilus/'+str(config.TARGET_ICON_SIZE)+'/recent.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_command_img = wx.Image('gfx/plugins/nautilus/'+icon_size+'/recent.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_command.SetBitmap(main_window.ui__bt_command_img.ConvertToBitmap())
     main_window.ui__bt_command.SetToolTipString('Show recent files')
     main_window.ui__txt_command.SetValue('nautilus')
 
     ## parameter button & txt
     main_window.ui__bt_parameter.SetToolTipString('Open')
-    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
     main_window.ui__txt_parameter.SetValue('recent://')
 
@@ -126,13 +126,13 @@ def prepare_plugin_nautilus_open_trash(main_window, icon_size):
     main_window.plugin__update_general_ui_information('Nautilus (Trash)')
 
     ## command button & txt
-    main_window.ui__bt_command_img = wx.Image('gfx/plugins/nautilus/'+str(config.TARGET_ICON_SIZE)+'/trash.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_command_img = wx.Image('gfx/plugins/nautilus/'+icon_size+'/trash.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_command.SetBitmap(main_window.ui__bt_command_img.ConvertToBitmap())
     main_window.ui__bt_command.SetToolTipString('Open Trash')
     main_window.ui__txt_command.SetValue('nautilus')
 
     ## parameter button & txt
     main_window.ui__bt_parameter.SetToolTipString('Open')
-    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
     main_window.ui__txt_parameter.SetValue('trash://')

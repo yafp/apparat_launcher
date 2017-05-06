@@ -128,14 +128,14 @@ def prepare_plugin_session_shutdown(main_window, icon_size):
     main_window.plugin__update_general_ui_information('Session (Shutdown)')
 
     ## command button & txt
-    main_window.ui__bt_command_img = wx.Image('gfx/plugins/session/'+str(config.TARGET_ICON_SIZE)+'/shutdown.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_command_img = wx.Image('gfx/plugins/session/'+icon_size+'/shutdown.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_command.SetBitmap(main_window.ui__bt_command_img.ConvertToBitmap())
     main_window.ui__bt_command.SetToolTipString('Shutdown machine')
     main_window.ui__txt_command.SetValue('gnome-session-quit')
 
     ## parameter button & txt
     main_window.ui__bt_parameter.SetToolTipString('Launch')
-    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
     main_window.ui__txt_parameter.SetValue('--power-off')
 

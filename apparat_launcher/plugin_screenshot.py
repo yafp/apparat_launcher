@@ -54,14 +54,14 @@ def prepare_selective_screenshot(main_window, icon_size):
     main_window.plugin__update_general_ui_information('Screenshot (Selective)')
 
     ## command button & txt
-    main_window.ui__bt_command_img = wx.Image('gfx/plugins/screenshot/'+str(config.TARGET_ICON_SIZE)+'/screenshot_selective.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_command_img = wx.Image('gfx/plugins/screenshot/'+icon_size+'/screenshot_selective.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_command.SetBitmap(main_window.ui__bt_command_img.ConvertToBitmap())
     main_window.ui__bt_command.SetToolTipString('Selective Screenshot')
     main_window.ui__txt_command.SetValue('import')
 
     ## parameter button
     main_window.ui__bt_parameter.SetToolTipString('Do')
-    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
     ## parameter txt
     current_timestamp = tools.generate_timestamp()
