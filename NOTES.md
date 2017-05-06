@@ -1,7 +1,7 @@
-apparat notes
+apparat_launcher notes
 ==========
 
-![logo](https://raw.githubusercontent.com/yafp/apparat-launcher/master/apparat-launcher/gfx/core/128/appIcon.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
 # Check scripts using pylint
@@ -12,3 +12,8 @@ apparat notes
 ```pip install pipreqs```
 ## Creation
 ```pipreqs /path/to/project```
+
+
+# Packaging
+## Creating a minimal setup.py
+* http://python-packaging.readthedocs.io/en/latest/minimal.html

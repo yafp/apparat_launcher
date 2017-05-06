@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - an application launcher for linux"""
+"""apparat_launcher - an application launcher for linux"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -12,14 +12,14 @@ import os # for home folder
 # -----------------------------------------------------------------------------------------------
 # GENERAL CONSTANTS
 # -----------------------------------------------------------------------------------------------
-APP_NAME = 'Apparat'
+APP_NAME = 'Apparat_launcher'
 APP_DESCRIPTION = 'An application launcher for linux'
-APP_URL = 'https://github.com/yafp/apparat'
+APP_URL = 'https://github.com/yafp/apparat_launcher'
 APP_LICENSE = 'GPL3'
 APP_TRAY_TOOLTIP = 'apparat'
 APP_TRAY_ICON = 'gfx/core/16/appIcon.png'
-APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat/'
-APP_INI_PATH = APP_INI_FOLDER+'apparat.ini'
+APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat_launcher/'
+APP_INI_PATH = APP_INI_FOLDER+'apparat_launcher.ini'
 
 
 

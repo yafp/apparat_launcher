@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - an application launcher for linux"""
+"""apparat_launcher - an application launcher for linux"""
 
 
 # -----------------------------------------------------------------------------------------------

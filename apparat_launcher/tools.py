@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - an application launcher for linux"""
+"""apparat_launcher - an application launcher for linux"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -28,7 +28,7 @@ def cmd_exists(cmd):
 
 
 def check_arguments():
-    """Checks if apparat was started with arguments or not"""
+    """Checks if apparat_launcher was started with arguments or not"""
     global DEBUG # pylint:disable=global-statement
     if len(sys.argv) > 2: # too much arguments
         print('Error: Unsupported amount of parameters')

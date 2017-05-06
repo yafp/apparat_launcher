@@ -1,7 +1,22 @@
 Changelog
 ==========
 
-![logo](https://raw.githubusercontent.com/yafp/apparat-launcher/master/apparat-launcher/gfx/core/128/appIcon.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
+
+
+# 20170506
+* Minor fix for apparatHotkeyHelper.sh
+* Minor changes based on pylint
+* Plugin Shell:
+    Moved from xterm to x-terminal-emulator as default
+    Opens now a new default terminal and executes the related command
+* Optimized method get_icon in apparat-launcher.py
+* Readme.md: Fixing landscape link                                                      (Issue: #42)
+* Ini: Adjusted ini folder and ini file to new project name                             (Issue: #42)
+* Project: renaming once again from apparat-launcher to apparat_launcher                (Issue: #42)
+    (apparat-launcher conflicts with naming conventions)
+* UI: Status icon is hidden by default. Only displayed if there is an OK or ERROR state
+* UI: Icon size change now via preferences (before: config.py)
 
 
 # 20170427

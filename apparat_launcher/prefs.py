@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - an application launcher for linux"""
+"""apparat_launcher - an application launcher for linux"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -88,14 +88,37 @@ class UITabGeneral(wx.Panel):
             self.cb_enable_hide_ui.SetValue(True)
         wx.EVT_CHECKBOX(self, self.cb_enable_hide_ui.GetId(), self.prefs_general_toggle_hide_ui)
 
+
+        ## icon sizes
+        cur_ini_value_for_iconsize = ini.read_single_value('General', 'icon_size')          # get current value from ini
+        t2 = wx.StaticText(self, -1, "Icon Size: ", (20, 20))
+
+        available_icon_sizes = ['128', '256']
+        combo_box_style = wx.CB_READONLY
+        self.ui__cb_iconsizes = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(100, 30), available_icon_sizes, style=combo_box_style)
+        self.ui__cb_iconsizes.SetFont(wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        self.ui__cb_iconsizes.SetValue(cur_ini_value_for_iconsize)
+        self.ui__cb_iconsizes.Bind(wx.EVT_TEXT, self.on_change_icon_size) # changing
+
+
         ## Layout
         general_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
         general_sizer.AddSpacer(10)
         general_sizer.Add(t, 0, wx.ALL, border=10)
         general_sizer.Add(ui__cb_languages, 0, wx.ALL, border=10)
-        general_sizer.AddSpacer(10)
+        general_sizer.AddSpacer(30)
         general_sizer.Add(self.cb_enable_hide_ui, 0, wx.ALL, border=10)
+        general_sizer.AddSpacer(30)
+        general_sizer.Add(t2, 0, wx.ALL, border=10)
+        general_sizer.Add(self.ui__cb_iconsizes, 0, wx.ALL, border=10)
         self.SetSizer(general_sizer)
+
+
+    def on_change_icon_size(self, event):
+        tools.debug_output('on_change_icon_size', 'Preference - General - change icon size: '+str(event), 1)
+        tools.debug_output('on_change_icon_size', 'New icon size is set to: '+str(self.ui__cb_iconsizes.GetValue())+'px', 1)
+        ini.write_single_value('General', 'icon_size', self.ui__cb_iconsizes.GetValue()) # update preference value
+        
 
 
     def prefs_general_toggle_hide_ui(self, event):
@@ -145,7 +168,7 @@ class UITabPluginCommands(wx.Panel):
 
     """Preference Window - Tab: Commands- Shows available plugins"""
 
-    def __init__(self, parent): # pylint:disable=too-many-statements
+    def __init__(self, parent): # pylint:disable=too-many-statements, too-many-branches
         """Inits the plugin-commands tab"""
         wx.Panel.__init__(self, parent)
 
@@ -154,127 +177,127 @@ class UITabPluginCommands(wx.Panel):
 
         ## Plugin: core (can not be disabled)
         ##
-        self.cb_enable_plugin_core = wx.CheckBox(self, -1, 'Core', (20, 60))
-        self.cb_enable_plugin_core.SetLabel('core')
-        self.cb_enable_plugin_core.SetToolTipString(u'Offers !help !prefs and !preferences.Plugin can not be disabled.')
-        self.cb_enable_plugin_core.SetValue(True)
-        self.cb_enable_plugin_core.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # changing the checkbox change
+        cb_enable_plugin_core = wx.CheckBox(self, -1, 'Core', (20, 60))
+        cb_enable_plugin_core.SetLabel('core')
+        cb_enable_plugin_core.SetToolTipString(u'Offers !help !prefs and !preferences.Plugin can not be disabled.')
+        cb_enable_plugin_core.SetValue(True)
+        cb_enable_plugin_core.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_core = wx.StaticText(self, -1, "Offers !help !prefs and !preferences", (20, 40))
-        self.txt_plugin_core.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_core.SetFont(font)
+        txt_plugin_core = wx.StaticText(self, -1, "Offers !help !prefs and !preferences", (20, 40))
+        txt_plugin_core.SetForegroundColour('#7f8c8d')
+        txt_plugin_core.SetFont(font)
 
         ## Plugin: Misc
         ##
-        self.cb_enable_plugin_misc = wx.CheckBox(self, -1, 'Misc', (20, 60))
-        self.cb_enable_plugin_misc.SetToolTipString(u'Enable other stuff')
-        self.cb_enable_plugin_misc.SetLabel('misc')
+        cb_enable_plugin_misc = wx.CheckBox(self, -1, 'Misc', (20, 60))
+        cb_enable_plugin_misc.SetToolTipString(u'Enable other stuff')
+        cb_enable_plugin_misc.SetLabel('misc')
         cur_ini_value_for_plugin_misc = ini.read_single_value('Plugins', 'enable_plugin_misc')          # get current value from ini
         if cur_ini_value_for_plugin_misc == 'True':
-            self.cb_enable_plugin_misc.SetValue(True)
+            cb_enable_plugin_misc.SetValue(True)
         else:
-            self.cb_enable_plugin_misc.SetValue(False)
-        self.cb_enable_plugin_misc.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_misc.SetValue(False)
+        cb_enable_plugin_misc.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_misc = wx.StaticText(self, -1, "Enable other stuff", (20, 40))
-        self.txt_plugin_misc.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_misc.SetFont(font)
+        txt_plugin_misc = wx.StaticText(self, -1, "Enable other stuff", (20, 40))
+        txt_plugin_misc.SetForegroundColour('#7f8c8d')
+        txt_plugin_misc.SetFont(font)
 
         ## Plugin: Nautilus
         ##
-        self.cb_enable_plugin_nautilus = wx.CheckBox(self, -1, 'Nautilus', (20, 60))
-        self.cb_enable_plugin_nautilus.SetLabel('nautilus')
-        self.cb_enable_plugin_nautilus.SetToolTipString(u'Enables quick access to some nautilus locations/places')
+        cb_enable_plugin_nautilus = wx.CheckBox(self, -1, 'Nautilus', (20, 60))
+        cb_enable_plugin_nautilus.SetLabel('nautilus')
+        cb_enable_plugin_nautilus.SetToolTipString(u'Enables quick access to some nautilus locations/places')
         cur_ini_value_for_plugin_nautilus = ini.read_single_value('Plugins', 'enable_plugin_nautilus')          # get current value from ini
         if cur_ini_value_for_plugin_nautilus == 'True':
-            self.cb_enable_plugin_nautilus.SetValue(True)
+            cb_enable_plugin_nautilus.SetValue(True)
         else:
-            self.cb_enable_plugin_nautilus.SetValue(False)
-        self.cb_enable_plugin_nautilus.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_nautilus.SetValue(False)
+        cb_enable_plugin_nautilus.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_nautilus = wx.StaticText(self, -1, "Enables quick access to some nautilus locations/places", (20, 40))
-        self.txt_plugin_nautilus.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_nautilus.SetFont(font)
+        txt_plugin_nautilus = wx.StaticText(self, -1, "Enables quick access to some nautilus locations/places", (20, 40))
+        txt_plugin_nautilus.SetForegroundColour('#7f8c8d')
+        txt_plugin_nautilus.SetFont(font)
 
         ## Plugin: Screenshot
         ##
-        self.cb_enable_plugin_screenshot = wx.CheckBox(self, -1, 'Screenshot', (20, 60))
-        self.cb_enable_plugin_screenshot.SetLabel('screenshot')
-        self.cb_enable_plugin_screenshot.SetToolTipString(u'Enables simple screenshot functions')
+        cb_enable_plugin_screenshot = wx.CheckBox(self, -1, 'Screenshot', (20, 60))
+        cb_enable_plugin_screenshot.SetLabel('screenshot')
+        cb_enable_plugin_screenshot.SetToolTipString(u'Enables simple screenshot functions')
         cur_ini_value_for_plugin_screenshot = ini.read_single_value('Plugins', 'enable_plugin_screenshot')          # get current value from ini
         if cur_ini_value_for_plugin_screenshot == 'True':
-            self.cb_enable_plugin_screenshot.SetValue(True)
+            cb_enable_plugin_screenshot.SetValue(True)
         else:
-            self.cb_enable_plugin_screenshot.SetValue(False)
-        self.cb_enable_plugin_screenshot.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_screenshot.SetValue(False)
+        cb_enable_plugin_screenshot.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_screenshot = wx.StaticText(self, -1, "Enables simple screenshot functions", (20, 40))
-        self.txt_plugin_screenshot.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_screenshot.SetFont(font)
+        txt_plugin_screenshot = wx.StaticText(self, -1, "Enables simple screenshot functions", (20, 40))
+        txt_plugin_screenshot.SetForegroundColour('#7f8c8d')
+        txt_plugin_screenshot.SetFont(font)
 
         ## Plugin: Internet search
         ##
-        self.cb_enable_plugin_internet_search = wx.CheckBox(self, -1, 'Internet-Search', (20, 60))
-        self.cb_enable_plugin_internet_search.SetLabel('search_internet')
-        self.cb_enable_plugin_internet_search.SetToolTipString(u'Enables search for several popular web-services')
+        cb_enable_plugin_internet_search = wx.CheckBox(self, -1, 'Internet-Search', (20, 60))
+        cb_enable_plugin_internet_search.SetLabel('search_internet')
+        cb_enable_plugin_internet_search.SetToolTipString(u'Enables search for several popular web-services')
         cur_ini_value_for_plugin_search_internet = ini.read_single_value('Plugins', 'enable_plugin_search_internet')          # get current value from ini
         if cur_ini_value_for_plugin_search_internet == 'True':
-            self.cb_enable_plugin_internet_search.SetValue(True)
+            cb_enable_plugin_internet_search.SetValue(True)
         else:
-            self.cb_enable_plugin_internet_search.SetValue(False)
-        self.cb_enable_plugin_internet_search.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_internet_search.SetValue(False)
+        cb_enable_plugin_internet_search.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_internet_search = wx.StaticText(self, -1, "Enables search for several popular web-services", (20, 40))
-        self.txt_plugin_internet_search.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_internet_search.SetFont(font)
+        txt_plugin_internet_search = wx.StaticText(self, -1, "Enables search for several popular web-services", (20, 40))
+        txt_plugin_internet_search.SetForegroundColour('#7f8c8d')
+        txt_plugin_internet_search.SetFont(font)
 
         ## Plugin: Local search
         ##
-        self.cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
-        self.cb_enable_plugin_local_search.SetLabel('search_local')
-        self.cb_enable_plugin_local_search.SetToolTipString(u'Enables search for files and folders in users home directory')
+        cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
+        cb_enable_plugin_local_search.SetLabel('search_local')
+        cb_enable_plugin_local_search.SetToolTipString(u'Enables search for files and folders in users home directory')
         cur_ini_value_for_plugin_search_local = ini.read_single_value('Plugins', 'enable_plugin_search_local')          # get current value from ini
         if cur_ini_value_for_plugin_search_local == 'True':
-            self.cb_enable_plugin_local_search.SetValue(True)
+            cb_enable_plugin_local_search.SetValue(True)
         else:
-            self.cb_enable_plugin_local_search.SetValue(False)
-        self.cb_enable_plugin_local_search.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_local_search.SetValue(False)
+        cb_enable_plugin_local_search.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_local_search = wx.StaticText(self, -1, "Enables search for files and folders in users home directory", (20, 40))
-        self.txt_plugin_local_search.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_local_search.SetFont(font)
+        txt_plugin_local_search = wx.StaticText(self, -1, "Enables search for files and folders in users home directory", (20, 40))
+        txt_plugin_local_search.SetForegroundColour('#7f8c8d')
+        txt_plugin_local_search.SetFont(font)
 
 
         ## Plugin: Session
         ##
-        self.cb_enable_plugin_session = wx.CheckBox(self, -1, 'Session', (20, 60))
-        self.cb_enable_plugin_session.SetLabel('session')
-        self.cb_enable_plugin_session.SetToolTipString(u'Enables several session commands')
+        cb_enable_plugin_session = wx.CheckBox(self, -1, 'Session', (20, 60))
+        cb_enable_plugin_session.SetLabel('session')
+        cb_enable_plugin_session.SetToolTipString(u'Enables several session commands')
         cur_ini_value_for_plugin_session = ini.read_single_value('Plugins', 'enable_plugin_session')          # get current value from ini
         if cur_ini_value_for_plugin_session == 'True':
-            self.cb_enable_plugin_session.SetValue(True)
+            cb_enable_plugin_session.SetValue(True)
         else:
-            self.cb_enable_plugin_session.SetValue(False)
-        self.cb_enable_plugin_session.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_session.SetValue(False)
+        cb_enable_plugin_session.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_session = wx.StaticText(self, -1, "Enables several session commands", (20, 40))
-        self.txt_plugin_session.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_session.SetFont(font)
+        txt_plugin_session = wx.StaticText(self, -1, "Enables several session commands", (20, 40))
+        txt_plugin_session.SetForegroundColour('#7f8c8d')
+        txt_plugin_session.SetFont(font)
 
         ## Plugin: Shell
-        self.cb_enable_plugin_shell = wx.CheckBox(self, -1, 'Shell', (20, 60))
-        self.cb_enable_plugin_shell.SetLabel('shell')
-        self.cb_enable_plugin_shell.SetToolTipString(u'Enable executing shell commands')
+        cb_enable_plugin_shell = wx.CheckBox(self, -1, 'Shell', (20, 60))
+        cb_enable_plugin_shell.SetLabel('shell')
+        cb_enable_plugin_shell.SetToolTipString(u'Enable executing shell commands')
         cur_ini_value_for_plugin_shell = ini.read_single_value('Plugins', 'enable_plugin_shell')          # get current value from ini
         if cur_ini_value_for_plugin_shell == 'True':
-            self.cb_enable_plugin_shell.SetValue(True)
+            cb_enable_plugin_shell.SetValue(True)
         else:
-            self.cb_enable_plugin_shell.SetValue(False)
-        self.cb_enable_plugin_shell.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+            cb_enable_plugin_shell.SetValue(False)
+        cb_enable_plugin_shell.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
         ## Plugin description
-        self.txt_plugin_shell = wx.StaticText(self, -1, "Enable executing shell commands", (20, 40))
-        self.txt_plugin_shell.SetForegroundColour('#7f8c8d')
-        self.txt_plugin_shell.SetFont(font)
+        txt_plugin_shell = wx.StaticText(self, -1, "Enable executing shell commands", (20, 40))
+        txt_plugin_shell.SetForegroundColour('#7f8c8d')
+        txt_plugin_shell.SetFont(font)
 
 
 
@@ -290,43 +313,43 @@ class UITabPluginCommands(wx.Panel):
         pref_sizer.AddSpacer(10)
 
         ## core
-        pref_sizer.Add(self.cb_enable_plugin_core, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_core, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_core, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_core, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## misc
-        pref_sizer.Add(self.cb_enable_plugin_misc, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_misc, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_misc, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_misc, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## Nautilus
-        pref_sizer.Add(self.cb_enable_plugin_nautilus, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_nautilus, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_nautilus, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_nautilus, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## screenshot
-        pref_sizer.Add(self.cb_enable_plugin_screenshot, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_screenshot, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_screenshot, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_screenshot, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## search internet
-        pref_sizer.Add(self.cb_enable_plugin_internet_search, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_internet_search, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_internet_search, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_internet_search, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## search local
-        pref_sizer.Add(self.cb_enable_plugin_local_search, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_local_search, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_local_search, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_local_search, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## Session
-        pref_sizer.Add(self.cb_enable_plugin_session, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_session, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_session, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(5)
 
         ## Shell
-        pref_sizer.Add(self.cb_enable_plugin_shell, 0, wx.ALL, border=10)
-        pref_sizer.Add(self.txt_plugin_shell, 0, wx.ALL, border=10)
+        pref_sizer.Add(cb_enable_plugin_shell, 0, wx.ALL, border=10)
+        pref_sizer.Add(txt_plugin_shell, 0, wx.ALL, border=10)
         pref_sizer.AddSpacer(10)
 
         ## Hyperlink to docs

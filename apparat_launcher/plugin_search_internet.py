@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - plugin: search-internet"""
+"""apparat_launcher - plugin: search-internet"""
 
 # general
 import webbrowser
@@ -15,7 +15,7 @@ import tools
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
 
-TRIGGER = ('!am', '!au', '!bc', '!dd', '!fb', '!fl', '!gh', '!gi', '!gm', '!gn', '!go', '!la', '!re', '!sc', '!se', '!so', '!tu', '!tw', '!vi', '!wi', '!yt')
+TRIGGER = ('!am', '!au', '!bc', '!dd', '!fb', '!fl', '!gh', '!gi', '!gm', '!gn', '!gs', '!la', '!re', '!sc', '!se', '!so', '!tu', '!tw', '!vi', '!wi', '!yt')
 
 URLS = (
     'https://www.amazon.de/s/field-keywords=',
@@ -76,7 +76,7 @@ DESCRIPTIONS = (
     'Internet-Search (Google Images)',
     'Internet-Search (Google Maps)',
     'Internet-Search (Google News)',
-    'Internet-Search (Google)',
+    'Internet-Search (Google Search)',
     'Internet-Search (LastFM)',
     'Internet-Search (Reddit)',
     'Internet-Search (SoundCloud)',
@@ -98,13 +98,15 @@ def prepare_internet_search(main_window, current_search_string):
     """Updates the UI according to the matching internet-search trigger"""
     tools.debug_output('prepare_internet_search', 'starting', 1)
 
-    # Reset status notification back to OK
-    main_window.status_notification_reset()
+    ## Reset status notification back to OK
+    main_window.status_notification_got_distinct_result()
+
+    icon_size = ini.read_single_value('General', 'icon_size') # get preference value
 
     ## show searchstring in parameter field
-    if(main_window.ui__txt_selected_app.GetValue() != ''):
+    if(main_window.ui__txt_command.GetValue() != ''):
         cur_searchphrase_parameter = current_search_string[3:] # remove trigger - example: '!y '
-        main_window.ui__txt_selected_parameter.SetValue(cur_searchphrase_parameter)
+        main_window.ui__txt_parameter.SetValue(cur_searchphrase_parameter)
 
     ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
     if(len(current_search_string) >= 4) and (current_search_string[3] != " "):
@@ -122,24 +124,24 @@ def prepare_internet_search(main_window, current_search_string):
     index = TRIGGER.index(current_search_string)
 
     # get icon-name based on tuple index
-    icon = 'gfx/plugins/search_internet/'+str(config.TARGET_ICON_SIZE)+'/'+ICONS[index]
+    icon = 'gfx/plugins/search_internet/'+icon_size+'/'+ICONS[index]
 
     # get description based on tuple index
     description = DESCRIPTIONS[index]
 
     # update UI with icon and description
-    main_window.ui__bt_selected_app_img = wx.Image(icon, wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_command_img = wx.Image(icon, wx.BITMAP_TYPE_PNG)
     main_window.plugin__update_general_ui_information(description)
 
-    ## update application button
-    main_window.ui__bt_selected_app.Enable(True)
-    main_window.ui__bt_selected_app.SetBitmap(main_window.ui__bt_selected_app_img.ConvertToBitmap())
+    ## command button
+    main_window.ui__bt_command.Enable(True)
+    main_window.ui__bt_command.SetBitmap(main_window.ui__bt_command_img.ConvertToBitmap())
 
-    ## update option button
-    main_window.ui__bt_selected_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/search.png', wx.BITMAP_TYPE_PNG)
-    main_window.ui__bt_selected_parameter.Enable(True)
-    main_window.ui__bt_selected_parameter.SetBitmap(main_window.ui__bt_selected_parameter_img.ConvertToBitmap())
-    main_window.ui__bt_selected_parameter.SetToolTipString('Search')
+    ## parameter button
+    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/search.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_parameter.Enable(True)
+    main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
+    main_window.ui__bt_parameter.SetToolTipString('Search')
 
 
 def execute_internet_search(main_window, command, parameter):

@@ -1,9 +1,9 @@
-# <a name="top"> apparat-launcher
+# <a name="top"> apparat_launcher
 
 
-![logo](https://raw.githubusercontent.com/yafp/apparat-launcher/master/apparat-launcher/gfx/core/128/appIcon.png)
+![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
-[![Code Health](https://landscape.io/github/yafp/apparat/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat/master)
+[![Code Health](https://landscape.io/github/yafp/apparat_launcher/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat_launcher/master)
 
 
 ## <a name="toc">Table of Contents
@@ -31,18 +31,18 @@
 
 ## <a name="description">Description
 
-__apparat-launcher__ is an application launcher for linux. It is developed and tested for Gnome Desktop environments.
+__apparat_launcher__ is an application launcher for linux. It is developed and tested for Gnome Desktop environments.
 
 
 ## <a name="screenshots">Screenshots
 *Launcher UI*
 
-![screenshot](https://raw.githubusercontent.com/yafp/apparat-launcher/master/docs/screenshots_ui/screenshot_ui.png)
+![screenshot](https://raw.githubusercontent.com/yafp/apparat_launcher/master/docs/screenshots_ui/screenshot_ui.png)
 
 
 *Tray-Icon (Gnome)*
 
-![screenshot](https://raw.githubusercontent.com/yafp/apparat-launcher/master/docs/screenshots_ui/screenshot_trayicon.png)
+![screenshot](https://raw.githubusercontent.com/yafp/apparat_launcher/master/docs/screenshots_ui/screenshot_trayicon.png)
 
 
 ## <a name="installation">Installation
@@ -91,7 +91,7 @@ The following command line parameters are available:
 
 
 #### <a name="hotkey">Hotkey
-If you want to use a global/system-wide hotkey to trigger ```apparat-launcher``` (starting, focusing and minimizing) consider using the script ```apparatHotkeyHelper.sh```. Simply define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
+If you want to use a global/system-wide hotkey to trigger ```apparat_launcher``` (starting, focusing and minimizing) consider using the script ```apparatHotkeyHelper.sh```. Simply define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
 
 Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en)
 * Open the **Activities** overview and start typing Keyboard.
@@ -106,8 +106,8 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 #### <a name="core">Core
 | Trigger            | Alias              | Parameter      | Function                                        |
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
-| ```!help```        |                    |                | Open apparat online documentation               |
-| ```!preferences``` | ```!prefs```       |                | Open apparat preferences                        |
+| ```!help```        |                    |                | Open apparat_launcher online documentation      |
+| ```!preferences``` | ```!prefs```       |                | Open apparat_launcher preferences               |
 
 
 #### <a name="misc">Misc
@@ -145,7 +145,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 | ```!gi```        |                | _searchstring_ | Google Images          |
 | ```!gm```        |                | _searchstring_ | Google Maps            |
 | ```!gn```        |                | _searchstring_ | Google News            |
-| ```!go```        |                | _searchstring_ | Google                 |
+| ```!gs```        |                | _searchstring_ | Google Search          |
 | ```!la```        |                | _searchstring_ | LastFM                 |
 | ```!re```        |                | _searchstring_ | Reddit                 |
 | ```!sc```        |                | _searchstring_ | SoundCloud             |

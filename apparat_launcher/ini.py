@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - an application launcher for linux"""
+"""apparat_launcher - an application launcher for linux"""
 
 
 # -----------------------------------------------------------------------------------------------
@@ -39,6 +39,8 @@ def read_single_value(section_name, key_name):
             value = '0'
         elif (key_name == 'hide_ui_after_command_execution'):
             value = 'True'
+        elif (key_name == 'icon_size'):
+            value = '128'
         elif (key_name == 'lang'):
             value = 'EN'
         elif key_name.startswith('enable_plugin'): # any plugin
@@ -88,6 +90,7 @@ def check_if_ini_exists():
             f.write('lang = EN\n\n')
             f.write('[General]\n')
             f.write('hide_ui_after_command_execution = True\n')
+            f.write('icon_size = 128\n')
             f.write('[Statistics]\n')
             f.write('apparat_started = 0\n')
             f.write('command_executed = 0\n')
@@ -118,7 +121,7 @@ def validate():
     # Section: General
     #
     SECTIONS = ['General']
-    OPTIONS = ['hide_ui_after_command_execution']
+    OPTIONS = ['hide_ui_after_command_execution', 'icon_size']
     validate_single_section(SECTIONS, OPTIONS)
 
     # Section: Statistics

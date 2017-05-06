@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat - plugin: core"""
+"""apparat_launcher - plugin: core"""
 
 ## general
 
@@ -36,7 +36,7 @@ def prepare_general(current_search_string, main_window):
             main_window.tbicon.execute_tray_icon_left_click()
         main_window.reset_ui()
 
-    elif current_search_string == '!preferences' or current_search_string == '!prefs': # opens apparat preferences
+    elif current_search_string == '!preferences' or current_search_string == '!prefs': # opens apparat_launcher preferences
         tools.debug_output('prepare_general', 'Case: Preferences', 1)
         main_window.open_preference_window()
         main_window.reset_ui()
