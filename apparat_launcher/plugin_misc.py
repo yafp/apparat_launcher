@@ -6,7 +6,6 @@ import os
 import wx
 
 ## apparat
-import config
 import ini
 import tools
 

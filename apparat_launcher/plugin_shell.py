@@ -5,7 +5,6 @@
 import wx
 
 ## apparat
-import config
 import ini
 import tools
 
@@ -32,7 +31,7 @@ def prepare_general(current_search_string, main_window):
 
         if (len(current_search_string) > 3):
             if current_search_string.startswith("!sh "):
-                prepare_plugin_shell(main_window)
+                prepare_plugin_shell(main_window, icon_size)
             else:
                 main_window.plugin__update_general_ui_information('')
                 tools.debug_output('prepare_general', 'Aborting shell', 2)

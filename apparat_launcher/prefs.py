@@ -115,6 +115,7 @@ class UITabGeneral(wx.Panel):
 
 
     def on_change_icon_size(self, event):
+        """Handles the value change of icon_size dropbox"""
         tools.debug_output('on_change_icon_size', 'Preference - General - change icon size: '+str(event), 1)
         tools.debug_output('on_change_icon_size', 'New icon size is set to: '+str(self.ui__cb_iconsizes.GetValue())+'px', 1)
         ini.write_single_value('General', 'icon_size', self.ui__cb_iconsizes.GetValue()) # update preference value
@@ -168,7 +169,7 @@ class UITabPluginCommands(wx.Panel):
 
     """Preference Window - Tab: Commands- Shows available plugins"""
 
-    def __init__(self, parent): # pylint:disable=too-many-statements, too-many-branches
+    def __init__(self, parent): # pylint:disable=too-many-statements, too-many-branches, too-many-local-variables
         """Inits the plugin-commands tab"""
         wx.Panel.__init__(self, parent)
 
