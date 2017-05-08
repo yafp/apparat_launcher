@@ -8,7 +8,6 @@
 import os # for home folder
 
 
-
 # -----------------------------------------------------------------------------------------------
 # GENERAL CONSTANTS
 # -----------------------------------------------------------------------------------------------
@@ -16,11 +15,13 @@ APP_NAME = 'Apparat_launcher'
 APP_DESCRIPTION = 'An application launcher for linux'
 APP_URL = 'https://github.com/yafp/apparat_launcher'
 APP_LICENSE = 'GPL3'
-APP_TRAY_TOOLTIP = 'apparat'
+APP_TRAY_TOOLTIP = 'apparat_launcher'
 APP_TRAY_ICON = 'gfx/core/16/appIcon.png'
 APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat_launcher/'
 APP_INI_PATH = APP_INI_FOLDER+'apparat_launcher.ini'
 
+WINDOW_WIDTH = 650 # 650
+WINDOW_HEIGHT = 460 # 460
 
 
 # -----------------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@ import tools
 # -----------------------------------------------------------------------------------------------
 def read_single_value(section_name, key_name):
     """Method to read a single value from the configuration file apparat.ini"""
-    check_if_ini_exists()
+    #check_if_ini_exists()
     tools.debug_output('read_single_value', 'starting', 0)
     config = ConfigParser.ConfigParser()
     config.read(constants.APP_INI_PATH)
@@ -41,6 +41,8 @@ def read_single_value(section_name, key_name):
             value = 'True'
         elif (key_name == 'icon_size'):
             value = '128'
+        elif (key_name == 'transparency'):
+            value = '255'
         elif (key_name == 'lang'):
             value = 'EN'
         elif key_name.startswith('enable_plugin'): # any plugin
@@ -53,7 +55,7 @@ def read_single_value(section_name, key_name):
 
 def write_single_value(section_name, key_name, value):
     """Method to write a single value to the configuration file apparat.ini"""
-    check_if_ini_exists()
+    #check_if_ini_exists()
     tools.debug_output('write_single_value', 'starting', 0)
     try:
         config = ConfigParser.ConfigParser()
@@ -91,6 +93,7 @@ def check_if_ini_exists():
             f.write('[General]\n')
             f.write('hide_ui_after_command_execution = True\n')
             f.write('icon_size = 128\n')
+            f.write('transparency = 255\n')
             f.write('[Statistics]\n')
             f.write('apparat_started = 0\n')
             f.write('command_executed = 0\n')
@@ -121,7 +124,7 @@ def validate():
     # Section: General
     #
     SECTIONS = ['General']
-    OPTIONS = ['hide_ui_after_command_execution', 'icon_size']
+    OPTIONS = ['hide_ui_after_command_execution', 'icon_size', 'transparency']
     validate_single_section(SECTIONS, OPTIONS)
 
     # Section: Statistics

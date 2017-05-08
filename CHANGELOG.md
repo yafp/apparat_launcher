@@ -4,6 +4,12 @@ Changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
+# 20170508
+* Fix left-over from #50 in apparat.py (get_icon) and plugin_nautilus.py
+* Finishing rename to apparat_launcher.py                                               (Issue: #42)
+* UI: Transparency change now via preferences (before: config.py)                       (Issue: #52)
+
+
 # 20170506
 * Minor fix for apparatHotkeyHelper.sh
 * Minor changes based on pylint
@@ -16,7 +22,7 @@ Changelog
 * Project: renaming once again from apparat-launcher to apparat_launcher                (Issue: #42)
     (apparat-launcher conflicts with naming conventions)
 * UI: Status icon is hidden by default. Only displayed if there is an OK or ERROR state
-* UI: Icon size change now via preferences (before: config.py)
+* UI: Icon size change now via preferences (before: config.py)                          (Issue: #50)
 
 
 # 20170427

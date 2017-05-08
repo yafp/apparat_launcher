@@ -3,7 +3,15 @@
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
+
 [![Code Health](https://landscape.io/github/yafp/apparat_launcher/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat_launcher/master)
+[![Issues](https://img.shields.io/github/issues/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues)
+[![Issues Closed](https://img.shields.io/github/issues-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues?q=is%3Aclosed)
+
+
+
+## Important notice
+This program is currently in a very early development state.
 
 
 ## <a name="toc">Table of Contents
@@ -76,7 +84,7 @@ The following packages are needed:
 ## <a name="usage">Usage
 Simply run:
 ```
-./apparat-launcher.py
+./apparat_launcher.py
 ```
 
 
@@ -104,6 +112,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 ## <a name="plugins">Plugins
 #### <a name="core">Core
+Core plugin (can not be disabled)
 | Trigger            | Alias              | Parameter      | Function                                        |
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
 | ```!help```        |                    |                | Open apparat_launcher online documentation      |
@@ -111,12 +120,14 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 #### <a name="misc">Misc
+Optional plugin
 | Trigger            | Alias              | Parameter      | Function                                        |
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
 | ```!open```        |                    | _path_         | Open file or folder using default application   |
 
 
 #### <a name="nautilus">Nautilus
+Optional plugin which offers quick access to some locations in nautilus
 | Trigger          | Alias          | Parameter      | Function                         |
 |------------------|:-------------- |:---------------|:---------------------------------|
 | ```!goto```      |                | _path_         | Open directory in nautilus       |
@@ -126,6 +137,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 #### <a name="screenshot">Screenshot
+Optional plugin which offers screenshot functionality
 | Trigger          | Alias              | Parameter      | Function                              |
 |------------------|:------------------ |:---------------|:--------------------------------------|
 | ```!ss```        |                    |                | Selective screenshot (window or area) |
@@ -133,6 +145,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 #### <a name="search-internet">Search-Internet
+Optional plugin which offers easy access to some popular web-services.
 | Trigger          | Alias          | Parameter      | Function               |
 |------------------|:---------------|:---------------|:---------------------- |
 | ```!am```        |                | _searchstring_ | Amazon                 |
@@ -158,12 +171,14 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 | ```!yt```        |                | _searchstring_ | YouTube                |
 
 #### <a name="search-local">Search-Local
+Optional plugin which offers a file search for $HOME
 | Trigger          | Alias          | Parameter      | Function                      |
 |------------------|:---------------|:---------------|:----------------------------- |
 | ```?```          |                | _searchstring_ | Filesearch for home directory |
 
 
 #### <a name="session">Session
+Optional plugin which offers access to some session commands
 | Trigger            | Alias          | Parameter      | Function                    |
 |--------------------|:-------------- |:---------------|:----------------------------|
 | ```!hibernate```   | ```!sleep```   |                | hibernate the machine       |
@@ -175,6 +190,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 
 
 #### <a name="shell">Shell
+Optional plugin which allows running terminal commands from within the launcher
 | Trigger          | Alias              | Parameter      | Function                            |
 |------------------|:------------------ |:---------------|:------------------------------------|
 | ```!sh```        |                    | _path_         | Run terminal commands in new window |

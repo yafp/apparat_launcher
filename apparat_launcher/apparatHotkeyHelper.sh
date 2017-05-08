@@ -17,7 +17,7 @@
 # CONFIG
 # ---------------------------------------------------------
 APPARAT_FOLDER=$HOME'/Dropbox/Temp/apparat_launcher/apparat_launcher/'
-APPARAT_EXECUTABLE='apparat.py'
+APPARAT_EXECUTABLE='apparat_launcher.py'
 
 
 
@@ -64,7 +64,7 @@ if [ $? -eq 0 ]; then # it is running
 
 else # apparat_launcher is not running -> start it
     #echo "Not yet running, launching it now"
-    notify-send 'Apparat_Launcher' 'Started via Hotkey'
+    #notify-send 'Apparat_Launcher' 'Started via Hotkey'
     cd "$APPARAT_FOLDER" && python2 "./"$APPARAT_EXECUTABLE
     exit 0
 fi

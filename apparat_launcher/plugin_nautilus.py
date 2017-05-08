@@ -6,7 +6,6 @@ import os
 import wx
 
 # apparat
-import config
 import ini
 import tools
 
@@ -93,7 +92,7 @@ def prepare_plugin_nautilus_show_network_devices(main_window, icon_size):
 
     ## parameter button & txt
     main_window.ui__bt_parameter.SetToolTipString('Open')
-    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+str(config.TARGET_ICON_SIZE)+'/execute.png', wx.BITMAP_TYPE_PNG)
+    main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
     main_window.ui__txt_parameter.SetValue('network://')
 
