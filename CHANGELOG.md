@@ -5,6 +5,8 @@ Changelog
 
 
 # 20170509
+* Plugin Internet Search: Add support for Google Keep/Notes (!gk)                       (Issue: #53)
+* Plugin Password Generator: Added initial version of new plugin                        (Issue: #54)
 * Fix wrong result count while incomplete plugin command                                (Issue: #55)
 * Command button is now displaying appIcon if disabled                                  (Issue: #56)
 * Parameter button is now showing search-icon if disabled                               (Issue: #57)
