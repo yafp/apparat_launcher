@@ -1,13 +1,11 @@
-# <a name="top"> apparat_launcher
-
-
-![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
-
-
 [![Code Health](https://landscape.io/github/yafp/apparat_launcher/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat_launcher/master)
 [![Issues](https://img.shields.io/github/issues/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues)
 [![Issues Closed](https://img.shields.io/github/issues-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues?q=is%3Aclosed)
 
+
+# <a name="top"> apparat_launcher
+
+![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
 ## Important notice
@@ -27,6 +25,7 @@ This program is currently in a very early development state.
     * [Core](#core)
     * [Misc](#misc)
     * [Nautilus](#nautilus)
+    * [Password Generator](#passwordgen)
     * [Screenshot](#screenshot)
     * [Search-Internet](#search-internet)
     * [Search-Local](#search-local)
@@ -113,6 +112,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 ## <a name="plugins">Plugins
 #### <a name="core">Core
 Core plugin (can not be disabled)
+
 | Trigger            | Alias              | Parameter      | Function                                        |
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
 | ```!help```        |                    |                | Open apparat_launcher online documentation      |
@@ -121,6 +121,7 @@ Core plugin (can not be disabled)
 
 #### <a name="misc">Misc
 Optional plugin
+
 | Trigger            | Alias              | Parameter      | Function                                        |
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
 | ```!open```        |                    | _path_         | Open file or folder using default application   |
@@ -128,6 +129,7 @@ Optional plugin
 
 #### <a name="nautilus">Nautilus
 Optional plugin which offers quick access to some locations in nautilus
+
 | Trigger          | Alias          | Parameter      | Function                         |
 |------------------|:-------------- |:---------------|:---------------------------------|
 | ```!goto```      |                | _path_         | Open directory in nautilus       |
@@ -136,8 +138,17 @@ Optional plugin which offers quick access to some locations in nautilus
 | ```!trash```     |                |                | Show trash in nautilus           |
 
 
+#### <a name="passwordgen">Password Generator
+Optional plugin which offers a simple password generator
+
+| Trigger          | Alias          | Parameter      | Function                         |
+|------------------|:-------------- |:---------------|:---------------------------------|
+| ```!pw```        |                |                | A simple password generator      |
+
+
 #### <a name="screenshot">Screenshot
 Optional plugin which offers screenshot functionality
+
 | Trigger          | Alias              | Parameter      | Function                              |
 |------------------|:------------------ |:---------------|:--------------------------------------|
 | ```!ss```        |                    |                | Selective screenshot (window or area) |
@@ -145,7 +156,8 @@ Optional plugin which offers screenshot functionality
 
 
 #### <a name="search-internet">Search-Internet
-Optional plugin which offers easy access to some popular web-services.
+Optional plugin which offers easy access to some popular web-services
+
 | Trigger          | Alias          | Parameter      | Function               |
 |------------------|:---------------|:---------------|:---------------------- |
 | ```!am```        |                | _searchstring_ | Amazon                 |
@@ -156,6 +168,7 @@ Optional plugin which offers easy access to some popular web-services.
 | ```!fl```        |                | _searchstring_ | Flickr                 |
 | ```!gh```        |                | _searchstring_ | GitHub                 |
 | ```!gi```        |                | _searchstring_ | Google Images          |
+| ```!gk```        |                | _searchstring_ | Google Keep/Notes      |
 | ```!gm```        |                | _searchstring_ | Google Maps            |
 | ```!gn```        |                | _searchstring_ | Google News            |
 | ```!gs```        |                | _searchstring_ | Google Search          |
@@ -172,6 +185,7 @@ Optional plugin which offers easy access to some popular web-services.
 
 #### <a name="search-local">Search-Local
 Optional plugin which offers a file search for $HOME
+
 | Trigger          | Alias          | Parameter      | Function                      |
 |------------------|:---------------|:---------------|:----------------------------- |
 | ```?```          |                | _searchstring_ | Filesearch for home directory |
@@ -179,6 +193,7 @@ Optional plugin which offers a file search for $HOME
 
 #### <a name="session">Session
 Optional plugin which offers access to some session commands
+
 | Trigger            | Alias          | Parameter      | Function                    |
 |--------------------|:-------------- |:---------------|:----------------------------|
 | ```!hibernate```   | ```!sleep```   |                | hibernate the machine       |
@@ -191,6 +206,7 @@ Optional plugin which offers access to some session commands
 
 #### <a name="shell">Shell
 Optional plugin which allows running terminal commands from within the launcher
+
 | Trigger          | Alias              | Parameter      | Function                            |
 |------------------|:------------------ |:---------------|:------------------------------------|
 | ```!sh```        |                    | _path_         | Run terminal commands in new window |
@@ -198,7 +214,7 @@ Optional plugin which allows running terminal commands from within the launcher
 
 
 ## <a name="contributing">Contributing
-Please check the [Contribution guidelines for this project](CONTRIBUTING.md)
+Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
 
 
 

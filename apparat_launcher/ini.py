@@ -101,6 +101,7 @@ def check_if_ini_exists():
             f.write('[Plugins]\n')
             f.write('enable_plugin_misc = False\n')
             f.write('enable_plugin_nautilus = False\n')
+            f.write('enable_plugin_passwordgen = False\n')
             f.write('enable_plugin_screenshot = False\n')
             f.write('enable_plugin_search_internet = False\n')
             f.write('enable_plugin_search_local = False\n')
@@ -136,7 +137,7 @@ def validate():
     # Section: Plugins
     #
     SECTIONS = ['Plugins']
-    OPTIONS = ['enable_plugin_misc', 'enable_plugin_nautilus', 'enable_plugin_screenshot', 'enable_plugin_search_internet', 'enable_plugin_search_local', 'enable_plugin_session', 'enable_plugin_shell']
+    OPTIONS = ['enable_plugin_misc', 'enable_plugin_nautilus', 'enable_plugin_passwordgen', 'enable_plugin_screenshot', 'enable_plugin_search_internet', 'enable_plugin_search_local', 'enable_plugin_session', 'enable_plugin_shell']
     validate_single_section(SECTIONS, OPTIONS)
 
     tools.debug_output('validate', 'Finished validating complete ini ('+constants.APP_INI_PATH+')', 0)

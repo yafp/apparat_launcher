@@ -25,7 +25,7 @@ class PreferenceWindow(wx.Frame):
         """Initialize the preference window"""
         ## define style of preference window
         pref_window_style = (wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.STAY_ON_TOP | wx.FRAME_NO_TASKBAR)
-        wx.Frame.__init__(self, parent, idd, constants.APP_NAME+' Preferences', size=(500, 850), style=pref_window_style)
+        wx.Frame.__init__(self, parent, idd, constants.APP_NAME+' - Preferences', size=(500, 600), style=pref_window_style)
 
         ## Create a panel and notebook (tabs holder)
         p = wx.Panel(self)
@@ -81,7 +81,7 @@ class UITabGeneral(wx.Panel):
         ui__cb_languages.SetValue(languages[0])
 
         # line_1
-        self.line1 = wx.StaticLine(self, -1, size=(480, 1), style=wx.LI_HORIZONTAL)
+        line1 = wx.StaticLine(self, -1, size=(480, 1), style=wx.LI_HORIZONTAL)
 
         ## icon sizes
         ##
@@ -96,14 +96,14 @@ class UITabGeneral(wx.Panel):
         self.ui__cb_iconsizes.Bind(wx.EVT_TEXT, self.on_change_icon_size) # changing
 
         # line_2
-        self.line2 = wx.StaticLine(self, -1, size=(480, 1), style=wx.LI_HORIZONTAL)
+        line2 = wx.StaticLine(self, -1, size=(480, 1), style=wx.LI_HORIZONTAL)
 
         ## transparency
         ##
         cur_ini_value_for_transparency = ini.read_single_value('General', 'transparency') # get current value from ini
         txt_transparency = wx.StaticText(self, -1, "UI transparency (default 255, needs restart) : ", (20, 20))
 
-        available_transparency_values = ['255', '250', '240', '230', '220']
+        available_transparency_values = ['255', '250', '245', '240', '235', '230', '225', '220', '215', '210', '205', '200']
         combo_box_style = wx.CB_READONLY
         self.ui__cb_transparency = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(100, 30), available_transparency_values, style=combo_box_style)
         self.ui__cb_transparency.SetFont(wx.Font(12, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
@@ -111,7 +111,7 @@ class UITabGeneral(wx.Panel):
         self.ui__cb_transparency.Bind(wx.EVT_TEXT, self.on_change_transparency) # changing
 
         # line_3
-        self.line3 = wx.StaticLine(self, -1, size=(480, 1), style=wx.LI_HORIZONTAL)
+        line3 = wx.StaticLine(self, -1, size=(480, 1), style=wx.LI_HORIZONTAL)
 
         ## Hide UI
         ##
@@ -131,21 +131,21 @@ class UITabGeneral(wx.Panel):
         general_sizer.Add(ui__cb_languages, 0, wx.ALL, border=10)
 
         general_sizer.AddSpacer(30)
-        general_sizer.Add(self.line1, 0, wx.CENTRE)
+        general_sizer.Add(line1, 0, wx.CENTRE)
         general_sizer.AddSpacer(10)
 
         general_sizer.Add(txt_iconsize, 0, wx.ALL, border=10)
         general_sizer.Add(self.ui__cb_iconsizes, 0, wx.ALL, border=10)
 
         general_sizer.AddSpacer(30)
-        general_sizer.Add(self.line2, 0, wx.CENTRE)
+        general_sizer.Add(line2, 0, wx.CENTRE)
         general_sizer.AddSpacer(10)
 
         general_sizer.Add(txt_transparency, 0, wx.ALL, border=10)
         general_sizer.Add(self.ui__cb_transparency, 0, wx.ALL, border=10)
 
         general_sizer.AddSpacer(30)
-        general_sizer.Add(self.line3, 0, wx.CENTRE)
+        general_sizer.Add(line3, 0, wx.CENTRE)
         general_sizer.AddSpacer(10)
 
         general_sizer.Add(self.cb_enable_hide_ui, 0, wx.ALL, border=10)
@@ -230,7 +230,7 @@ class UITabPluginCommands(wx.Panel):
         ## Plugin description
         txt_plugin_core = wx.StaticText(self, -1, "Offers !help !prefs and !preferences", (20, 40))
         txt_plugin_core.SetForegroundColour('#7f8c8d')
-        txt_plugin_core.SetFont(font)
+        #txt_plugin_core.SetFont(font)
 
         ## Plugin: Misc
         ##
@@ -263,6 +263,22 @@ class UITabPluginCommands(wx.Panel):
         txt_plugin_nautilus = wx.StaticText(self, -1, "Enables quick access to some nautilus locations/places", (20, 40))
         txt_plugin_nautilus.SetForegroundColour('#7f8c8d')
         txt_plugin_nautilus.SetFont(font)
+
+        ## Plugin: PasswordGen
+        ##
+        cb_enable_plugin_passwordgen = wx.CheckBox(self, -1, 'Password Generator', (20, 60))
+        cb_enable_plugin_passwordgen.SetLabel('passwordgen')
+        cb_enable_plugin_passwordgen.SetToolTipString(u'Enables a simple password generator')
+        cur_ini_value_for_plugin_passwordgen = ini.read_single_value('Plugins', 'enable_plugin_passwordgen') # get current value from ini
+        if cur_ini_value_for_plugin_passwordgen == 'True':
+            cb_enable_plugin_passwordgen.SetValue(True)
+        else:
+            cb_enable_plugin_passwordgen.SetValue(False)
+        cb_enable_plugin_passwordgen.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+        ## Plugin description
+        txt_plugin_passwordgen = wx.StaticText(self, -1, "Enables a simple password generator", (20, 40))
+        txt_plugin_passwordgen.SetForegroundColour('#7f8c8d')
+        txt_plugin_passwordgen.SetFont(font)
 
         ## Plugin: Screenshot
         ##
@@ -355,43 +371,60 @@ class UITabPluginCommands(wx.Panel):
         pref_sizer.AddSpacer(10)
 
         ## core
-        pref_sizer.Add(cb_enable_plugin_core, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_core, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        coreSizer = wx.BoxSizer(wx.HORIZONTAL)
+        coreSizer.Add(cb_enable_plugin_core, 0, wx.ALL, border=10) # status icon button
+        coreSizer.Add(txt_plugin_core, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(coreSizer, 0, wx.EXPAND)
 
         ## misc
-        pref_sizer.Add(cb_enable_plugin_misc, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_misc, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        miscSizer = wx.BoxSizer(wx.HORIZONTAL)
+        miscSizer.Add(cb_enable_plugin_misc, 0, wx.ALL, border=10) # status icon button
+        miscSizer.Add(txt_plugin_misc, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(miscSizer, 0, wx.EXPAND)
+        #pref_sizer.AddSpacer(5)
 
         ## Nautilus
-        pref_sizer.Add(cb_enable_plugin_nautilus, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_nautilus, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        nautilusSizer = wx.BoxSizer(wx.HORIZONTAL)
+        nautilusSizer.Add(cb_enable_plugin_nautilus, 0, wx.ALL, border=10) # status icon button
+        nautilusSizer.Add(txt_plugin_nautilus, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(nautilusSizer, 0, wx.EXPAND)
+
+        ## PasswordGen
+        passwordgenSizer = wx.BoxSizer(wx.HORIZONTAL)
+        passwordgenSizer.Add(cb_enable_plugin_passwordgen, 0, wx.ALL, border=10) # status icon button
+        passwordgenSizer.Add(txt_plugin_passwordgen, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(passwordgenSizer, 0, wx.EXPAND)
 
         ## screenshot
-        pref_sizer.Add(cb_enable_plugin_screenshot, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_screenshot, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        screenshotSizer = wx.BoxSizer(wx.HORIZONTAL)
+        screenshotSizer.Add(cb_enable_plugin_screenshot, 0, wx.ALL, border=10) # status icon button
+        screenshotSizer.Add(txt_plugin_screenshot, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(screenshotSizer, 0, wx.EXPAND)
 
         ## search internet
-        pref_sizer.Add(cb_enable_plugin_internet_search, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_internet_search, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        searchinternetSizer = wx.BoxSizer(wx.HORIZONTAL)
+        searchinternetSizer.Add(cb_enable_plugin_internet_search, 0, wx.ALL, border=10) # status icon button
+        searchinternetSizer.Add(txt_plugin_internet_search, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(searchinternetSizer, 0, wx.EXPAND)
 
         ## search local
-        pref_sizer.Add(cb_enable_plugin_local_search, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_local_search, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        searchlocalSizer = wx.BoxSizer(wx.HORIZONTAL)
+        searchlocalSizer.Add(cb_enable_plugin_local_search, 0, wx.ALL, border=10) # status icon button
+        searchlocalSizer.Add(txt_plugin_local_search, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(searchlocalSizer, 0, wx.EXPAND)
 
         ## Session
-        pref_sizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_session, 0, wx.ALL, border=10)
-        pref_sizer.AddSpacer(7)
+        sessionSizer = wx.BoxSizer(wx.HORIZONTAL)
+        sessionSizer.Add(cb_enable_plugin_session, 0, wx.ALL, border=10) # status icon button
+        sessionSizer.Add(txt_plugin_session, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(sessionSizer, 0, wx.EXPAND)
 
         ## Shell
-        pref_sizer.Add(cb_enable_plugin_shell, 0, wx.ALL, border=10)
-        pref_sizer.Add(txt_plugin_shell, 0, wx.ALL, border=10)
+        shellSizer = wx.BoxSizer(wx.HORIZONTAL)
+        shellSizer.Add(cb_enable_plugin_shell, 0, wx.ALL, border=10) # status icon button
+        shellSizer.Add(txt_plugin_shell, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(shellSizer, 0, wx.EXPAND)
+
         pref_sizer.AddSpacer(10)
 
         ## Hyperlink to docs

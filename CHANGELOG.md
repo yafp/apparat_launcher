@@ -4,6 +4,13 @@ Changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
+# 20170509
+* Fix wrong result count while incomplete plugin command                                (Issue: #55)
+* Command button is now displaying appIcon if disabled                                  (Issue: #56)
+* Parameter button is now showing search-icon if disabled                               (Issue: #57)
+* Parameter button now shows execute icon if search results > 1 (formerly blank)        (ISsue: #58)
+
+
 # 20170508
 * Fix left-over from #50 in apparat.py (get_icon) and plugin_nautilus.py
 * Finishing rename to apparat_launcher.py                                               (Issue: #42)

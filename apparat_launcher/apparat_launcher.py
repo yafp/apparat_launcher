@@ -32,12 +32,12 @@ else: # python 2.x
 
     ## apparat
     import constants                    # contains some constants
-    #import config                       # contains some config values
     import ini                          # ini file handling
     import prefs                        # preference window
     import plugin_core
     import plugin_misc
     import plugin_nautilus
+    import plugin_passwordgen
     import plugin_screenshot
     import plugin_search_internet
     import plugin_search_local
@@ -94,6 +94,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_img_search = wx.Bitmap('gfx/core/'+icon_size+'/search.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_img_blank = wx.Bitmap('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_img_execute_black = wx.Bitmap('gfx/core/'+icon_size+'/execute_black.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_img_appicon = wx.Bitmap('gfx/core/'+icon_size+'/appIcon.png', wx.BITMAP_TYPE_PNG)
 
         ## Button: Preference
         self.ui__bt_prefs_img = wx.Bitmap('gfx/core/16/prefs.png', wx.BITMAP_TYPE_PNG)
@@ -142,7 +143,8 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_command_img = wx.Image('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_command = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_command.SetBitmapHover(wx.NullBitmap)
-        self.ui__bt_command.SetBitmapDisabled(self.ui__bt_img_blank)
+        #self.ui__bt_command.SetBitmapDisabled(self.ui__bt_img_blank)
+        self.ui__bt_command.SetBitmapDisabled(self.ui__bt_img_appicon)
         self.ui__bt_command.SetBitmap(self.ui__bt_command_img.ConvertToBitmap())
         self.ui__bt_command.SetLabel('Applications')
         self.ui__bt_command.Enable(False)
@@ -152,7 +154,8 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_parameter.SetBitmapFocus(self.ui__bt_img_execute_black) # image when in focus
         self.ui__bt_parameter.SetBitmapHover(wx.NullBitmap) # image on hover
-        self.ui__bt_parameter.SetBitmapDisabled(self.ui__bt_img_blank)
+        #self.ui__bt_parameter.SetBitmapDisabled(self.ui__bt_img_blank)
+        self.ui__bt_parameter.SetBitmapDisabled(self.ui__bt_img_search)
         self.ui__bt_parameter.SetBitmap(self.ui__bt_parameter_img.ConvertToBitmap())
         self.ui__bt_parameter.SetLabel('Options')
         self.ui__bt_parameter.Enable(False)
@@ -563,6 +566,13 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                         plugin_nautilus.prepare_general(current_search_string, self)
                         return
 
+                ## Plugin: PasswordGen
+                cur_ini_value_for_plugin_passwordgen = ini.read_single_value('Plugins', 'enable_plugin_passwordgen') # get current value from ini
+                if cur_ini_value_for_plugin_passwordgen == 'True':
+                    if current_search_string in plugin_passwordgen.TRIGGER:
+                        plugin_passwordgen.prepare_general(current_search_string, self)
+                        return
+
                 ## Plugin: Session
                 cur_ini_value_for_plugin_session = ini.read_single_value('Plugins', 'enable_plugin_session') # get current value from ini
                 if cur_ini_value_for_plugin_session == 'True':
@@ -600,6 +610,9 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 # reset status icon as we got no hit
                 self.status_notification_reset()
 
+                ## reset result-count
+                self.ui__txt_result_counter.SetValue('0')
+
                 ## reset command ui items
                 self.ui__bt_command.Enable(False)
                 self.ui__txt_command.SetValue('')
@@ -632,7 +645,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         tools.debug_output('search_executables', 'Found '+str(len(search_results))+' matching application', 1)
         if len(search_results) == 0: # 0 results
             ## update status button
-            self.status_notification_display_error('No matching executables found')
+            self.status_notification_display_error('No executables found')
 
             ## update command button
             self.ui__bt_command.Enable(True)
@@ -676,9 +689,9 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__txt_command.SetValue(search_results[0])             # assume first search result is the way to go
 
             ## parameter button
-            self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
+            self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_parameter.SetBitmap(self.ui__bt_parameter_img.ConvertToBitmap())
-            self.ui__bt_parameter.Enable(False) # Enable parameter button
+            self.ui__bt_parameter.Enable(True) # Enable parameter button
             self.ui__bt_parameter.SetToolTipString('Launch')
             self.ui__txt_parameter.SetValue('')             ## update parameter
 
@@ -731,6 +744,12 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         if command in plugin_search_internet.TRIGGER:
             plugin_search_internet.execute_internet_search(self, command, parameter)
             return
+
+        ## Plugin: PasswordGen
+        if command in plugin_passwordgen.TRIGGER:
+            plugin_passwordgen.execute_password_generation(self)
+            return
+
 
         ## Plugin: Session/Screenshot/Nautilus/Shell OR normal application
         if command is not None: # Check if the dropdown contains something at all or not
@@ -790,12 +809,12 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def status_notification_reset(self):
         """resets the status notification back to default"""
-        tools.debug_output('status_notification_reset', 'Reset notification area back to OK', 0)
+        tools.debug_output('status_notification_reset', 'Reset notification area back to blank', 0)
         self.ui__bt_status.Enable(False)
         self.ui__bt_status.SetToolTipString('')
         self.ui__bt_status_img = wx.Bitmap('gfx/core/16/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_status.SetBitmap(self.ui__bt_status_img)
-        self.Refresh()
+        #self.Refresh()
 
 
     def status_notification_got_distinct_result(self):

@@ -14,7 +14,7 @@ import tools
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
 
-TRIGGER = ('!am', '!au', '!bc', '!dd', '!fb', '!fl', '!gh', '!gi', '!gm', '!gn', '!gs', '!la', '!re', '!sc', '!se', '!so', '!tu', '!tw', '!vi', '!wi', '!yt')
+TRIGGER = ('!am', '!au', '!bc', '!dd', '!fb', '!fl', '!gh', '!gi', '!gk', '!gm', '!gn', '!gs', '!la', '!re', '!sc', '!se', '!so', '!tu', '!tw', '!vi', '!wi', '!yt')
 
 URLS = (
     'https://www.amazon.de/s/field-keywords=',
@@ -25,6 +25,7 @@ URLS = (
     'https://www.flickr.com/search/?text=',
     'https://github.com/search?q=',
     'https://www.google.de/search?&tbm=isch&q=',
+    'https://keep.google.com/',
     'http://www.maps.google.de/maps/place/',
     'https://www.google.de/search?&tbm=nws&q=',
     'https://www.google.com/search?q=',
@@ -48,6 +49,7 @@ ICONS = (
     'facebook.png',
     'flickr.png',
     'github.png',
+    'google.png',
     'google.png',
     'maps.png',
     'google.png',
@@ -73,6 +75,7 @@ DESCRIPTIONS = (
     'Internet-Search (Flickr)',
     'Internet-Search (GitHub)',
     'Internet-Search (Google Images)',
+    'Internet-Search (Google Keep/Notes)',
     'Internet-Search (Google Maps)',
     'Internet-Search (Google News)',
     'Internet-Search (Google Search)',
