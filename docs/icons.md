@@ -21,4 +21,49 @@ Icons
 * search.png                fa-search
 
 # plugins
-* not yet
+## core
+* help.png
+* preferences.png           fa-cogs
+## misc
+* open.png
+## nautilus
+* goto.png
+* network.png               fa-sitemap
+* recent.png
+* trash.png
+## screenshot
+* screenshot_full.png
+* screenshot_selective.png
+## search_internet
+* amazon.png
+* bandcamp.png
+* duckduckgo.png
+* facebook.png
+* flickr.png
+* github.png
+* google.png
+* lastfm.png
+* maps.png
+* reddit.png
+* soundcloud.png
+* stack-exchange.png
+* stack-overflow.png
+* tumblr.png
+* twitter.png
+* vimeo.png
+* wikipedia.png
+* youtube.png
+## search_local
+* file.png
+* files.png
+* search.png                  ! foundation-icon page-search
+## session
+* hibernate.png
+* lock.png
+* logout.png
+* reboot.png
+* screensaver.png
+* shutdown.png
+## shell
+* shell.png                   fa-terminal
+
