@@ -522,6 +522,44 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__txt_parameter.SetValue('')
 
 
+    def collect_matching_plugin_trigger(self, current_search_string):
+        """Fill result list with all possible plugin commands"""
+        tools.debug_output('collect_matching_plugin_trigger', 'starting', 0)
+
+        ## collect all plugin commands and add them to the dropdown
+        plugin_commands = []
+        plugin_commands = plugin_core.TRIGGER + plugin_misc.TRIGGER + plugin_nautilus.TRIGGER + plugin_passwordgen.TRIGGER + plugin_screenshot.TRIGGER + plugin_search_internet.TRIGGER + plugin_session.TRIGGER + plugin_shell.TRIGGER
+
+        ## filter out those which dont match the searchstring
+        plugin_commands = fnmatch.filter(plugin_commands, '*'+current_search_string+'*')     # search for executables matching users searchstring
+        plugin_commands = sorted(plugin_commands, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
+
+        ## update ui
+        ##
+        self.ui__cb_search.SetItems(plugin_commands) # update combobox
+        self.ui__txt_result_counter.SetValue(str(len(plugin_commands))) # update result count
+
+        ## Command
+        self.ui__bt_command_img = wx.Image('gfx/core/'+icon_size+'/plugins.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_command.Enable(True)
+        self.ui__bt_command.SetBitmap(self.ui__bt_command_img.ConvertToBitmap())
+        self.ui__bt_command.SetToolTipString("Plugin-Search") # set tooltip
+        self.ui__txt_command.SetValue('') # set command
+
+        if(len(plugin_commands) == 1):
+            tools.debug_output('collect_matching_plugin_trigger', 'Only 1 command left - choose it automaticly', 0)
+            self.ui__cb_search.SetSelection(0) # is default
+
+            if 'Ubuntu' in platform.linux_distribution():
+                subprocess.Popen(["xdotool", "key", "Down"]) # simulate key press to highlight the choosen value as well
+
+            self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
+            self.parse_user_input(self.ui__cb_search.GetValue().lower())
+
+        tools.debug_output('collect_matching_plugin_trigger', 'found '+str(len(plugin_commands))+' plugin trigger for current user input: '+current_search_string, 0)
+        tools.debug_output('collect_matching_plugin_trigger', 'finished', 0)
+
+
     def parse_user_input(self, current_search_string): # pylint:disable=too-many-return-statements, too-many-branches
         """Takes the current user input and parses it for matching plugins or general application search"""
         tools.debug_output('parse_user_input', 'starting', 0)
@@ -538,7 +576,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 if current_search_string == '!':
                     tools.debug_output('parse_user_input', 'Case: !', 1)
                     self.plugin__update_general_ui_information('')
-                    return
 
                 ## Plugin: Core (can not be disabled)
                 if  current_search_string.startswith(plugin_core.TRIGGER):
@@ -621,6 +658,8 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 self.ui__bt_parameter.Enable(False)
                 self.ui__txt_parameter.SetValue('')
 
+                self.collect_matching_plugin_trigger(current_search_string)
+
                 return
 
             ## Nothing matched (no plugin and no executable -> display error
@@ -695,8 +734,9 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__bt_parameter.SetToolTipString('Launch')
             self.ui__txt_parameter.SetValue('')             ## update parameter
 
-            # check if application is already running - should offer an option to change to this instance besides starting a new one
+            ## check if application is already running - should offer an option to change to this instance besides starting a new one
             self.check_for_existing_app_instances(search_results[0])
+
 
     def check_for_existing_app_instances(self, application_name):
         """checks if there are already existing instances/processes of an given app - to decide if launching or focusing makes more sense"""
@@ -749,7 +789,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         if command in plugin_passwordgen.TRIGGER:
             plugin_passwordgen.execute_password_generation(self)
             return
-
 
         ## Plugin: Session/Screenshot/Nautilus/Shell OR normal application
         if command is not None: # Check if the dropdown contains something at all or not
