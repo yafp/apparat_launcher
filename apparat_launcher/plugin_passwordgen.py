@@ -3,10 +3,9 @@
 
 ## general
 import os
-import wx
-# 
 import random
 import string
+import wx
 
 ## apparat
 import constants
@@ -18,7 +17,7 @@ import tools
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
-TRIGGER = ('!pw')
+TRIGGER = ('!pw', '!password', '!pa')
 
 
 # -----------------------------------------------------------------------------------------------
@@ -28,12 +27,12 @@ def prepare_general(current_search_string, main_window):
     """Prepare General"""
     tools.debug_output('prepare_general', 'starting', 1)
 
-    # Reset status notification back to OK
+    ## Reset status notification back to OK
     main_window.status_notification_reset()
 
     icon_size = ini.read_single_value('General', 'icon_size') # get preference value
 
-    if current_search_string == ('!pw'):
+    if current_search_string == ('!pw') or current_search_string == ('!password'):
         tools.debug_output('prepare_general', 'Case: Password Generator', 1)
         prepare_plugin_passwordgen(main_window, icon_size)
 
@@ -65,57 +64,74 @@ def prepare_plugin_passwordgen(main_window, icon_size):
 def execute_password_generation(main_window):
     """Generate a password"""
     tools.debug_output('execute_password_generation', 'started', 0)
-    dlg = wx.TextEntryDialog(None,'Please insert desired password length','Password Generator', '8')
+    dlg = wx.TextEntryDialog(None, 'Please insert desired password length', 'Password Generator', '8')
     ret = dlg.ShowModal()
     if ret == wx.ID_OK:
         tools.debug_output('execute_password_generation', 'Password length set to: '+dlg.GetValue(), 1)
         try:
-            length = int(dlg.GetValue())
-            if length > 7:
-                chars = string.ascii_letters + string.digits + '!@#$%^&*()'
-                random.seed = (os.urandom(1024))
-                generated_password = ''.join(random.choice(chars) for i in range(length))
+            password_length = int(dlg.GetValue())
+            if password_length < 8:
+                password_length = 8
+                wx.MessageBox('Forced minimal password length 8', 'Password Generator', wx.OK | wx.ICON_WARNING)
 
-                # output the password
-                wx.MessageBox('Your generated password is:\n\n'+generated_password, 'Password Generator', wx.OK | wx.ICON_INFORMATION)
+            dial = wx.MessageDialog(None, 'Should the password be memorable?', 'Password Generator', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+            pw_type = dial.ShowModal()
 
-                ## human readable
-                #
-                #blub = make_pseudo_word(syllables=1)
-                #print blub
-                #
-                #blub2 = make_pseudo_word(syllables=1,add_number=True)
-                #print blub2
-                
-                ## update usage-statistics
-                tools.debug_output('execute_password_generation', 'Updating statistics (plugin_executed)', 1)
-                current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed') # get current value from ini
-                ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
+            single_generated_password = ''
+            generated_passwords = ''
 
-                # reset the UI
-                main_window.reset_ui()
+            if pw_type == wx.ID_YES:
+                tools.debug_output('execute_password_generation', 'User selected memorable password type', 1)
 
-                ## if enabled in ini - hide the UI after executing the command
-                cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
-                if cur_ini_value_for_hide_ui_after_command_execution == 'True':
-                    main_window.tbicon.execute_tray_icon_left_click()
+                for x in range(0, 5):
+                    tools.debug_output('execute_password_generation', 'Generating memorable password '+str(x), 1)
+                    single_generated_password = make_pseudo_word(syllables=password_length, add_number=False)
+                    single_generated_password = single_generated_password[0:password_length] # substring to correct length
+                    generated_passwords = generated_passwords+single_generated_password+'\n'
+
+                ## add xkcd style pw_type
+                xkcd = generate_xkcd_password()
+                generated_passwords = generated_passwords+'\n\nor XKCD (936) like:\n'+xkcd
 
             else:
-                wx.MessageBox('Min. password length is 8', 'Password Generator', wx.OK | wx.ICON_WARNING)
+                tools.debug_output('execute_password_generation', 'User selected default password type', 1)
+
+                for x in range(0, 5):
+                    tools.debug_output('execute_password_generation', 'Generating general password '+str(x), 1)
+
+                    chars = string.ascii_letters + string.digits + '!@#$%^&*()'
+                    random.seed = (os.urandom(1024))
+
+                    single_generated_password = ''.join(random.choice(chars) for i in range(password_length))
+                    generated_passwords = generated_passwords+single_generated_password+'\n'
+
+            ## output the password
+            wx.MessageBox('Your generated passwords are:\n\n'+generated_passwords, 'Password Generator', wx.OK | wx.ICON_INFORMATION)
+
+            ## update usage-statistics
+            tools.debug_output('execute_password_generation', 'Updating statistics (plugin_executed)', 1)
+            current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed') # get current value from ini
+            ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
+
+            ## reset the UI
+            main_window.reset_ui()
+
+            ## if enabled in ini - hide the UI after executing the command
+            cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
+            if cur_ini_value_for_hide_ui_after_command_execution == 'True':
+                main_window.tbicon.execute_tray_icon_left_click()
 
         except ValueError:
             tools.debug_output('execute', 'Password length entered by user was not a number', 3)
+            wx.MessageBox('Length was not a number', 'Password Generator', wx.OK | wx.ICON_WARNING)
 
     else:
         tools.debug_output('execute', 'Password length definition canceld by user', 2)
 
 
-# read other comments: http://stackoverflow.com/questions/7479442/high-quality-simple-random-password-generator
-#
-# NOT YET IN USE
+# via comments in: http://stackoverflow.com/questions/7479442/high-quality-simple-random-password-generator
 def make_pseudo_word(syllables=5, add_number=False):
-    """Alternate random consonants & vowels creating decent memorable passwords
-    """
+    """Alternate random consonants & vowels creating decent memorable passwords"""
     rnd = random.SystemRandom()
     s = string.ascii_lowercase
     vowels = 'aeiou'
@@ -126,3 +142,24 @@ def make_pseudo_word(syllables=5, add_number=False):
         pwd += str(rnd.choice(range(10)))
     return pwd
 
+
+def get_random_word():
+    """Picks a random file from the file words"""
+    afile = open("words", 'r')
+
+    line = next(afile)
+    for num, aline in enumerate(afile):
+      if random.randrange(num + 2): continue
+      line = aline
+    return line
+
+
+def generate_xkcd_password():
+    """Generated an xkcd like password - see: https://xkcd.com/936/"""
+    single = ''
+    full = ''
+    for x in range(0, 5):
+        single = get_random_word()
+        single = single.rstrip()
+        full = full+' '+single
+    return full
