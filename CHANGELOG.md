@@ -3,6 +3,13 @@ Changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
+# 20170511
+* Fill searchresults with matching plugin-triggers (if input starts with !)             (Issue: #59)
+* Plugin Password Generator: Add support for memorable passwords                        (Issue: #60)
+* Plugin Password Generator: Now generates 5 passwords on execution to offer a choice   (Issue: #61)
+* Renamed apparatHotkeyHelper.sh to hotkeyHelperForApparatLauncher
+
+
 
 # 20170509
 * Plugin Internet Search: Add support for Google Keep/Notes (!gk)                       (Issue: #53)

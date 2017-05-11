@@ -98,7 +98,7 @@ The following command line parameters are available:
 
 
 #### <a name="hotkey">Hotkey
-If you want to use a global/system-wide hotkey to trigger ```apparat_launcher``` (starting, focusing and minimizing) consider using the script ```apparatHotkeyHelper.sh```. Simply define a system-wide hotkey which triggers ```apparatHotkeyHelper.sh```.
+If you want to use a global/system-wide hotkey to trigger ```apparat_launcher``` (starting, focusing and minimizing) consider using the script ```apparatHotkeyHelper.sh```. Simply define a system-wide hotkey which triggers ```hotkeyHelperForApparatLauncher.sh```.
 
 Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en)
 * Open the **Activities** overview and start typing Keyboard.
@@ -143,7 +143,7 @@ Optional plugin which offers a simple password generator
 
 | Trigger          | Alias          | Parameter      | Function                         |
 |------------------|:-------------- |:---------------|:---------------------------------|
-| ```!pw```        |                |                | A simple password generator      |
+| ```!pw```        | ```!password```|                | A simple password generator      |
 
 
 #### <a name="screenshot">Screenshot
