@@ -6,6 +6,7 @@
 # -----------------------------------------------------------------------------------------------
 
 ## built-in modules
+import sys
 import wx
 
 ## apparat
@@ -53,8 +54,8 @@ class PreferenceWindow(wx.Frame):
 
     def close_preference_ui(self, event):
         """Closes the preference window"""
-        tools.debug_output('close_preference_ui', 'starting', 1)
-        tools.debug_output('close_preference_ui', 'Event: '+str(event), 1)
+        tools.debug_output('close_preference_ui', 'starting', 1, __name__)
+        tools.debug_output('close_preference_ui', 'Event: '+str(event), 1, __name__)
         self.Destroy() # close the pref UI
 
 
@@ -65,13 +66,13 @@ class UITabGeneral(wx.Panel):
 
     """Preference Window - Tab: General"""
 
-    def __init__(self, parent):
+    def __init__(self, parent): # pylint:disable=too-many-statements
         """Inits the general tab"""
         wx.Panel.__init__(self, parent)
 
         ## show language
         ##
-        cur_ini_value_for_language = ini.read_single_value('Language', 'lang') # get current value from ini
+        cur_ini_value_for_language = ini.read_single_ini_value('Language', 'lang') # get current value from ini
         txt_language = wx.StaticText(self, -1, "Language: ", (20, 20))
 
         languages = [cur_ini_value_for_language]
@@ -85,7 +86,7 @@ class UITabGeneral(wx.Panel):
 
         ## icon sizes
         ##
-        cur_ini_value_for_iconsize = ini.read_single_value('General', 'icon_size') # get current value from ini
+        cur_ini_value_for_iconsize = ini.read_single_ini_value('General', 'icon_size') # get current value from ini
         txt_iconsize = wx.StaticText(self, -1, "Icon Size: ", (20, 20))
 
         available_icon_sizes = ['128', '256']
@@ -100,7 +101,7 @@ class UITabGeneral(wx.Panel):
 
         ## transparency
         ##
-        cur_ini_value_for_transparency = ini.read_single_value('General', 'transparency') # get current value from ini
+        cur_ini_value_for_transparency = ini.read_single_ini_value('General', 'transparency') # get current value from ini
         txt_transparency = wx.StaticText(self, -1, "UI transparency (default 255, needs restart) : ", (20, 20))
 
         available_transparency_values = ['255', '250', '245', '240', '235', '230', '225', '220', '215', '210', '205', '200']
@@ -116,7 +117,7 @@ class UITabGeneral(wx.Panel):
         ## Hide UI
         ##
         self.cb_enable_hide_ui = wx.CheckBox(self, -1, 'Hide UI after command execution ', (20, 60))
-        cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
+        cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_ini_value('General', 'hide_ui_after_command_execution') # get current value from ini
         if cur_ini_value_for_hide_ui_after_command_execution == "False":
             self.cb_enable_hide_ui.SetValue(False)
         else:
@@ -155,27 +156,27 @@ class UITabGeneral(wx.Panel):
 
     def on_change_icon_size(self, event):
         """Handles the value change of icon_size dropbox"""
-        tools.debug_output('on_change_icon_size', 'Preference - General - change icon size: '+str(event), 1)
-        tools.debug_output('on_change_icon_size', 'New icon size is set to: '+str(self.ui__cb_iconsizes.GetValue())+'px', 1)
-        ini.write_single_value('General', 'icon_size', self.ui__cb_iconsizes.GetValue()) # update preference value
+        tools.debug_output('on_change_icon_size', 'Preference - General - change icon size: '+str(event), 1, __name__)
+        tools.debug_output('on_change_icon_size', 'New icon size is set to: '+str(self.ui__cb_iconsizes.GetValue())+'px', 1, __name__)
+        ini.write_single_ini_value('General', 'icon_size', self.ui__cb_iconsizes.GetValue()) # update preference value
 
 
     def on_change_transparency(self, event):
         """Handles the value change of transparency dropbox"""
-        tools.debug_output('on_change_transparency', 'Preference - General - change transparency: '+str(event), 1)
-        tools.debug_output('on_change_transparency', 'New transparency value is set to: '+str(self.ui__cb_transparency.GetValue()), 1)
-        ini.write_single_value('General', 'transparency', self.ui__cb_transparency.GetValue()) # update preference value
+        tools.debug_output('on_change_transparency', 'Preference - General - change transparency: '+str(event), 1, __name__)
+        tools.debug_output('on_change_transparency', 'New transparency value is set to: '+str(self.ui__cb_transparency.GetValue()), 1, __name__)
+        ini.write_single_ini_value('General', 'transparency', self.ui__cb_transparency.GetValue()) # update preference value
 
 
     def prefs_general_toggle_hide_ui(self, event):
         """Toggle the general pref: hide_ui"""
-        tools.debug_output('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event), 1)
+        tools.debug_output('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event), 1, __name__)
         if self.cb_enable_hide_ui.GetValue() is True:
-            tools.debug_output('prefs_general_toggle_hide_ui', 'Enabled', 1)
-            ini.write_single_value('General', 'hide_ui_after_command_execution', "True") # update preference value
+            tools.debug_output('prefs_general_toggle_hide_ui', 'Enabled', 1, __name__)
+            ini.write_single_ini_value('General', 'hide_ui_after_command_execution', "True") # update preference value
         else:
-            tools.debug_output('prefs_general_toggle_hide_ui', 'Disabled', 1)
-            ini.write_single_value('General', 'hide_ui_after_command_execution', "False") # update preference value
+            tools.debug_output('prefs_general_toggle_hide_ui', 'Disabled', 1, __name__)
+            ini.write_single_ini_value('General', 'hide_ui_after_command_execution', "False") # update preference value
 
 
 class UITabStatistics(wx.Panel):
@@ -187,15 +188,15 @@ class UITabStatistics(wx.Panel):
         wx.Panel.__init__(self, parent)
 
         ## show app start counter
-        cur_ini_value_for_apparat_started = ini.read_single_value('Statistics', 'apparat_started') # get current value from ini
+        cur_ini_value_for_apparat_started = ini.read_single_ini_value('Statistics', 'apparat_started') # get current value from ini
         txt_stats__apparat_started = wx.StaticText(self, -1, "Apparat started:\t\t\t"+cur_ini_value_for_apparat_started, (20, 20))
 
         ## show execute counter
-        cur_ini_value_for_command_executed = ini.read_single_value('Statistics', 'command_executed') # get current value from ini
+        cur_ini_value_for_command_executed = ini.read_single_ini_value('Statistics', 'command_executed') # get current value from ini
         txt_stats__command_executed = wx.StaticText(self, -1, "Command executed:\t\t"+cur_ini_value_for_command_executed, (20, 40))
 
         ## show plugin trigger count
-        cur_ini_value_for_plugin_executed = ini.read_single_value('Statistics', 'plugin_executed') # get current value from ini
+        cur_ini_value_for_plugin_executed = ini.read_single_ini_value('Statistics', 'plugin_executed') # get current value from ini
         txt_stats__plugin_executed = wx.StaticText(self, -1, "Plugins executed:\t\t\t"+cur_ini_value_for_plugin_executed, (20, 60))
 
         ## Layout
@@ -227,6 +228,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_core.SetToolTipString(u'Offers !help !prefs and !preferences.Plugin can not be disabled.')
         cb_enable_plugin_core.SetValue(True)
         cb_enable_plugin_core.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_click) # changing the checkbox change
+        cb_enable_plugin_core.Enable(False)
         ## Plugin description
         txt_plugin_core = wx.StaticText(self, -1, "Offers !help !prefs and !preferences", (20, 40))
         txt_plugin_core.SetForegroundColour('#7f8c8d')
@@ -237,7 +239,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_misc = wx.CheckBox(self, -1, 'Misc', (20, 60))
         cb_enable_plugin_misc.SetToolTipString(u'Enable other stuff')
         cb_enable_plugin_misc.SetLabel('misc')
-        cur_ini_value_for_plugin_misc = ini.read_single_value('Plugins', 'enable_plugin_misc') # get current value from ini
+        cur_ini_value_for_plugin_misc = ini.read_single_ini_value('Plugins', 'plugin_misc') # get current value from ini
         if cur_ini_value_for_plugin_misc == 'True':
             cb_enable_plugin_misc.SetValue(True)
         else:
@@ -253,7 +255,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_nautilus = wx.CheckBox(self, -1, 'Nautilus', (20, 60))
         cb_enable_plugin_nautilus.SetLabel('nautilus')
         cb_enable_plugin_nautilus.SetToolTipString(u'Enables quick access to some nautilus locations/places')
-        cur_ini_value_for_plugin_nautilus = ini.read_single_value('Plugins', 'enable_plugin_nautilus') # get current value from ini
+        cur_ini_value_for_plugin_nautilus = ini.read_single_ini_value('Plugins', 'plugin_nautilus') # get current value from ini
         if cur_ini_value_for_plugin_nautilus == 'True':
             cb_enable_plugin_nautilus.SetValue(True)
         else:
@@ -269,7 +271,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_passwordgen = wx.CheckBox(self, -1, 'Password Generator', (20, 60))
         cb_enable_plugin_passwordgen.SetLabel('passwordgen')
         cb_enable_plugin_passwordgen.SetToolTipString(u'Enables a simple password generator')
-        cur_ini_value_for_plugin_passwordgen = ini.read_single_value('Plugins', 'enable_plugin_passwordgen') # get current value from ini
+        cur_ini_value_for_plugin_passwordgen = ini.read_single_ini_value('Plugins', 'plugin_passwordgen') # get current value from ini
         if cur_ini_value_for_plugin_passwordgen == 'True':
             cb_enable_plugin_passwordgen.SetValue(True)
         else:
@@ -285,7 +287,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_screenshot = wx.CheckBox(self, -1, 'Screenshot', (20, 60))
         cb_enable_plugin_screenshot.SetLabel('screenshot')
         cb_enable_plugin_screenshot.SetToolTipString(u'Enables simple screenshot functions')
-        cur_ini_value_for_plugin_screenshot = ini.read_single_value('Plugins', 'enable_plugin_screenshot') # get current value from ini
+        cur_ini_value_for_plugin_screenshot = ini.read_single_ini_value('Plugins', 'plugin_screenshot') # get current value from ini
         if cur_ini_value_for_plugin_screenshot == 'True':
             cb_enable_plugin_screenshot.SetValue(True)
         else:
@@ -301,7 +303,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_internet_search = wx.CheckBox(self, -1, 'Internet-Search', (20, 60))
         cb_enable_plugin_internet_search.SetLabel('search_internet')
         cb_enable_plugin_internet_search.SetToolTipString(u'Enables search for several popular web-services')
-        cur_ini_value_for_plugin_search_internet = ini.read_single_value('Plugins', 'enable_plugin_search_internet') # get current value from ini
+        cur_ini_value_for_plugin_search_internet = ini.read_single_ini_value('Plugins', 'plugin_search_internet') # get current value from ini
         if cur_ini_value_for_plugin_search_internet == 'True':
             cb_enable_plugin_internet_search.SetValue(True)
         else:
@@ -317,7 +319,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_local_search = wx.CheckBox(self, -1, 'Local-Search', (20, 60))
         cb_enable_plugin_local_search.SetLabel('search_local')
         cb_enable_plugin_local_search.SetToolTipString(u'Enables search for files and folders in users home directory')
-        cur_ini_value_for_plugin_search_local = ini.read_single_value('Plugins', 'enable_plugin_search_local') # get current value from ini
+        cur_ini_value_for_plugin_search_local = ini.read_single_ini_value('Plugins', 'plugin_search_local') # get current value from ini
         if cur_ini_value_for_plugin_search_local == 'True':
             cb_enable_plugin_local_search.SetValue(True)
         else:
@@ -333,7 +335,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_session = wx.CheckBox(self, -1, 'Session', (20, 60))
         cb_enable_plugin_session.SetLabel('session')
         cb_enable_plugin_session.SetToolTipString(u'Enables several session commands')
-        cur_ini_value_for_plugin_session = ini.read_single_value('Plugins', 'enable_plugin_session') # get current value from ini
+        cur_ini_value_for_plugin_session = ini.read_single_ini_value('Plugins', 'plugin_session') # get current value from ini
         if cur_ini_value_for_plugin_session == 'True':
             cb_enable_plugin_session.SetValue(True)
         else:
@@ -348,7 +350,7 @@ class UITabPluginCommands(wx.Panel):
         cb_enable_plugin_shell = wx.CheckBox(self, -1, 'Shell', (20, 60))
         cb_enable_plugin_shell.SetLabel('shell')
         cb_enable_plugin_shell.SetToolTipString(u'Enable executing shell commands')
-        cur_ini_value_for_plugin_shell = ini.read_single_value('Plugins', 'enable_plugin_shell') # get current value from ini
+        cur_ini_value_for_plugin_shell = ini.read_single_ini_value('Plugins', 'plugin_shell') # get current value from ini
         if cur_ini_value_for_plugin_shell == 'True':
             cb_enable_plugin_shell.SetValue(True)
         else:
@@ -446,8 +448,8 @@ class UITabPluginCommands(wx.Panel):
         value = event.GetEventObject().GetValue()
 
         if value is True:
-            tools.debug_output('on_plugin_checkbox_change', 'Enabled Plugin: '+btn, 1)
-            ini.write_single_value('Plugins', 'enable_plugin_'+btn, 'True')
+            tools.debug_output('on_plugin_checkbox_change', 'Enabled Plugin: '+btn, 1, __name__)
+            ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'True')
         else:
-            tools.debug_output('on_plugin_checkbox_change', 'Disabled Plugin: '+btn, 1)
-            ini.write_single_value('Plugins', 'enable_plugin_'+btn, 'False')
+            tools.debug_output('on_plugin_checkbox_change', 'Disabled Plugin: '+btn, 1, __name__)
+            ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'False')

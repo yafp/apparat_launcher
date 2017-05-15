@@ -5,7 +5,9 @@
 import os
 import random
 import string
+import sys
 import wx
+
 
 ## apparat
 import constants
@@ -17,7 +19,7 @@ import tools
 # -----------------------------------------------------------------------------------------------
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
-TRIGGER = ('!pw', '!password', '!pa')
+TRIGGER = ('!pw', '!password',)
 
 
 # -----------------------------------------------------------------------------------------------
@@ -25,27 +27,27 @@ TRIGGER = ('!pw', '!password', '!pa')
 # -----------------------------------------------------------------------------------------------
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting', 1)
+    tools.debug_output('prepare_general', 'starting', 1, __name__)
 
     ## Reset status notification back to OK
     main_window.status_notification_reset()
 
-    icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     if current_search_string == ('!pw') or current_search_string == ('!password'):
-        tools.debug_output('prepare_general', 'Case: Password Generator', 1)
+        tools.debug_output('prepare_general', 'Case: Password Generator', 1, __name__)
         prepare_plugin_passwordgen(main_window, icon_size)
 
     else:
-        tools.debug_output('prepare_general', 'Error: Unexpected passwordgen plugin command', 3)
+        tools.debug_output('prepare_general', 'Error: Unexpected passwordgen plugin command', 3, __name__)
         main_window.status_notification_display_error('Unexpected passwordgen plugin command')
 
-    tools.debug_output('prepare_general', 'finished', 1)
+    tools.debug_output('prepare_general', 'finished', 1, __name__)
 
 
 def prepare_plugin_passwordgen(main_window, icon_size):
-    """Plugin PasswordGen"""
-    tools.debug_output('prepare_plugin_passwordgen', 'starting', 1)
+    """Prepares UI for plugin PasswordGen"""
+    tools.debug_output('prepare_plugin_passwordgen', 'starting', 1, __name__)
     main_window.plugin__update_general_ui_information('Password Generator') ## update plugin info
 
     ## command button & txt
@@ -58,16 +60,16 @@ def prepare_plugin_passwordgen(main_window, icon_size):
     main_window.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
 
-    tools.debug_output('prepare_plugin_passwordgen', 'finished', 1)
+    tools.debug_output('prepare_plugin_passwordgen', 'Finished preparing password UI', 1, __name__)
 
 
 def execute_password_generation(main_window):
-    """Generate a password"""
-    tools.debug_output('execute_password_generation', 'started', 0)
+    """Handles the actual password generation process"""
+    tools.debug_output('execute_password_generation', 'started', 0, __name__)
     dlg = wx.TextEntryDialog(None, 'Please insert desired password length', 'Password Generator', '8')
     ret = dlg.ShowModal()
     if ret == wx.ID_OK:
-        tools.debug_output('execute_password_generation', 'Password length set to: '+dlg.GetValue(), 1)
+        tools.debug_output('execute_password_generation', 'Password length set to: '+dlg.GetValue(), 1, __name__)
         try:
             password_length = int(dlg.GetValue())
             if password_length < 8:
@@ -81,9 +83,9 @@ def execute_password_generation(main_window):
             generated_passwords = ''
 
             if pw_type == wx.ID_YES:
-                tools.debug_output('execute_password_generation', 'User selected memorable password type', 1)
+                tools.debug_output('execute_password_generation', 'User selected memorable password type', 1, __name__)
 
-                for x in range(0, 5):
+                for x in range(0, 5): # generate 5 memorizable passwords
                     tools.debug_output('execute_password_generation', 'Generating memorable password '+str(x), 1)
                     single_generated_password = make_pseudo_word(syllables=password_length, add_number=False)
                     single_generated_password = single_generated_password[0:password_length] # substring to correct length
@@ -91,13 +93,13 @@ def execute_password_generation(main_window):
 
                 ## add xkcd style pw_type
                 xkcd = generate_xkcd_password()
-                generated_passwords = generated_passwords+'\n\nor XKCD (936) like:\n'+xkcd
+                generated_passwords = generated_passwords+'\n\nXKCD (936) like:\n'+xkcd
 
             else:
-                tools.debug_output('execute_password_generation', 'User selected default password type', 1)
+                tools.debug_output('execute_password_generation', 'User selected default password type', 1, __name__)
 
-                for x in range(0, 5):
-                    tools.debug_output('execute_password_generation', 'Generating general password '+str(x), 1)
+                for x in range(0, 5): # generate 5 default passwords
+                    tools.debug_output('execute_password_generation', 'Generating general password '+str(x), 1, __name__)
 
                     chars = string.ascii_letters + string.digits + '!@#$%^&*()'
                     random.seed = (os.urandom(1024))
@@ -105,28 +107,28 @@ def execute_password_generation(main_window):
                     single_generated_password = ''.join(random.choice(chars) for i in range(password_length))
                     generated_passwords = generated_passwords+single_generated_password+'\n'
 
-            ## output the password
-            wx.MessageBox('Your generated passwords are:\n\n'+generated_passwords, 'Password Generator', wx.OK | wx.ICON_INFORMATION)
+            ## output the passwords
+            wx.MessageBox('Choose from the following:\n\n'+generated_passwords, 'Password Generator', wx.OK | wx.ICON_INFORMATION)
 
             ## update usage-statistics
-            tools.debug_output('execute_password_generation', 'Updating statistics (plugin_executed)', 1)
-            current_plugin_executed_count = ini.read_single_value('Statistics', 'plugin_executed') # get current value from ini
-            ini.write_single_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
-
-            ## reset the UI
-            main_window.reset_ui()
-
-            ## if enabled in ini - hide the UI after executing the command
-            cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_value('General', 'hide_ui_after_command_execution') # get current value from ini
-            if cur_ini_value_for_hide_ui_after_command_execution == 'True':
-                main_window.tbicon.execute_tray_icon_left_click()
+            tools.debug_output('execute_password_generation', 'Updating statistics (plugin_executed)', 1, __name__)
+            current_plugin_executed_count = ini.read_single_ini_value('Statistics', 'plugin_executed') # get current value from ini
+            ini.write_single_ini_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
 
         except ValueError:
-            tools.debug_output('execute', 'Password length entered by user was not a number', 3)
+            tools.debug_output('execute', 'Password length entered by user was not a number', 3, __name__)
             wx.MessageBox('Length was not a number', 'Password Generator', wx.OK | wx.ICON_WARNING)
 
     else:
-        tools.debug_output('execute', 'Password length definition canceld by user', 2)
+        tools.debug_output('execute', 'Password length definition canceld by user', 2, __name__)
+
+    ## reset the UI
+    main_window.reset_ui()
+
+    ## if enabled in ini - hide the UI after executing the command
+    cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_ini_value('General', 'hide_ui_after_command_execution') # get current value from ini
+    if cur_ini_value_for_hide_ui_after_command_execution == 'True':
+        main_window.tbicon.execute_tray_icon_left_click()
 
 
 # via comments in: http://stackoverflow.com/questions/7479442/high-quality-simple-random-password-generator
@@ -137,7 +139,7 @@ def make_pseudo_word(syllables=5, add_number=False):
     vowels = 'aeiou'
     consonants = ''.join([x for x in s if x not in vowels])
     pwd = ''.join([rnd.choice(consonants)+rnd.choice(vowels)
-               for x in 'x'*syllables]).title()
+    for x in 'x'*syllables]).title()
     if add_number:
         pwd += str(rnd.choice(range(10)))
     return pwd
@@ -145,12 +147,12 @@ def make_pseudo_word(syllables=5, add_number=False):
 
 def get_random_word():
     """Picks a random file from the file words"""
-    afile = open("words", 'r')
-
-    line = next(afile)
-    for num, aline in enumerate(afile):
-      if random.randrange(num + 2): continue
-      line = aline
+    wordlist = open('words', 'r')
+    line = next(wordlist)
+    for num, wordlist in enumerate(wordlist):
+        if random.randrange(num + 2):
+            continue
+        line = wordlist
     return line
 
 
@@ -162,4 +164,5 @@ def generate_xkcd_password():
         single = get_random_word()
         single = single.rstrip()
         full = full+' '+single
+    tools.debug_output('generate_xkcd_password', 'Finished generating an xkcd-like password', 1, __name__)
     return full

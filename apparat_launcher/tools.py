@@ -23,7 +23,7 @@ DEBUG = False
 # -----------------------------------------------------------------------------------------------
 def cmd_exists(cmd):
     """Method to check if a command exists."""
-    debug_output('cmd_exists', 'starting', 1)
+    debug_output('cmd_exists', 'starting', 0, __name__)
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
@@ -54,15 +54,16 @@ def check_arguments():
         show_help()
         sys.exit()
 
-    debug_output('check_arguments', 'finished', 1)
+    debug_output('check_arguments', 'finished', 1, __name__)
 
 
-def debug_output(source, message, message_type=0):
+def debug_output(source_function, message, message_type=0, module='undefined'):
     """Method to print debug messages (if debug = True)."""
     if DEBUG is True:
         timestamp = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
-        source = source.ljust(40) # Add spaces to source until it has length of 40 chars (readability)
-
+        source_function = source_function.ljust(40) # Add spaces to source until it has length of 40 chars (readability)
+        source_file = str(module)+'.py'.ljust(26)
+    
         # colorize the message
         if(message_type == 1): # Info
             text_color = constants.C_GREEN
@@ -78,7 +79,8 @@ def debug_output(source, message, message_type=0):
             message_type_class = ' O '
 
         ## format: time + message_type_class + source + message
-        print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source+" "+text_color+message+constants.C_DEFAULT)
+        #print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source+" "+text_color+message+constants.C_DEFAULT)
+        print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source_file+" "+source_function+" "+text_color+message+constants.C_DEFAULT)
 
 
 def generate_timestamp():
@@ -89,29 +91,30 @@ def generate_timestamp():
 
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
-    debug_output('check_linux_requirements', 'starting', 0)
+    debug_output('check_linux_requirements', 'Starting requirements checks', 0, __name__)
 
     ## needed for session commands:
     REQUIRED_LINUX_PACKAGES = ('gnome-screensaver-command', 'gnome-session-quit', 'systemctl', 'xdg-open', 'xdotool')
 
     for i, (a) in enumerate(REQUIRED_LINUX_PACKAGES):
-        debug_output('check_linux_requirements', 'Checking '+a, 0)
+        debug_output('check_linux_requirements', 'Checking '+a, 0, __name__)
         if which(REQUIRED_LINUX_PACKAGES[i]) is None:
-            debug_output('check_linux_requirements', 'Error: '+REQUIRED_LINUX_PACKAGES[i]+' is missing', 3)
+            debug_output('check_linux_requirements', 'Error: '+REQUIRED_LINUX_PACKAGES[i]+' is missing. Please check if is available via your package system.', 3, __name__)
             sys.exit()
 
-    debug_output('check_linux_requirements', 'finished', 1)
+    debug_output('check_linux_requirements', 'Requirements checks finished ', 1, __name__)
+
 
 
 def which(program):
     """Method to check if executable exists"""
     def is_exe(fpath):
-        """foo"""
+        """is_exe"""
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
     fpath, fname = os.path.split(program)
     #debug_output('which', 'fpath: '+fpath, 1)
-    debug_output('which', 'fname: '+fname, 1)
+    #debug_output('which', 'fname: '+fname, 1)
     if fpath:
         if is_exe(program):
             return program
@@ -121,7 +124,7 @@ def which(program):
             exe_file = os.path.join(path, program)
             if is_exe(exe_file):
                 return exe_file
-    debug_output('which', 'finished', 1)
+    debug_output('which', 'finished', 1, __name__)
     return None
 
 
@@ -140,23 +143,21 @@ def show_help():
 
 def check_platform():
     """Method to check the platform (supported or not)"""
-    debug_output('check_platform', 'starting', 0)
-
     ## Linux
     if sys.platform == "linux" or sys.platform == "linux2":
-        debug_output('check_platform', 'Detected linux', 1)
-        debug_output('check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION'), 1) # Issue: 24
+        debug_output('check_platform', 'Detected linux', 1, __name__)
+        debug_output('check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION'), 1, __name__) # Issue: 24
         if(os.environ.get('DESKTOP_SESSION') != 'gnome'):
-            debug_output('check_platform', 'Here be dragons (Untested desktop environment)', 2)
+            debug_output('check_platform', 'Here be dragons (Untested desktop environment)', 2, __name__)
         return
 
     else: # anything else (darwin = Mac OS, win32 = windows)
-        debug_output('check_platform', 'Detected unsupported platform.', 3)
+        debug_output('check_platform', 'Detected unsupported platform.', 3, __name__)
         print("Error: Unsupported platform detected. Aborting ...")
         sys.exit()
 
 
 def trunc_at(s, d, n=3):
     """Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."""
-    debug_output('trunc_at', 'starting', 0)
+    debug_output('trunc_at', 'starting', 0, __name__)
     return d.join(s.split(d)[:n])

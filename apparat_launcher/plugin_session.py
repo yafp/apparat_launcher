@@ -2,6 +2,7 @@
 """apparat_launcher - plugin: session"""
 
 # general
+import sys
 import wx
 
 # apparat
@@ -11,17 +12,17 @@ import tools
 
 
 # Plugin: Session
-TRIGGER = ('!hibernate', '!sleep', '!lock', '!logout', '!reboot', '!restart', '!shutdown', '!halt', '!screensaver', '!saver')
+TRIGGER = ('!hibernate', '!sleep', '!lock', '!logout', '!reboot', '!restart', '!shutdown', '!halt', '!screensaver', '!saver',)
 
 
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting with searchstring: '+current_search_string, 1)
+    tools.debug_output('prepare_general', 'starting with searchstring: '+current_search_string, 1, __name__)
 
     # Reset status notification back to OK
     main_window.status_notification_reset()
 
-    icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     ## Hibernate
     if current_search_string == '!hibernate' or current_search_string == '!sleep':
@@ -48,17 +49,16 @@ def prepare_general(current_search_string, main_window):
         prepare_plugin_session_screensaver(main_window, icon_size)
 
     else:
-        tools.debug_output('parse_user_search_input', 'Error: Unexpected session command', 3)
+        tools.debug_output('parse_user_search_input', 'Error: Unexpected session command', 3, __name__)
         main_window.status_notification_display_error('Unexpected session plugin command')
         return
 
-    tools.debug_output('prepare_general', 'finished', 1)
+    tools.debug_output('prepare_general', 'finished', 1, __name__)
 
 
 def prepare_plugin_session_hibernate(main_window, icon_size):
     """Plugin Session - Hibernate"""
-    tools.debug_output('prepare_plugin_session_hibernate', 'starting', 1)
-    #icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    tools.debug_output('prepare_plugin_session_hibernate', 'starting', 1, __name__)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Hibernate)')
@@ -78,8 +78,7 @@ def prepare_plugin_session_hibernate(main_window, icon_size):
 
 def prepare_plugin_session_lock(main_window, icon_size):
     """Plugin Session - Lock"""
-    tools.debug_output('prepare_plugin_session_lock', 'starting', 1)
-    #icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    tools.debug_output('prepare_plugin_session_lock', 'starting', 1, __name__)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Lock)')
@@ -99,8 +98,7 @@ def prepare_plugin_session_lock(main_window, icon_size):
 
 def prepare_plugin_session_logout(main_window, icon_size):
     """Plugin Session - Logout"""
-    tools.debug_output('prepare_plugin_session_logout', 'starting', 1)
-    #icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    tools.debug_output('prepare_plugin_session_logout', 'starting', 1, __name__)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Logout)')
@@ -120,8 +118,7 @@ def prepare_plugin_session_logout(main_window, icon_size):
 
 def prepare_plugin_session_shutdown(main_window, icon_size):
     """Plugin Session - Shutdown"""
-    tools.debug_output('prepare_plugin_session_shutdown', 'starting', 1)
-    #icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    tools.debug_output('prepare_plugin_session_shutdown', 'starting', 1, __name__)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Shutdown)')
@@ -141,8 +138,7 @@ def prepare_plugin_session_shutdown(main_window, icon_size):
 
 def prepare_plugin_session_reboot(main_window, icon_size):
     """Plugin Session - Reboot"""
-    tools.debug_output('prepare_plugin_session_reboot', 'starting', 1)
-    #icon_size = ini.read_single_value('General', 'icon_size') # get preference value
+    tools.debug_output('prepare_plugin_session_reboot', 'starting', 1, __name__)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Session (Reboot)')
@@ -162,7 +158,7 @@ def prepare_plugin_session_reboot(main_window, icon_size):
 
 def prepare_plugin_session_screensaver(main_window, icon_size):
     """Plugin Session - Screensaver"""
-    tools.debug_output('prepare_plugin_session_screensaver', 'starting', 1)
+    tools.debug_output('prepare_plugin_session_screensaver', 'starting', 1, __name__)
     main_window.ui__txt_command.SetValue('gnome-session-quit')
 
     ## update plugin info

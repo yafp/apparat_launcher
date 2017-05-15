@@ -1,4 +1,6 @@
+<!---
 [![Code Health](https://landscape.io/github/yafp/apparat_launcher/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat_launcher/master)
+-->
 [![Issues](https://img.shields.io/github/issues/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues)
 [![Issues Closed](https://img.shields.io/github/issues-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues?q=is%3Aclosed)
 
@@ -104,7 +106,7 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 * Open the **Activities** overview and start typing Keyboard.
 * Click on **Keyboard** to open the panel.
 * Select the **Shortcuts** tab.
-* Select a category in the left pane, and the row for the desired action (launching ```apparatHotkeyHelper.sh```)  on the right. The current shortcut definition will change to **New accelerator…**
+* Select a category in the left pane, and the row for the desired action (launching ```hotkeyHelperForApparatLauncher.sh```)  on the right. The current shortcut definition will change to **New accelerator…**
 * Hold down the desired key combination, or press Backspace to clear.
 
 

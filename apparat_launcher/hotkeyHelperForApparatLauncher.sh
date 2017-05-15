@@ -16,7 +16,7 @@
 # ---------------------------------------------------------
 # CONFIG
 # ---------------------------------------------------------
-APPARAT_FOLDER=$HOME'/Dropbox/Temp/apparat_launcher/apparat_launcher/'
+APPARAT_FOLDER=$HOME'/Dropbox/Temp/apparat_launcher/apparat_launcher'
 APPARAT_EXECUTABLE='apparat_launcher.py'
 
 

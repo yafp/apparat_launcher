@@ -3,18 +3,27 @@ Changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
+
+# 20170515
+* Plugin-command-search now features only commands from enabled plugins                 (Issue: #62)
+* Plugin-command-search is now sorted                                                   (Issue: #63)
+* Plugin-command-search got autocomplete now                                            (Issue: #64)
+* Plugin-command-search does no autocomplete if user is pressing BackSpace
+* Plugin Password Generator: UI is now always resetted after finishing the function
+* Debug Output: Now shows the source (.py) file as well, not only function name)        (Issue: #65)
+
+
 # 20170511
-* Fill searchresults with matching plugin-triggers (if input starts with !)             (Issue: #59)
+* Plugins: Fill searchresults with matching plugin-triggers (if input starts with !)    (Issue: #59)
 * Plugin Password Generator: Add support for memorable passwords                        (Issue: #60)
 * Plugin Password Generator: Now generates 5 passwords on execution to offer a choice   (Issue: #61)
 * Renamed apparatHotkeyHelper.sh to hotkeyHelperForApparatLauncher
 
 
-
 # 20170509
 * Plugin Internet Search: Add support for Google Keep/Notes (!gk)                       (Issue: #53)
 * Plugin Password Generator: Added initial version of new plugin                        (Issue: #54)
-* Fix wrong result count while incomplete plugin command                                (Issue: #55)
+* Plugins: Fix wrong result count while incomplete plugin command                       (Issue: #55)
 * Command button is now displaying appIcon if disabled                                  (Issue: #56)
 * Parameter button is now showing search-icon if disabled                               (Issue: #57)
 * Parameter button now shows execute icon if search results > 1 (formerly blank)        (ISsue: #58)
