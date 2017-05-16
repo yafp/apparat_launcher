@@ -3,7 +3,6 @@
 
 ## general
 import os
-import sys
 import wx
 
 ## apparat
@@ -23,7 +22,7 @@ TRIGGER = ('!open',)
 # -----------------------------------------------------------------------------------------------
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_general', 'starting', 1)
 
     # Reset status notification back to OK
     main_window.status_notification_reset()
@@ -31,19 +30,19 @@ def prepare_general(current_search_string, main_window):
     icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     if current_search_string.startswith('!open'):
-        tools.debug_output('prepare_general', 'Case: Open', 1, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Case: Open', 1)
         prepare_plugin_misc_open(main_window, icon_size)
 
     else:
-        tools.debug_output('prepare_general', 'Error: Unexpected misc plugin command', 3, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Error: Unexpected misc plugin command', 3)
         main_window.status_notification_display_error('Unexpected misc plugin command')
 
-    tools.debug_output('prepare_general', 'finished', 1, __name__)
+    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
 
 
 def prepare_plugin_misc_open(main_window, icon_size):
     """Plugin Misc - Open - Opens file or location using xdg-open"""
-    tools.debug_output('prepare_plugin_misc_open', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_plugin_misc_open', 'starting', 1)
     main_window.plugin__update_general_ui_information('Misc (Open)') ## update plugin info
 
     ## command button & txt
@@ -59,7 +58,7 @@ def prepare_plugin_misc_open(main_window, icon_size):
 
         ## set parameter
         if (main_window.ui__cb_search.GetValue()[6:7] == '~'):
-            tools.debug_output('prepare_plugin_misc_open', 'Replacing ~', 1, __name__)
+            tools.debug_output(__name__, 'prepare_plugin_misc_open', 'Replacing ~', 1)
             home = os.environ['HOME']
             main_window.ui__txt_parameter.SetValue(home+main_window.ui__cb_search.GetValue()[7:]) # possible parameter
         else:
@@ -68,4 +67,4 @@ def prepare_plugin_misc_open(main_window, icon_size):
         ## set command
         main_window.ui__txt_command.SetValue('xdg-open')
     else:
-        tools.debug_output('prepare_plugin_misc_open', 'Incomplete input, waiting for more...', 2, __name__)
+        tools.debug_output(__name__, 'prepare_plugin_misc_open', 'Incomplete input, waiting for more...', 2)

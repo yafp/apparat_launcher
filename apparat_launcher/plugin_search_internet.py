@@ -3,7 +3,6 @@
 
 # general
 import webbrowser
-import sys
 import wx
 
 # apparat
@@ -15,7 +14,30 @@ import tools
 # CONSTANTS
 # -----------------------------------------------------------------------------------------------
 
-TRIGGER = ('!am', '!au', '!bc', '!dd', '!fb', '!fl', '!gh', '!gi', '!gk', '!gm', '!gn', '!gs', '!la', '!re', '!sc', '!se', '!so', '!tu', '!tw', '!vi', '!wi', '!yt',)
+TRIGGER = (
+    '!am',
+    '!au',
+    '!bc',
+    '!dd',
+    '!fb',
+    '!fl',
+    '!gh',
+    '!gi',
+    '!gk',
+    '!gm',
+    '!gn',
+    '!gs',
+    '!la',
+    '!re',
+    '!sc',
+    '!se',
+    '!so',
+    '!tu',
+    '!tw',
+    '!vi',
+    '!wi',
+    '!yt',
+)
 
 URLS = (
     'https://www.amazon.de/s/field-keywords=',
@@ -99,7 +121,7 @@ DESCRIPTIONS = (
 
 def prepare_internet_search(main_window, current_search_string):
     """Updates the UI according to the matching internet-search trigger"""
-    tools.debug_output('prepare_internet_search', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_internet_search', 'starting', 1)
 
     ## Reset status notification back to OK
     main_window.status_notification_got_distinct_result()
@@ -113,7 +135,7 @@ def prepare_internet_search(main_window, current_search_string):
 
     ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
     if(len(current_search_string) >= 4) and (current_search_string[3] != " "):
-        tools.debug_output('prepare_internet_search', 'No space after trigger - should reset icons', 1, __name__)
+        tools.debug_output(__name__, 'prepare_internet_search', 'No space after trigger - should reset icons', 1)
         main_window.plugin__update_general_ui_information('')
         main_window.status_notification_display_error('Invalid input')
         return
@@ -149,7 +171,7 @@ def prepare_internet_search(main_window, current_search_string):
 
 def execute_internet_search(main_window, command, parameter):
     """Plugin: Internet-Search - Execute the actual internet search call"""
-    tools.debug_output('execute_internet_search', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'execute_internet_search', 'starting', 1)
 
     # get tuple position of command
     index = TRIGGER.index(command)
@@ -158,14 +180,14 @@ def execute_internet_search(main_window, command, parameter):
     remote_url = URLS[index]+parameter
 
     if(len(parameter) == 0): # if so searchphrase/parameter was supplied - open the main url (Issue #22)
-        tools.debug_output('execute_internet_search', 'No searchphrase supplied, trunc to main-url', 2, __name__) # Issue #22
+        tools.debug_output(__name__, 'execute_internet_search', 'No searchphrase supplied, trunc to main-url', 2) # Issue #22
         remote_url = tools.trunc_at(remote_url, "/")
 
     ## open the URL
     webbrowser.open(remote_url)
 
     ## update usage-statistics
-    tools.debug_output('execute_internet_search', 'Updating statistics (plugin_executed)', 1, __name__)
+    tools.debug_output(__name__, 'execute_internet_search', 'Updating statistics (plugin_executed)', 1)
     current_plugin_executed_count = ini.read_single_ini_value('Statistics', 'plugin_executed') # get current value from ini
     ini.write_single_ini_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
 

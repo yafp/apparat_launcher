@@ -2,7 +2,6 @@
 """apparat_launcher - plugin: shell"""
 
 ## general
-import sys
 import wx
 
 ## apparat
@@ -22,12 +21,12 @@ TRIGGER = ('!sh',)
 # -----------------------------------------------------------------------------------------------
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_general', 'starting', 1)
     main_window.status_notification_reset() # Reset status notification back to OK
     icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     if current_search_string.startswith("!sh"):
-        tools.debug_output('prepare_general', 'Case: Shell', 1, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Case: Shell', 1)
         prepare_plugin_shell(main_window, icon_size)
 
         if (len(current_search_string) > 3):
@@ -35,20 +34,20 @@ def prepare_general(current_search_string, main_window):
                 prepare_plugin_shell(main_window, icon_size)
             else:
                 main_window.plugin__update_general_ui_information('')
-                tools.debug_output('prepare_general', 'Aborting shell', 2, __name__)
+                tools.debug_output(__name__, 'prepare_general', 'Aborting shell', 2)
         return
 
     else:
-        tools.debug_output('prepare_general', 'Error: Unexpected shell plugin command', 3, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Error: Unexpected shell plugin command', 3)
         main_window.status_notification_display_error('Unexpected shell plugin command')
         return
 
-    tools.debug_output('prepare_general', 'finished', 1, __name__)
+    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
 
 
 def prepare_plugin_shell(main_window, icon_size):
     """Plugin Shell"""
-    tools.debug_output('prepare_plugin_shell', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_plugin_shell', 'starting', 1)
     main_window.plugin__update_general_ui_information('Shell') # update plugin info
 
     ## command button & txt

@@ -3,7 +3,6 @@
 
 # general
 import os
-import sys
 import wx
 
 # apparat
@@ -22,7 +21,7 @@ TRIGGER = ('!goto', '!recent', '!trash', '!network', '!net',)
 
 def prepare_general(current_search_string, main_window):
     """Prepare General"""
-    tools.debug_output('prepare_general', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_general', 'starting', 1)
 
     # Reset status notification back to OK
     main_window.status_notification_reset()
@@ -30,31 +29,31 @@ def prepare_general(current_search_string, main_window):
     icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     if current_search_string.startswith('!goto'):
-        tools.debug_output('prepare_general', 'Case: Goto', 1, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Case: Goto', 1)
         prepare_plugin_nautilus_goto(main_window, icon_size)
 
     elif current_search_string == ('!recent'):
-        tools.debug_output('prepare_general', 'Case: Recent', 1, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Case: Recent', 1)
         prepare_plugin_nautilus_show_recent(main_window, icon_size)
 
     elif current_search_string == ('!trash'):
-        tools.debug_output('prepare_general', 'Case: Trash', 1, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Case: Trash', 1)
         prepare_plugin_nautilus_open_trash(main_window, icon_size)
 
     elif current_search_string == ('!network') or current_search_string == ('!net'):
-        tools.debug_output('prepare_general', 'Case: Network', 1, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Case: Network', 1)
         prepare_plugin_nautilus_show_network_devices(main_window, icon_size)
 
     else:
-        tools.debug_output('prepare_general', 'Error: Unexpected nautilus plugin command', 3, __name__)
+        tools.debug_output(__name__, 'prepare_general', 'Error: Unexpected nautilus plugin command', 3)
         main_window.status_notification_display_error('Unexpected nautilus plugin command')
 
-    tools.debug_output('prepare_general', 'finished', 1, __name__)
+    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
 
 
 def prepare_plugin_nautilus_goto(main_window, icon_size):
     """Plugin Nautilus - GoTo"""
-    tools.debug_output('prepare_plugin_nautilus_goto', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_plugin_nautilus_goto', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Nautilus (GoTo)')
@@ -71,7 +70,7 @@ def prepare_plugin_nautilus_goto(main_window, icon_size):
     main_window.ui__bt_parameter.SetBitmap(main_window.ui__bt_parameter_img.ConvertToBitmap())
     ## set parameter txt
     if (main_window.ui__cb_search.GetValue()[6:7] == '~'):
-        tools.debug_output('prepare_plugin_nautilus_goto', 'Replacing ~', 1, __name__)
+        tools.debug_output(__name__, 'prepare_plugin_nautilus_goto', 'Replacing ~', 1)
         home = os.environ['HOME']
         main_window.ui__txt_parameter.SetValue(home+main_window.ui__cb_search.GetValue()[7:]) # possible parameter
     else:
@@ -80,7 +79,7 @@ def prepare_plugin_nautilus_goto(main_window, icon_size):
 
 def prepare_plugin_nautilus_show_network_devices(main_window, icon_size):
     """Plugin Nautilus - Network"""
-    tools.debug_output('prepare_plugin_nautilus_show_network_devices', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_plugin_nautilus_show_network_devices', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Nautilus (Network)')
@@ -100,7 +99,7 @@ def prepare_plugin_nautilus_show_network_devices(main_window, icon_size):
 
 def prepare_plugin_nautilus_show_recent(main_window, icon_size):
     """Plugin Nautilus - Recent"""
-    tools.debug_output('prepare_plugin_nautilus_show_recent', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_plugin_nautilus_show_recent', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Nautilus (Recent)')
@@ -120,7 +119,7 @@ def prepare_plugin_nautilus_show_recent(main_window, icon_size):
 
 def prepare_plugin_nautilus_open_trash(main_window, icon_size):
     """Plugin Nautilus - Trash"""
-    tools.debug_output('prepare_plugin_nautilus_open_trash', 'starting', 1, __name__)
+    tools.debug_output(__name__, 'prepare_plugin_nautilus_open_trash', 'starting', 1)
 
     ## update plugin info
     main_window.plugin__update_general_ui_information('Nautilus (Trash)')
