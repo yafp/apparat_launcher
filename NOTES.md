@@ -17,3 +17,7 @@ apparat_launcher notes
 # Packaging
 ## Creating a minimal setup.py
 * http://python-packaging.readthedocs.io/en/latest/minimal.html
+
+
+# Debugging
+```python -m pdb apparat_launcher.py```

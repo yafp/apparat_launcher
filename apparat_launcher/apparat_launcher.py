@@ -52,8 +52,7 @@ else: # python 2.x
 # -----------------------------------------------------------------------------------------------
 is_combobox_open = 0
 is_resetted = True
-#icon_size = 128 # set a default value
-
+icon_size = 128
 
 # -----------------------------------------------------------------------------------------------
 # MAIN
@@ -69,7 +68,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
     def __init__(self, parent, title): # pylint:disable=too-many-statements
         """Initialize the MainWindow"""
         ## Update Statistics (ini) - Apparat launched
-        tools.debug_output('__init__', 'Updating statistics (apparat_started)', 1, __name__)
+        tools.debug_output(__name__, '__init__', 'Updating statistics (apparat_started)', 1)
         cur_app_start_count = ini.read_single_ini_value('Statistics', 'apparat_started')          # get current value from ini
         ini.write_single_ini_value('Statistics', 'apparat_started', int(cur_app_start_count)+1)    # update ini +1
 
@@ -254,22 +253,22 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def on_key_down(self, event):
         """On Key Down in main ui"""
-        tools.debug_output('on_key_down', 'starting with event: '+str(event), 0, __name__)
-        tools.debug_output('on_key_down', 'Currently focus is at: '+str(self.FindFocus()), 1, __name__)
+        tools.debug_output(__name__, 'on_key_down', 'starting with event: '+str(event), 0)
+        tools.debug_output(__name__, 'on_key_down', 'Currently focus is at: '+str(self.FindFocus()), 1)
         focused_object = self.FindFocus()
-        tools.debug_output('on_key_down', str(focused_object), 1)
+        tools.debug_output(__name__, 'on_key_down', str(focused_object), 1)
         if focused_object is None or focused_object == 'None':
-            tools.debug_output('on_key_down', 'Focused object is empty', 1)
+            tools.debug_output(__name__, 'on_key_down', 'Focused object is empty', 1)
             self.ui__bt_command.SetFocus()
-            tools.debug_output('on_key_down', 'Set focus to command button, ending function here.', 1, __name__)
+            tools.debug_output(__name__, 'on_key_down', 'Set focus to command button, ending function here.', 1)
             return
 
-        tools.debug_output('on_key_down', focused_object.GetLabel(), 1)
+        tools.debug_output(__name__, 'on_key_down', focused_object.GetLabel(), 1)
 
         if focused_object.GetLabel() == 'Status' or focused_object.GetLabel() == 'Preferences':
             self.ui__cb_search.SetFocus() # set focus to search
             self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
-            tools.debug_output('on_key_down', 'Set focus back to search.', 1, __name__)
+            tools.debug_output(__name__, 'on_key_down', 'Set focus back to search.', 1)
             return
 
         if focused_object.GetLabel() == 'Search':
@@ -278,26 +277,26 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         if focused_object.GetLabel() == 'Applications':
             self.ui__bt_parameter.SetFocus()
-            tools.debug_output('on_key_down', 'Set focus to parameter button', 1, __name__)
+            tools.debug_output(__name__, 'on_key_down', 'Set focus to parameter button', 1)
             return
 
         if focused_object.GetLabel() == 'Options':
             self.ui__cb_search.SetFocus() # set focus to search
             self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
-            tools.debug_output('on_key_down', 'Set focus back to search.', 1, __name__)
+            tools.debug_output(__name__, 'on_key_down', 'Set focus back to search.', 1)
             return
 
         else:
-            tools.debug_output('on_key_down', 'Focus in on an unexpected place', 1, __name__)
-            tools.debug_output('on_key_down', focused_object.GetLabel(), 1, __name__)
+            tools.debug_output(__name__, 'on_key_down', 'Focus in on an unexpected place', 1)
+            tools.debug_output(__name__, 'on_key_down', focused_object.GetLabel(), 1)
             self.ui__cb_search.SetFocus() # set focus to search
             self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
-            tools.debug_output('on_key_down', 'Set focus back to search.', 1, __name__)
+            tools.debug_output(__name__, 'on_key_down', 'Set focus back to search.', 1)
 
 
     def on_close_application(self, event):
         """Method to close the app"""
-        tools.debug_output('on_close_application', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_close_application', 'starting with event: '+str(event), 0)
         self.tbicon.RemoveIcon()
         self.tbicon.Destroy()
         self.Destroy()
@@ -307,46 +306,46 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def on_clicked_parameter_button(self, event):
         """If the parameter button was clicked"""
-        tools.debug_output('on_clicked_parameter_button', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_clicked_parameter_button', 'starting with event: '+str(event), 0)
         self.do_execute()
         self.ui__cb_search.SetFocus()
 
 
     def on_clicked(self, event):
         """General click handler - using label to find source"""
-        tools.debug_output('on_clicked', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_clicked', 'starting with event: '+str(event), 0)
         btn = event.GetEventObject().GetLabel()
         if btn == 'Preferences':
-            tools.debug_output('on_clicked', 'Preferences', 1, __name__)
+            tools.debug_output(__name__, 'on_clicked', 'Preferences', 1)
             self.open_preference_window()
         else:
-            tools.debug_output('on_clicked', 'Something else got clicked', 1, __name__)
+            tools.debug_output(__name__, 'on_clicked', 'Something else got clicked', 1)
 
 
     def open_preference_window(self):
         """Opens the preference window"""
-        tools.debug_output('open_preference_window', 'starting', 0, __name__)
+        tools.debug_output(__name__, 'open_preference_window', 'starting', 0)
         self.prefWindow = prefs.PreferenceWindow(parent=None, idd=-1)
         self.prefWindow.Show()
 
 
     def on_combobox_text_changed(self, event):
         """Triggered if the combobox text changes"""
-        tools.debug_output('on_combobox_text_changed', 'starting with event:'+str(event), 0)
+        tools.debug_output(__name__, 'on_combobox_text_changed', 'starting with event:'+str(event), 0)
         if self.ui__cb_search.GetValue() == '': #searchstring is empty
-            tools.debug_output('on_combobox_text_changed', 'New searchstring: <empty>. Nothing do to', 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_text_changed', 'New searchstring: <empty>. Nothing do to', 1)
             # baustelle
             #self.reset_ui()
             #event.Skip()
         else:
-            tools.debug_output('on_combobox_text_changed', 'New searchstring: '+self.ui__cb_search.GetValue().lower(), 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_text_changed', 'New searchstring: '+self.ui__cb_search.GetValue().lower(), 1)
             global is_resetted
             is_resetted = False
 
 
     def on_combobox_enter(self, event):
         """Triggered if Enter was pressed in combobox"""
-        tools.debug_output('on_combobox_enter', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_combobox_enter', 'starting with event: '+str(event), 0)
         if len(self.ui__cb_search.GetValue()) > 0:
             global is_resetted
             is_resetted = False
@@ -356,18 +355,18 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 self.do_execute()
 
             else: ## enter was pressed to close the combobox
-                tools.debug_output('on_combobox_enter', 'Pressed enter to close the open combobox', 1, __name__)
+                tools.debug_output(__name__, 'on_combobox_enter', 'Pressed enter to close the open combobox', 1)
                 is_combobox_open = 0 # global var to keep track if dropdown is open or closed
 
                 ## run search again after selecting the desired search string from dropdown
                 self.parse_user_input(self.ui__cb_search.GetValue().lower())
         else:
-            tools.debug_output('on_combobox_enter', 'Combobox is empty, nothing to do here.', 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_enter', 'Combobox is empty, nothing to do here.', 1)
 
 
     def on_combobox_select_item(self, event):
         """If an item of the result-list was selected"""
-        tools.debug_output('on_combobox_select_item', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_combobox_select_item', 'starting with event: '+str(event), 0)
 
         if(self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search'): # Local search is always using xdg-open - special case
             self.ui__txt_parameter.SetValue(self.ui__cb_search.GetValue().lower()) # write command to command text field
@@ -376,12 +375,12 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.get_icon(self.ui__cb_search.GetValue().lower()) # get icon for selected executable
 
         self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
-        tools.debug_output('on_combobox_select_item', 'finished', 1, __name__)
+        tools.debug_output(__name__, 'on_combobox_select_item', 'finished', 1)
 
 
     def on_combobox_popup_open(self, event):
         """If the popup of the combobox gets opened"""
-        tools.debug_output('on_combobox_popup_open', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_combobox_popup_open', 'starting with event: '+str(event), 0)
         global is_combobox_open
         is_combobox_open = True
 
@@ -389,79 +388,79 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__cb_search.SetSelection(0) # is default
         if 'Ubuntu' in platform.linux_distribution():
             subprocess.Popen(["xdotool", "key", "Down"]) # simulate key press to highlight the choosen value as well
-        tools.debug_output('on_combobox_popup_open', 'finished', 1, __name__)
+        tools.debug_output(__name__, 'on_combobox_popup_open', 'finished', 1)
 
 
     def on_combobox_popup_close(self, event):
         """If the popup of the combobox is closed"""
-        tools.debug_output('on_combobox_popup_close', 'starting with event: '+str(event), 0, __name__)
-        tools.debug_output('on_combobox_popup_close', 'combobox just got closed', 1, __name__)
+        tools.debug_output(__name__, 'on_combobox_popup_close', 'starting with event: '+str(event), 0)
+        tools.debug_output(__name__, 'on_combobox_popup_close', 'combobox just got closed', 1)
         self.get_icon(self.ui__cb_search.GetValue().lower()) # get icon for selected executable
         global is_combobox_open
         is_combobox_open = False
-        tools.debug_output('on_combobox_popup_close', 'finished', 1, __name__)
+        tools.debug_output(__name__, 'on_combobox_popup_close', 'finished', 1)
 
 
     def on_combobox_key_press(self, event):
         """If content of the searchfield of the combobox changes"""
-        tools.debug_output('on_combobox_key_press', 'starting with event: '+str(event), 0)
+        tools.debug_output(__name__, 'on_combobox_key_press', 'starting with event: '+str(event), 0)
         global is_combobox_open
 
         current_keycode = event.GetKeyCode()
-        tools.debug_output('on_combobox_key_press', 'KeyCode: '+str(current_keycode), 1, __name__)
+        tools.debug_output(__name__, 'on_combobox_key_press', 'KeyCode: '+str(current_keycode), 1)
 
         if current_keycode == 27: # Key: ESC
-            tools.debug_output('on_combobox_key_press', 'ESC in combobox', 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_key_press', 'ESC in combobox', 1)
             if(is_resetted is False):
-                tools.debug_output('on_combobox_key_press', 'Launch reset method', 1, __name__)
+                tools.debug_output(__name__, 'on_combobox_key_press', 'Launch reset method', 1)
                 self.reset_ui()
             else: # hide main window
-                tools.debug_output('on_combobox_key_press', 'UI is already resetted', 1, __name__)
-                self.tbicon.execute_tray_icon_left_click()
+                tools.debug_output(__name__, 'on_combobox_key_press', 'UI is already resetted', 1)
+                self.tbicon.execute_tray_icon_left_click() # click tray-icon to hide main-ui
 
         elif current_keycode == wx.WXK_BACK: # Key: Backspace
-            tools.debug_output('on_combobox_key_press', 'Pressed Backspace', 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_key_press', 'Pressed Backspace', 1)
             current_search_string = self.ui__cb_search.GetValue().lower()
             if current_search_string.startswith('!'):
                 self.get_enabled_plugin_trigger(current_search_string, autocomplete=False) # False to prevent re-autocomplete after user tried to revert the former autocomplete
-            else:
+            else: #most likely a normal search for executables
                 self.parse_user_input(current_search_string)
 
         elif current_keycode == wx.WXK_TAB: # Key: Tab
             event.Skip()
 
         elif current_keycode == 317:    # Key: Arrow Down
-            tools.debug_output('on_combobox_key_press', 'ARROW DOWN in combobox', 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_key_press', 'ARROW DOWN in combobox', 1)
             if(self.ui__txt_result_counter.GetValue() != '0'):
                 self.ui__cb_search.Popup()
-                tools.debug_output('on_combobox_key_press', 'Opening dropdown', 1, __name__)
+                tools.debug_output(__name__, 'on_combobox_key_press', 'Opening dropdown', 1)
                 is_combobox_open = 1
             else:
-                tools.debug_output('on_combobox_key_press', 'No result, so no need to open the dropdown', 1, __name__)
+                tools.debug_output(__name__, 'on_combobox_key_press', 'No result, so no need to open the dropdown', 1)
                 is_combobox_open = 0
 
         elif current_keycode == 13: # Key: Enter
-            tools.debug_output('on_combobox_key_press', 'ENTER was pressed - ignoring it because of "on_combobox_enter"', 1, __name__)
+            tools.debug_output(__name__, 'on_combobox_key_press', 'ENTER was pressed - ignoring it because of "on_combobox_enter"', 1)
             self.parse_user_input(self.ui__cb_search.GetValue().lower())
             is_combobox_open = 0
 
         else:
             current_search_string = self.ui__cb_search.GetValue().lower()
-            if len(current_search_string) == 0:
-                tools.debug_output('on_combobox_key_press', 'Searchstring: <empty>. Trigger reset_ui method', 1, __name__)
+            if (current_search_string) == "":
+                tools.debug_output(__name__, 'on_combobox_key_press', 'Searchstring: <empty>. Trigger reset_ui method', 1)
                 self.reset_ui()
             else:
-                tools.debug_output('on_combobox_key_press', 'Searching: '+current_search_string, 1, __name__)
+                tools.debug_output(__name__, 'on_combobox_key_press', 'Searching: '+current_search_string, 1)
                 self.parse_user_input(current_search_string)
 
 
     def get_icon(self, full_executable_name): # pylint:disable=too-many-branches,too-many-statements
         """Tries to get an icon for an executable by name"""
-        tools.debug_output('get_icon', 'Starting icon search for: '+full_executable_name, 0, __name__)
+        tools.debug_output(__name__, 'get_icon', 'Starting icon search for: '+full_executable_name, 0)
 
         ## Abort if a plugin is activated
         if(self.ui__txt_plugin_information.GetValue() != '') or self.ui__cb_search.GetValue().startswith('!'):
-            tools.debug_output('get_icon', 'Aborted as everything points into plugin direction', 2, __name__)
+            tools.debug_output(__name__, 'get_icon', 'Aborted as everything points into plugin direction', 2)
             return
 
         global icon_size
@@ -473,16 +472,16 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         if theme is None: # fallback to hicolor icon theme if none was detected
             theme = xdg.Config.icon_theme # hicolor
-            tools.debug_output('get_icon', 'Using fallback icon theme hicolor', 2, __name__)
+            tools.debug_output(__name__, 'get_icon', 'Using fallback icon theme hicolor', 2)
 
-        tools.debug_output('get_icon', 'Using icon theme: '+theme, 1, __name__)
+        tools.debug_output(__name__, 'get_icon', 'Using icon theme: '+theme, 1)
         icon = xdg.IconTheme.getIconPath(full_executable_name, size=int(icon_size), theme=theme, extensions=['png'])
 
         if(icon is None) or (icon is "") or '.svg' in icon: # use default icon
             new_app_icon = wx.Image('gfx/core/'+icon_size+'/missingAppIcon.png', wx.BITMAP_TYPE_PNG)
-            tools.debug_output('get_icon', 'Selected icon: DEFAULT', 2, __name__)
+            tools.debug_output(__name__, 'get_icon', 'Selected icon: DEFAULT', 2)
         else:
-            tools.debug_output('get_icon', 'Selected icon: '+icon, 1, __name__)
+            tools.debug_output(__name__, 'get_icon', 'Selected icon: '+icon, 1)
             new_app_icon = wx.Image(icon, wx.BITMAP_TYPE_ANY)    # define new image
             new_app_icon.Rescale(int(icon_size), int(icon_size)) # rescale image
 
@@ -502,14 +501,14 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def plugin__update_general_ui_information(self, plugin_name):
         """set some general UI values after having a plugin triggered"""
-        tools.debug_output('plugin__update_general_ui_information', 'started', 0, __name__)
+        tools.debug_output(__name__, 'plugin__update_general_ui_information', 'started', 0)
         if(plugin_name != ''):
             self.ui__bt_command.Enable(True) # enable command button
             self.ui__bt_parameter.Enable(True) # Enable parameter button
             self.ui__txt_result_counter.SetValue('1') ## set result-count
             self.ui__txt_command.SetValue(self.ui__cb_search.GetValue().lower()[:3]) ## update command (Example: !g)
             self.ui__txt_plugin_information.SetValue('Plugin: '+plugin_name) # Plugin Name in specific field
-            tools.debug_output('plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated', 1, __name__)
+            tools.debug_output(__name__, 'plugin__update_general_ui_information', 'Plugin '+plugin_name+' activated', 1)
 
             self.status_notification_got_distinct_result()
         else:
@@ -536,20 +535,22 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def get_enabled_plugin_trigger(self, current_search_string, autocomplete=True):
         """Fill result list with all commands/triggers from the enabled plugins"""
-        tools.debug_output('get_enabled_plugin_trigger', 'starting', 0, __name__)
+        tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'starting', 0)
 
         ## collect all plugin commands from the enabled plugins and add them to the dropdown
         plugin_commands = plugin_core.TRIGGER # add core commands
-        for i in plugin_core.PLUGINS:
-            if i != 'plugin_search_local': # plugin_search_local gets ignored
+        for current_plugin in plugin_core.PLUGINS:
+            if current_plugin != 'plugin_search_local': # plugin_search_local gets ignored
                 # check if plugin is currently enabled
-                tools.debug_output('get_enabled_plugin_trigger', 'Checking if '+i+' is enabled', 0, __name__)
-                ini_value_for_current_plugin = ini.read_single_ini_value('Plugins', i) # get current value from ini
+                tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Checking if '+current_plugin+' is enabled', 0)
+                ini_value_for_current_plugin = ini.read_single_ini_value('Plugins', current_plugin) # get current value from ini
                 if ini_value_for_current_plugin == 'True':
-                    tools.debug_output('get_enabled_plugin_trigger', 'Adding commands of '+i+' to enabled plugin command list', 1, __name__)
-                    plugin_commands = plugin_commands + eval(i).TRIGGER # add plugin commands to plugin_commands tuple
+                    tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Adding commands of '+current_plugin+' to enabled plugin command list', 1)
+                    plugin_commands = plugin_commands + eval(current_plugin).TRIGGER # add plugin commands to plugin_commands tuple
 
-        ## filter out those which dont match the searchstring
+        ## filter out those plugin-commands which dont match the searchstring
+        #
+        # fnmatch return a list, while apparat is using tuple. Any idea how to improve this section?
         plugin_commands = fnmatch.filter(plugin_commands, '*'+current_search_string+'*') # search for executables matching users searchstring
         plugin_commands = sorted(plugin_commands)
 
@@ -564,48 +565,44 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_command.SetToolTipString("Plugin-Search") # set tooltip
         self.ui__txt_command.SetValue('') # set command
 
-        # depending on amount of results
+        ## depending on amount of results
         if(len(plugin_commands) == 0):
-            tools.debug_output('get_enabled_plugin_trigger', 'Found 0 enabled matching plugin commands', 2, __name__)
+            tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Found 0 enabled matching plugin commands', 2)
             self.status_notification_display_error('Invalid input')
 
         elif(len(plugin_commands) == 1):
-            tools.debug_output('get_enabled_plugin_trigger', 'Found 1 enabled matching plugin commands, gonna autocomplete now', 1, __name__)
+            tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Found 1 enabled matching plugin commands, gonna autocomplete now', 1)
             self.status_notification_got_distinct_result()
 
             if(autocomplete is True):
-                self.ui__cb_search.SetSelection(0) # is default
+                self.ui__cb_search.SetSelection(0)
                 self.parse_user_input(self.ui__cb_search.GetValue().lower()) # to parse the new command and adopt the UI to it
 
-            #if 'Ubuntu' in platform.linux_distribution():
-                #subprocess.Popen(["xdotool", "key", "Down"]) # simulate key press to highlight the choosen value as well
-
             self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
-            #self.parse_user_input(self.ui__cb_search.GetValue().lower()) # to parse the new command and adopt the UI to it
 
         else:
-            tools.debug_output('get_enabled_plugin_trigger', 'Found >1 enabled matching plugin commands', 1, __name__)
+            tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Found >1 enabled matching plugin commands', 1)
             self.status_notification_reset()
 
-        tools.debug_output('get_enabled_plugin_trigger', 'found '+str(len(plugin_commands))+' plugin trigger for current user input: '+current_search_string, 0, __name__)
-        tools.debug_output('get_enabled_plugin_trigger', 'finished', 0, __name__)
+        tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'found '+str(len(plugin_commands))+' plugin trigger for current user input: '+current_search_string, 0)
+        tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'finished', 0)
 
 
     def parse_user_input(self, current_search_string): # pylint:disable=too-many-return-statements, too-many-branches, too-many-statements
         """Takes the current user input and parses it for matching plugins or general application search"""
-        tools.debug_output('parse_user_input', 'starting', 0, __name__)
+        tools.debug_output(__name__, 'parse_user_input', 'starting', 0)
         if current_search_string != '': # if there is a search string
 
-            ## Search for executables - core-launcher-task
+            ## Search for executables
             if current_search_string[:1] != '!' and current_search_string[:1] != '?':
                 self.search_executables(current_search_string)
                 return
 
-            else: # Looks like it is a plugin
+            else: # Looks like it is a plugin call then
 
                 ## Reset UI partly if search is just !
                 if current_search_string == '!':
-                    tools.debug_output('parse_user_input', 'Case: !', 1, __name__)
+                    tools.debug_output(__name__, 'parse_user_input', 'Case: !', 1)
                     self.plugin__update_general_ui_information('')
 
                 ## Plugin: Core (can not be disabled)
@@ -670,7 +667,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                         return
 
                 ## Most likely a wrong plugin command as nothing matches so far in this case
-                tools.debug_output('parse_user_input', 'User input didnt match any plugin trigger', 2, __name__)
+                tools.debug_output(__name__, 'parse_user_input', 'User input didnt match any plugin trigger', 2)
 
                 ## reset plugin information
                 self.ui__txt_plugin_information.SetValue('')
@@ -689,20 +686,20 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 self.ui__bt_parameter.Enable(False)
                 self.ui__txt_parameter.SetValue('')
 
-                self.get_enabled_plugin_trigger(current_search_string, autocomplete=True)
+                self.get_enabled_plugin_trigger(current_search_string, autocomplete=True) # collect all enabled plugin-commands for plugin-command-search and filtering
 
                 return
 
-            ## Nothing matched (no plugin and no executable -> display error
+            ## Nothing matched (no plugin and no executable -> display error)
             self.status_notification_display_error('Invalid or incomplete input')
-            tools.debug_output('parse_user_input', 'User input didnt match any trigger at all', 2, __name__)
+            tools.debug_output(__name__, 'parse_user_input', 'User input didnt match any trigger at all', 2)
 
         else: ## search string is empty
 
             if is_resetted is True:
-                tools.debug_output('parse_user_input', 'Empty search string and UI is already resetted. Nothing to do.', 1, __name__)
+                tools.debug_output(__name__, 'parse_user_input', 'Empty search string and UI is already resetted. Nothing to do.', 1)
             else:
-                tools.debug_output('parse_user_input', 'Empty search string, but UI is not yet resetted. Triggering it now.', 1, __name__)
+                tools.debug_output(__name__, 'parse_user_input', 'Empty search string, but UI is not yet resetted. Triggering it now.', 1)
                 self.reset_ui()
 
 
@@ -710,14 +707,14 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         """Searches for executables"""
         self.plugin__update_general_ui_information('') # get rid of all plugin UI-artefacts
 
-        tools.debug_output('search_executables', 'Searching executables for the following string: '+current_search_string, 0, __name__)
+        tools.debug_output(__name__, 'search_executables', 'Searching executables for the following string: '+current_search_string, 0)
         search_results = fnmatch.filter(os.listdir('/usr/bin'), '*'+current_search_string+'*')     # search for executables matching users searchstring
         search_results = sorted(search_results, key=lambda x: difflib.SequenceMatcher(None, x, current_search_string).ratio(), reverse=True) # better sorting
 
         self.ui__txt_result_counter.SetValue(str(len(search_results))) # update result count
         self.ui__cb_search.SetItems(search_results) # update combobox
 
-        tools.debug_output('search_executables', 'Found '+str(len(search_results))+' matching application', 1, __name__)
+        tools.debug_output(__name__, 'search_executables', 'Found '+str(len(search_results))+' matching application', 1)
         if len(search_results) == 0: # 0 results
             ## update status button
             self.status_notification_display_error('No executables found')
@@ -776,13 +773,13 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def check_for_existing_app_instances(self, application_name):
         """checks if there are already existing instances/processes of an given app - to decide if launching or focusing makes more sense"""
-        tools.debug_output('check_for_existing_app_instances', "Checking for existing instances of: "+application_name, 0, __name__)
+        tools.debug_output(__name__, 'check_for_existing_app_instances', "Checking for existing instances of: "+application_name, 0)
         for pid in psutil.pids():
             p = psutil.Process(pid)
             if p.name() == application_name:
-                tools.debug_output('check_for_existing_app_instances', "Found instance of: "+ str(p.cmdline())+" ### Details: "+str(p), 1, __name__)
-                tools.debug_output('check_for_existing_app_instances', "Name: "+str(p.name()), 1, __name__)
-                tools.debug_output('check_for_existing_app_instances', "PID: "+str(p.pid), 1, __name__)
+                tools.debug_output(__name__, 'check_for_existing_app_instances', "Found instance of: "+ str(p.cmdline())+" ### Details: "+str(p), 1)
+                tools.debug_output(__name__, 'check_for_existing_app_instances', "Name: "+str(p.name()), 1)
+                tools.debug_output(__name__, 'check_for_existing_app_instances', "PID: "+str(p.pid), 1)
 
                 ## focus app
                 #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" --name "+str(p.name())+" windowactivate"], shell=True)
@@ -796,85 +793,85 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         parameter = self.ui__txt_parameter.GetValue() ## get parameter
 
         if(command == ''): # Executing with empty command is non-sense
-            tools.debug_output('do_execute', 'Command is empty, nothing to do. Aborting', 3, __name__)
+            tools.debug_output(__name__, 'do_execute', 'Command is empty, nothing to do. Aborting', 3)
             return
 
-        tools.debug_output('do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"', 1, __name__)
+        tools.debug_output(__name__, 'do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"', 1)
 
-        ## Plugin: Misc - Open
+        ## Plugin: Misc
         if self.ui__txt_plugin_information.GetValue() == 'Plugin: Misc (Open)':
             if parameter == '':
                 self.status_notification_display_error('No parameter supplied for !open')
                 return
             else: # check if parameter-path exists
-                tools.debug_output('do_execute', '!open - check if parameter is valid', 1, __name__)
+                tools.debug_output(__name__, 'do_execute', '!open - check if parameter is valid', 1)
                 # is parameter a file or folder
                 if os.path.isfile(parameter) or os.path.isdir(parameter):
-                    tools.debug_output('do_execute', '!open - parameter is valid', 1, __name__)
+                    tools.debug_output(__name__, 'do_execute', '!open - parameter is valid', 1)
                 else:
-                    tools.debug_output('do_execute', '!open - parameter is not valid', 3, __name__)
+                    tools.debug_output(__name__, 'do_execute', '!open - parameter is not valid', 3)
                     self.status_notification_display_error('Invalid parameter')
                     return
-
-        ## Plugin: Internet-Search
-        if command in plugin_search_internet.TRIGGER:
-            plugin_search_internet.execute_internet_search(self, command, parameter)
-            return
 
         ## Plugin: PasswordGen
         if command in plugin_passwordgen.TRIGGER or command == '!pa':
             plugin_passwordgen.execute_password_generation(self)
             return
 
-        ## Plugin: Session/Screenshot/Nautilus/Shell OR normal application
+        ## Plugin: Internet-Search
+        if command in plugin_search_internet.TRIGGER:
+            plugin_search_internet.execute_internet_search(self, command, parameter)
+            return
+
+        ## Plugin: Session/Screenshot/Nautilus/Shell/X/Y OR normal application/executable
         if command is not None: # Check if the dropdown contains something at all or not
-            tools.debug_output('do_execute', 'Should execute: "'+command+'" with parameter: "'+parameter+'"', 1, __name__)
+            tools.debug_output(__name__, 'do_execute', 'Should execute: "'+command+'" with parameter: "'+parameter+'"', 1)
 
             ## check if name exists and is executable
             executable_exists = tools.cmd_exists(command)
             if executable_exists is True:
-                tools.debug_output('do_execute', 'Executable: "'+command+'" exists', 1, __name__)
+                tools.debug_output(__name__, 'do_execute', 'Executable: "'+command+'" exists', 1)
 
                 ## usage-statistics: commands executed
-                tools.debug_output('do_execute', 'Updating statistics (command_executed)', 1, __name__)
+                tools.debug_output(__name__, 'do_execute', 'Updating statistics (command_executed)', 1)
                 current_commands_executed_count = ini.read_single_ini_value('Statistics', 'command_executed')          # get current value from ini
                 ini.write_single_ini_value('Statistics', 'command_executed', int(current_commands_executed_count)+1) # update ini +1
 
                 ## usage-statistics: plugin execution count
                 if self.ui__txt_plugin_information != '':
-                    tools.debug_output('do_execute', 'Updating statistics (plugins_executed)', 1, __name__)
+                    tools.debug_output(__name__, 'do_execute', 'Updating statistics (plugins_executed)', 1)
                     current_plugin_executed_count = ini.read_single_ini_value('Statistics', 'plugin_executed')          # get current value from ini
                     ini.write_single_ini_value('Statistics', 'plugin_executed', int(current_plugin_executed_count)+1) # update ini +1
 
                 ## Start subprocess
                 if parameter == '':
                     subprocess.Popen([command])
-                    tools.debug_output('do_execute', 'Executed: "'+command+'"', 1, __name__)
+                    tools.debug_output(__name__, 'do_execute', 'Executed: "'+command+'"', 1)
                 else: # there is at least 1 parameter
                     if(' ' in parameter): # if parameter contains at least 1 space, there are most likely several parameters
                         subprocess.Popen([command+" "+parameter], shell=True) # using shell=True as hack for handling several parameters (i.e. for !fs)
-                        tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'" (with shell=True)', 1, __name__)
+                        tools.debug_output(__name__, 'do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'" (with shell=True)', 1)
                     else: # assuming: single parameter
                         subprocess.Popen([command, parameter])
-                        tools.debug_output('do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'"', 1, __name__)
+                        tools.debug_output(__name__, 'do_execute', 'Executed: "'+command+'" with parameter: "'+parameter+'"', 1)
 
                 self.reset_ui()
 
                 ## Optional: if enabled in ini - hide the Main UI after executing the command
                 cur_ini_value_for_hide_ui_after_command_execution = ini.read_single_ini_value('General', 'hide_ui_after_command_execution') # get current value from ini
                 if cur_ini_value_for_hide_ui_after_command_execution == 'True':
-                    tools.debug_output('do_execute', 'Hide Main UI after executing a command', 1, __name__)
+                    tools.debug_output(__name__, 'do_execute', 'Hide Main UI after executing a command', 1)
                     self.tbicon.execute_tray_icon_left_click()
             else:
-                tools.debug_output('do_execute', 'ERROR >> Checking the "'+command+'" executable failed', 3, __name__)
+                tools.debug_output(__name__, 'do_execute', 'ERROR >> Checking the "'+command+'" executable failed', 3)
                 self.status_notification_display_error('Checking the executable failed')
         else:
-            tools.debug_output('do_execute', 'WARNING >> command is "None", aborting now', 3, __name__)
+            tools.debug_output(__name__, 'do_execute', 'WARNING >> command is "None", aborting now', 3)
 
 
     def status_notification_display_error(self, error_string):
         """displays an error string and symbol in the status area"""
-        tools.debug_output('status_notification_display_error', 'Error: '+error_string, 3, __name__)
+        tools.debug_output(__name__, 'status_notification_display_error', 'Error: '+error_string, 3)
         self.ui__bt_status.Enable(True)
         self.ui__bt_status.SetToolTipString(error_string)
         self.ui__bt_status_img = wx.Bitmap('gfx/core/16/status_error_red.png', wx.BITMAP_TYPE_PNG)
@@ -884,17 +881,16 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def status_notification_reset(self):
         """resets the status notification back to default"""
-        tools.debug_output('status_notification_reset', 'Reset notification area back to blank', 0, __name__)
+        tools.debug_output(__name__, 'status_notification_reset', 'Reset notification area back to blank', 0)
         self.ui__bt_status.Enable(False)
         self.ui__bt_status.SetToolTipString('')
         self.ui__bt_status_img = wx.Bitmap('gfx/core/16/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_status.SetBitmap(self.ui__bt_status_img)
-        #self.Refresh()
 
 
     def status_notification_got_distinct_result(self):
         """sets status notification to distinct result -> green color"""
-        tools.debug_output('status_notification_got_distinct_result', 'Got 1 distinct result - show green status', 0, __name__)
+        tools.debug_output(__name__, 'status_notification_got_distinct_result', 'Got 1 distinct result - show green status', 0)
         self.ui__bt_status.Enable(True)
         self.ui__bt_status.SetToolTipString('Valid command')
         self.ui__bt_status_img = wx.Bitmap('gfx/core/16/status_ok_green.png', wx.BITMAP_TYPE_PNG)
@@ -904,14 +900,13 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
     def open_app_url(self):
         """Method to open the application URL  (GitHub project)"""
-        tools.debug_output('open_app_url', 'Opening '+constants.APP_URL+' in default browser', 1, __name__)
+        tools.debug_output(__name__, 'open_app_url', 'Opening '+constants.APP_URL+' in default browser', 1)
         webbrowser.open(constants.APP_URL+'#top')  # Go to github
-        tools.debug_output('open_app_url', 'finished', 1, __name__)
 
 
     def reset_ui(self):
         """Method to reset the User-Interface of the Apps main-window"""
-        tools.debug_output('reset_ui', 'Starting UI reset', 0, __name__)
+        tools.debug_output(__name__, 'reset_ui', 'Starting UI reset', 0)
 
         ## reset the status
         self.status_notification_reset()
@@ -938,7 +933,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         global is_resetted
         is_resetted = True
 
-        tools.debug_output('reset_ui', 'Finished UI reset', 1, __name__)
+        tools.debug_output(__name__, 'reset_ui', 'Finished UI reset', 1)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -946,7 +941,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def create_menu_item(menu, label, func):
     """Generates single menu items for the tray icon popup menu"""
-    tools.debug_output('create_menu_item', 'Menuitem: '+label, 1, __name__)
+    tools.debug_output(__name__, 'create_menu_item', 'Menuitem: '+label, 1)
     item = wx.MenuItem(menu, -1, label)
     menu.Bind(wx.EVT_MENU, func, id=item.GetId())
     menu.AppendItem(item)
@@ -962,17 +957,17 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
 
     def __init__(self, frame):
         """Method to initialize the tray icon"""
-        tools.debug_output('__init__ (TaskBarIcon)', 'starting', 0, __name__)
+        tools.debug_output(__name__, '__init__ (TaskBarIcon)', 'starting', 0)
         self.frame = frame
         super(TaskBarIcon, self).__init__()
         self.set_tray_icon(constants.APP_TRAY_ICON)
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_app_tray_icon_left_click)
-        tools.debug_output('__init__ (TaskBarIcon)', 'Task icon is ready now', 1, __name__)
+        tools.debug_output(__name__, '__init__ (TaskBarIcon)', 'Task icon is ready now', 1)
 
 
     def CreatePopupMenu(self): # pylint:disable=invalid-name
         """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
-        tools.debug_output('CreatePopupMenu', 'starting', 0, __name__)
+        tools.debug_output(__name__, 'CreatePopupMenu', 'starting', 0)
         menu = wx.Menu()
         create_menu_item(menu, 'Show', self.on_tray_popup_left_show)
         menu.AppendSeparator()
@@ -981,7 +976,6 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
         create_menu_item(menu, 'GitHub', self.on_tray_popup_click_github)
         menu.AppendSeparator()
         create_menu_item(menu, 'Exit', self.on_tray_popup_click_exit)
-        tools.debug_output('CreatePopupMenu', 'finished', 1, __name__)
         return menu
 
 
@@ -993,39 +987,39 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
 
     def on_app_tray_icon_left_click(self, event):
         """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
-        tools.debug_output('on_app_tray_icon_left_click', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_app_tray_icon_left_click', 'starting with event: '+str(event), 0)
         self.execute_tray_icon_left_click()
 
 
     def execute_tray_icon_left_click(self):
         """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
         if self.frame.IsIconized(): # if main window is minimized
-            tools.debug_output('execute_tray_icon_left_click', 'MainWindow is now visible', 1, __name__)
+            tools.debug_output(__name__, 'execute_tray_icon_left_click', 'MainWindow is now visible', 1)
             self.frame.Raise()
         else: # if main window is shown
-            tools.debug_output('execute_tray_icon_left_click', 'MainWindow is now hidden/minimized', 1, __name__)
+            tools.debug_output(__name__, 'execute_tray_icon_left_click', 'MainWindow is now hidden/minimized', 1)
             self.frame.Iconize(True)
 
 
     def on_tray_popup_left_show(self, event):
         """Method to handle click in the 'Show mainwindow' tray menu item"""
-        tools.debug_output('on_tray_popup_left_show', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_tray_popup_left_show', 'starting with event: '+str(event), 0)
         if self.frame.IsIconized(): # if main window is minimized
-            tools.debug_output('on_tray_popup_left_show', 'MainWindow is now visible', 1, __name__)
+            tools.debug_output(__name__, 'on_tray_popup_left_show', 'MainWindow is now visible', 1)
             self.frame.Raise()
         else: # if main window is shown
-            tools.debug_output('on_tray_popup_left_show', 'MainWindow is already shown, nothing to do here', 1, __name__)
+            tools.debug_output(__name__, 'on_tray_popup_left_show', 'MainWindow is already shown, nothing to do here', 1)
 
 
     def on_tray_popup_click_preferences(self, event):
         """Method to handle click in the 'Preferences' tray menu item"""
-        tools.debug_output('on_tray_popup_click_preferences', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_tray_popup_click_preferences', 'starting with event: '+str(event), 0)
         self.open_preference_window()
 
 
     def on_tray_popup_click_about(self, event):
         """Method to handle click in the 'About' tray menu item"""
-        tools.debug_output('on_tray_popup_click_about', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_tray_popup_click_about', 'starting with event: '+str(event), 0)
         aboutInfo = wx.AboutDialogInfo()
         aboutInfo.SetName(constants.APP_NAME)
         aboutInfo.SetVersion(version.APP_VERSION)
@@ -1040,14 +1034,14 @@ class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
 
     def on_tray_popup_click_exit(self, event):
         """Method to handle click in the 'Exit' tray menu item"""
-        tools.debug_output('on_tray_popup_click_exit', 'starting with event: '+str(event), 0, __name__)
+        tools.debug_output(__name__, 'on_tray_popup_click_exit', 'starting with event: '+str(event), 0)
         wx.CallAfter(self.frame.Close)
 
 
     def on_tray_popup_click_github(self, event):
         """Method to handle click on the 'GitHub' tray menu item"""
-        tools.debug_output('on_tray_popup_click_github', 'starting with event: '+str(event), 0, __name__)
-        tools.debug_output('on_tray_popup_click_github', 'Opening: '+constants.APP_URL, 1, __name__)
+        tools.debug_output(__name__, 'on_tray_popup_click_github', 'starting with event: '+str(event), 0)
+        tools.debug_output(__name__, 'on_tray_popup_click_github', 'Opening: '+constants.APP_URL, 1)
         webbrowser.open(constants.APP_URL) # Go to github
 
 
@@ -1063,7 +1057,7 @@ class App(wx.App):
         self.name = constants.APP_NAME+'.lock'
         self.apparat_instance = wx.SingleInstanceChecker(self.name)
         if self.apparat_instance.IsAnotherRunning(): # allow only 1 instance of apparat
-            tools.debug_output('OnInit', 'An instance is already running. Aborting', 3, __name__)
+            tools.debug_output(__name__, 'OnInit', 'An instance is already running. Aborting', 3)
             wx.MessageBox(constants.APP_NAME+' is already running. Aborting startup', 'Error', wx.OK | wx.ICON_WARNING)
             return False
         return True
@@ -1081,9 +1075,9 @@ def main():
     ini.validate() # validate ini file
 
     frame = MyFrame(None, constants.APP_NAME) # Main UI window
-    tools.debug_output('main', 'Frame: '+str(frame), 1, __name__)
+    tools.debug_output(__name__, 'main', 'Frame: '+str(frame), 1)
     app.MainLoop()
 
 if __name__ == '__main__':
-    tools.debug_output('__main__', 'starting', 1, __name__)
+    tools.debug_output(__name__, '__main__', 'starting', 1)
     main()

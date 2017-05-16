@@ -7,9 +7,8 @@
 # URL:          https://github.com/yafp/apparat
 
 
+
 import dbus
-
-
 
 ## A list of available DBus services
 #
@@ -30,8 +29,8 @@ system_bus = dbus.SystemBus()
 
 
 ## example 1
-proxy = system_bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager/Devices/eth0') # proxy is a dbus.proxies.ProxyObject
-print(proxy)
+#proxy = system_bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager/Devices/eth0') # proxy is a dbus.proxies.ProxyObject
+#print(proxy)
 
 
 ## example 2
@@ -54,3 +53,6 @@ for name in names:
 
         except dbus.exceptions.DBusException:
             pass
+
+
+

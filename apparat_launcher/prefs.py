@@ -6,7 +6,6 @@
 # -----------------------------------------------------------------------------------------------
 
 ## built-in modules
-import sys
 import wx
 
 ## apparat
@@ -54,8 +53,8 @@ class PreferenceWindow(wx.Frame):
 
     def close_preference_ui(self, event):
         """Closes the preference window"""
-        tools.debug_output('close_preference_ui', 'starting', 1, __name__)
-        tools.debug_output('close_preference_ui', 'Event: '+str(event), 1, __name__)
+        tools.debug_output(__name__, 'close_preference_ui', 'starting', 1)
+        tools.debug_output(__name__, 'close_preference_ui', 'Event: '+str(event), 1)
         self.Destroy() # close the pref UI
 
 
@@ -156,26 +155,26 @@ class UITabGeneral(wx.Panel):
 
     def on_change_icon_size(self, event):
         """Handles the value change of icon_size dropbox"""
-        tools.debug_output('on_change_icon_size', 'Preference - General - change icon size: '+str(event), 1, __name__)
-        tools.debug_output('on_change_icon_size', 'New icon size is set to: '+str(self.ui__cb_iconsizes.GetValue())+'px', 1, __name__)
+        tools.debug_output(__name__, 'on_change_icon_size', 'Preference - General - change icon size: '+str(event), 1)
+        tools.debug_output(__name__, 'on_change_icon_size', 'New icon size is set to: '+str(self.ui__cb_iconsizes.GetValue())+'px', 1)
         ini.write_single_ini_value('General', 'icon_size', self.ui__cb_iconsizes.GetValue()) # update preference value
 
 
     def on_change_transparency(self, event):
         """Handles the value change of transparency dropbox"""
-        tools.debug_output('on_change_transparency', 'Preference - General - change transparency: '+str(event), 1, __name__)
-        tools.debug_output('on_change_transparency', 'New transparency value is set to: '+str(self.ui__cb_transparency.GetValue()), 1, __name__)
+        tools.debug_output(__name__, 'on_change_transparency', 'Preference - General - change transparency: '+str(event), 1)
+        tools.debug_output(__name__, 'on_change_transparency', 'New transparency value is set to: '+str(self.ui__cb_transparency.GetValue()), 1)
         ini.write_single_ini_value('General', 'transparency', self.ui__cb_transparency.GetValue()) # update preference value
 
 
     def prefs_general_toggle_hide_ui(self, event):
         """Toggle the general pref: hide_ui"""
-        tools.debug_output('prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event), 1, __name__)
+        tools.debug_output(__name__, 'prefs_general_toggle_hide_ui', 'Preference - General - Hide UI: '+str(event), 1)
         if self.cb_enable_hide_ui.GetValue() is True:
-            tools.debug_output('prefs_general_toggle_hide_ui', 'Enabled', 1, __name__)
+            tools.debug_output(__name__, 'prefs_general_toggle_hide_ui', 'Enabled', 1)
             ini.write_single_ini_value('General', 'hide_ui_after_command_execution', "True") # update preference value
         else:
-            tools.debug_output('prefs_general_toggle_hide_ui', 'Disabled', 1, __name__)
+            tools.debug_output(__name__, 'prefs_general_toggle_hide_ui', 'Disabled', 1)
             ini.write_single_ini_value('General', 'hide_ui_after_command_execution', "False") # update preference value
 
 
@@ -448,8 +447,8 @@ class UITabPluginCommands(wx.Panel):
         value = event.GetEventObject().GetValue()
 
         if value is True:
-            tools.debug_output('on_plugin_checkbox_change', 'Enabled Plugin: '+btn, 1, __name__)
+            tools.debug_output(__name__, 'on_plugin_checkbox_change', 'Enabled Plugin: '+btn, 1)
             ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'True')
         else:
-            tools.debug_output('on_plugin_checkbox_change', 'Disabled Plugin: '+btn, 1, __name__)
+            tools.debug_output(__name__, 'on_plugin_checkbox_change', 'Disabled Plugin: '+btn, 1)
             ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'False')
