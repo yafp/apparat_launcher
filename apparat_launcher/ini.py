@@ -44,8 +44,10 @@ def read_single_ini_value(section_name, key_name):
             value = 'EN'
         elif key_name.startswith('plugin'): # any plugin
             value = 'False'
+
+        # if a key was missing - create it with a default value
         write_single_ini_value(section_name, key_name, value) # write default value for missing key/value pair
-        tools.debug_output(__name__, 'read_single_ini_value', 'key '+key_name+' written with value: '+value, 1)
+        tools.debug_output(__name__, 'read_single_ini_value', 'key '+key_name+' written with value: '+value, 2)
         return value
     return value
 
@@ -66,7 +68,7 @@ def write_single_ini_value(section_name, key_name, value):
 
 def check_if_ini_exists():
     """Method to check if an ini file exists - and generate it if it doesnt"""
-    tools.debug_output(__name__, 'check_if_ini_exists', 'Start checking for ini file', 0)
+    tools.debug_output(__name__, 'check_if_ini_exists', 'Start checking for ini file', 1)
 
     ## check if config folder exists - if not create it
     if not os.path.exists(constants.APP_INI_FOLDER):
@@ -92,6 +94,7 @@ def check_if_ini_exists():
             f.write('command_executed = 0\n')
             f.write('plugin_executed = 0\n')
             f.write('[Plugins]\n')
+            f.write('plugin_kill = False\n')
             f.write('plugin_misc = False\n')
             f.write('plugin_nautilus = False\n')
             f.write('plugin_passwordgen = False\n')
@@ -107,7 +110,7 @@ def validate():
     """Validate the entire ini"""
     check_if_ini_exists()
     # https://pymotw.com/3/configparser/
-    tools.debug_output(__name__, 'validate', 'Validating ini ('+constants.APP_INI_PATH+') for existing sections and options', 0)
+    tools.debug_output(__name__, 'validate', 'Validating ini ('+constants.APP_INI_PATH+') for existing sections and options', 1)
 
     ## Section: Language
     SECTIONS = ['Language']
@@ -126,15 +129,15 @@ def validate():
 
     ## Section: Plugins
     SECTIONS = ['Plugins']
-    OPTIONS = ['plugin_misc', 'plugin_nautilus', 'plugin_passwordgen', 'plugin_screenshot', 'plugin_search_internet', 'plugin_search_local', 'plugin_session', 'plugin_shell']
+    OPTIONS = ['plugin_kill', 'plugin_misc', 'plugin_nautilus', 'plugin_passwordgen', 'plugin_screenshot', 'plugin_search_internet', 'plugin_search_local', 'plugin_session', 'plugin_shell']
     validate_single_section(SECTIONS, OPTIONS)
 
-    tools.debug_output(__name__, 'validate', 'Finished validating complete ini ('+constants.APP_INI_PATH+')', 0)
+    tools.debug_output(__name__, 'validate', 'Finished validating complete ini ('+constants.APP_INI_PATH+')', 1)
 
 
 def validate_single_section(sections, options):
     """Validates a given ini section for a defined amount of options"""
-    tools.debug_output(__name__, 'validate_single_section', 'Validating ini ('+constants.APP_INI_PATH+') for section'+str(sections), 0)
+    tools.debug_output(__name__, 'validate_single_section', 'Validating ini ('+constants.APP_INI_PATH+') for section'+str(sections), 1)
     config = ConfigParser.ConfigParser()
     config.read(constants.APP_INI_PATH)
 
@@ -158,4 +161,4 @@ def validate_single_section(sections, options):
             else:
                 tools.debug_output(__name__, 'validate_single_section', '{}.{:<12}  : {}'.format(section, candidate, has_option), 3)
 
-    tools.debug_output(__name__, 'validate_single_section', 'Validating ini ('+constants.APP_INI_PATH+') for section'+str(sections)+' finished', 0)
+    tools.debug_output(__name__, 'validate_single_section', 'Validating ini ('+constants.APP_INI_PATH+') for section'+str(sections)+' finished', 1)

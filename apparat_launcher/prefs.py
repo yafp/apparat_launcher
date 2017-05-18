@@ -233,6 +233,23 @@ class UITabPluginCommands(wx.Panel):
         txt_plugin_core.SetForegroundColour('#7f8c8d')
         #txt_plugin_core.SetFont(font)
 
+        ## Plugin: Kill
+        ##
+        cb_enable_plugin_kill = wx.CheckBox(self, -1, 'Misc', (20, 60))
+        cb_enable_plugin_kill.SetToolTipString(u'Enable other stuff')
+        cb_enable_plugin_kill.SetLabel('kill')
+        cur_ini_value_for_plugin_kill = ini.read_single_ini_value('Plugins', 'plugin_kill') # get current value from ini
+        if cur_ini_value_for_plugin_kill == 'True':
+            cb_enable_plugin_kill.SetValue(True)
+        else:
+            cb_enable_plugin_kill.SetValue(False)
+        cb_enable_plugin_kill.Bind(wx.EVT_CHECKBOX, self.on_plugin_checkbox_change) # changing the checkbox change
+        ## Plugin description
+        txt_plugin_kill = wx.StaticText(self, -1, "Kill graphical applications using xkill (requires xkill)", (20, 40))
+        txt_plugin_kill.SetForegroundColour('#7f8c8d')
+        txt_plugin_kill.SetFont(font)
+
+
         ## Plugin: Misc
         ##
         cb_enable_plugin_misc = wx.CheckBox(self, -1, 'Misc', (20, 60))
@@ -376,6 +393,12 @@ class UITabPluginCommands(wx.Panel):
         coreSizer.Add(cb_enable_plugin_core, 0, wx.ALL, border=10) # status icon button
         coreSizer.Add(txt_plugin_core, 0, wx.ALL, border=10) # preferences icon button
         pref_sizer.Add(coreSizer, 0, wx.EXPAND)
+
+        ## kill
+        killSizer = wx.BoxSizer(wx.HORIZONTAL)
+        killSizer.Add(cb_enable_plugin_kill, 0, wx.ALL, border=10) # status icon button
+        killSizer.Add(txt_plugin_kill, 0, wx.ALL, border=10) # preferences icon button
+        pref_sizer.Add(killSizer, 0, wx.EXPAND)
 
         ## misc
         miscSizer = wx.BoxSizer(wx.HORIZONTAL)

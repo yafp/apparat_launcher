@@ -25,6 +25,7 @@ This program is currently in a very early development state.
     * [Hotkey](#hotkey)
   * [Plugins](#plugins)
     * [Core](#core)
+    * [Kill](#kill)
     * [Misc](#misc)
     * [Nautilus](#nautilus)
     * [Password Generator](#passwordgen)
@@ -98,9 +99,13 @@ The following command line parameters are available:
 | ```-h```      | ```--help```   | Show help           |
 | ```-v```      | ```--version```| Show version        |
 
+*Debug output*
+
+![screenshot](https://raw.githubusercontent.com/yafp/apparat_launcher/master/docs/screenshots_ui/screenshot_debug_output.png)
+
 
 #### <a name="hotkey">Hotkey
-If you want to use a global/system-wide hotkey to trigger ```apparat_launcher``` (starting, focusing and minimizing) consider using the script ```apparatHotkeyHelper.sh```. Simply define a system-wide hotkey which triggers ```hotkeyHelperForApparatLauncher.sh```.
+If you want to use a global/system-wide hotkey to trigger ```apparat_launcher``` (starting, focusing and minimizing) consider using the script ```hotkeyHelperForApparatLauncher.sh```. Simply define a system-wide hotkey which triggers ```hotkeyHelperForApparatLauncher.sh```.
 
 Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyboard-shortcuts-set.html.en)
 * Open the **Activities** overview and start typing Keyboard.
@@ -108,7 +113,6 @@ Hotkey definition in [Gnome](https://help.gnome.org/users/gnome-help/stable/keyb
 * Select the **Shortcuts** tab.
 * Select a category in the left pane, and the row for the desired action (launching ```hotkeyHelperForApparatLauncher.sh```)  on the right. The current shortcut definition will change to **New accelerator…**
 * Hold down the desired key combination, or press Backspace to clear.
-
 
 
 ## <a name="plugins">Plugins
@@ -119,6 +123,14 @@ Core plugin (can not be disabled)
 |--------------------|:------------------ |:---------------|:------------------------------------------------|
 | ```!help```        |                    |                | Open apparat_launcher online documentation      |
 | ```!preferences``` | ```!prefs```       |                | Open apparat_launcher preferences               |
+
+
+#### <a name="kill">Kill
+Optional plugin to kill graphical applications using xkill
+
+| Trigger            | Alias              | Parameter      | Function                                        |
+|--------------------|:------------------ |:---------------|:------------------------------------------------|
+| ```!xkill```       | ```!kill```        |                | Starts xkill                                    |
 
 
 #### <a name="misc">Misc
@@ -185,6 +197,7 @@ Optional plugin which offers easy access to some popular web-services
 | ```!wi```        |                | _searchstring_ | Wikipedia              |
 | ```!yt```        |                | _searchstring_ | YouTube                |
 
+
 #### <a name="search-local">Search-Local
 Optional plugin which offers a file search for $HOME
 
@@ -214,15 +227,14 @@ Optional plugin which allows running terminal commands from within the launcher
 | ```!sh```        |                    | _path_         | Run terminal commands in new window |
 
 
-
 ## <a name="contributing">Contributing
 Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
-
 
 
 ## <a name="credits">Credits
 * Icons
   * [Font Awesome](http://fontawesome.io)
+  * [Foundation Icons](http://zurb.com/playground/foundation-icon-fonts-3)
   * [FA2PNG](http://fa2png.io/)
   * Color:
     * Gray: #7f8c8d

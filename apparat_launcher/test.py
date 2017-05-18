@@ -1,58 +1,62 @@
 #!/usr/bin/python
-"""test - an application launcher for linux"""
+"""test"""
 
-# NAME:         test
-# DESCRIPTION:  an application launcher for linux
-# AUTHOR:       yafp
-# URL:          https://github.com/yafp/apparat
-
-
-
-import dbus
-
-## A list of available DBus services
+##
+## DO NOT EDIT
+##
+#----------------------------------------------------------------------#
+# This is a minimal wxPython program to show a SplashScreen widget.
 #
-print('\n\nSYSTEMBUS')
-for service in dbus.SystemBus().list_names():
-    print(service)
+# Tian Xie
+# 3/8/2005
+#----------------------------------------------------------------------#
 
-print('\n\nSESSIONBUS')
-for service in dbus.SessionBus().list_names():
-    print(service)
+import wx
 
+class MyGUI(wx.Frame):
+    """
+Hello World!
+    """
+    def __init__(self, parent, id, title):
+        wx.Frame.__init__(self, parent, id, title)
+# Put more GUI code here for a fancier application.
+#----------------------------------------------------------------------#
 
+class MySplashScreen(wx.SplashScreen):
+    """
+Create a splash screen widget.
+    """
+    def __init__(self, parent=None):
+        # This is a recipe to a the screen.
+        # Modify the following variables as necessary.
+        aBitmap = wx.Image(name = "gfx/core/256/appIcon.png").ConvertToBitmap()
+        splashStyle = wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT | wx.STAY_ON_TOP
+        splashDuration = 1000 # milliseconds
+        # Call the constructor with the above arguments in exactly the
+        # following order.
+        wx.SplashScreen.__init__(self, aBitmap, splashStyle, splashDuration, parent)
+        self.Bind(wx.EVT_CLOSE, self.OnExit)
 
-## playing with dbus
-#
-session_bus = dbus.SessionBus()
-system_bus = dbus.SystemBus()
+        wx.Yield()
+#----------------------------------------------------------------------#
 
+    def OnExit(self, evt):
+        self.Hide()
+        # MyFrame is the main frame.
+        MyFrame = MyGUI(None, -1, "Hello from wxPython")
+        app.SetTopWindow(MyFrame)
+        MyFrame.Show(True)
+        # The program will freeze without this line.
+        evt.Skip()  # Make sure the default handler runs too...
+#----------------------------------------------------------------------#
 
-## example 1
-#proxy = system_bus.get_object('org.freedesktop.NetworkManager', '/org/freedesktop/NetworkManager/Devices/eth0') # proxy is a dbus.proxies.ProxyObject
-#print(proxy)
+class MyApp(wx.App):
+    def OnInit(self):
+        MySplash = MySplashScreen()
+        MySplash.Show()
 
+        return True
+#----------------------------------------------------------------------#
 
-## example 2
-#eth0 = system_bus.get_object('org.freedesktop.NetworkManager','/org/freedesktop/NetworkManager/Devices/eth0')
-#props = eth0.getProperties(dbus_interface='org.freedesktop.NetworkManager.Devices') # props is a tuple of properties, the first of which is the object path
-#print(props)
-
-
-
-bus = dbus.SessionBus()
-dbus_proxy = bus.get_object('org.freedesktop.DBus', '/org/freedesktop/DBus')
-names = dbus_proxy.ListNames()
-for name in names:
-    if name.startswith(':'):
-        try:
-            proxy = bus.get_object(name, '/')
-            ident_method = proxy.get_dbus_method("Identity", dbus_interface="org.freedesktop.MediaPlayer")
-
-            print ident_method()
-
-        except dbus.exceptions.DBusException:
-            pass
-
-
-
+app = MyApp(redirect=True, filename = "demo.log")
+app.MainLoop()

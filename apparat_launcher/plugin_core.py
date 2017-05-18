@@ -15,7 +15,7 @@ import tools
 # -----------------------------------------------------------------------------------------------
 TRIGGER = ('!help', '!preferences', '!prefs',)
 
-PLUGINS = ('plugin_misc', 'plugin_nautilus', 'plugin_passwordgen', 'plugin_screenshot', 'plugin_search_internet', 'plugin_search_local', 'plugin_session', 'plugin_shell')
+PLUGINS = ('plugin_kill', 'plugin_misc', 'plugin_nautilus', 'plugin_passwordgen', 'plugin_screenshot', 'plugin_search_internet', 'plugin_search_local', 'plugin_session', 'plugin_shell', )
 
 # -----------------------------------------------------------------------------------------------
 # FUNCTIONS

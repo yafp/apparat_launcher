@@ -180,7 +180,7 @@ def execute_internet_search(main_window, command, parameter):
     remote_url = URLS[index]+parameter
 
     if(len(parameter) == 0): # if so searchphrase/parameter was supplied - open the main url (Issue #22)
-        tools.debug_output(__name__, 'execute_internet_search', 'No searchphrase supplied, trunc to main-url', 2) # Issue #22
+        tools.debug_output(__name__, 'execute_internet_search', 'No searchphrase supplied, trunc to main-url', 1) # Issue #22
         remote_url = tools.trunc_at(remote_url, "/")
 
     ## open the URL

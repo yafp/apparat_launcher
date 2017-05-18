@@ -24,6 +24,8 @@ Icons
 ## core
 * help.png
 * preferences.png           fa-cogs
+## kill
+* kill.png                  fi-skull
 ## misc
 * open.png
 ## nautilus
@@ -56,7 +58,7 @@ Icons
 ## search_local
 * file.png
 * files.png
-* search.png                  ! foundation-icon page-search
+* search.png                  fi-page-search
 ## session
 * hibernate.png
 * lock.png

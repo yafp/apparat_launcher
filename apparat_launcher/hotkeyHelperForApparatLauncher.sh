@@ -53,7 +53,7 @@ wmctrl -lx | awk '{print $3}' | grep -i "$APPARAT_EXECUTABLE" # check if apparat
 if [ $? -eq 0 ]; then # it is running
     #echo "Is running already"
     ACTIVE_APP_WINDOW_TITLE=$(xdotool getwindowfocus getwindowname) # check name of current foreground app
-    if [ "$ACTIVE_APP_WINDOW_TITLE" == 'Apparat_launcher' ]; then  #if it is apparat
+    if [ "$ACTIVE_APP_WINDOW_TITLE" == 'apparat_launcher' ]; then  #if it is apparat
         #echo "Try minimizing it"
         xdotool windowminimize $(xdotool getactivewindow) # apparat_launcher is active already - minimize it
     else # focus it

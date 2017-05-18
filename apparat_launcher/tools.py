@@ -10,6 +10,8 @@ import datetime # for timestamp in debug output
 import os
 import subprocess # for checking if cmd_exists
 import sys
+import psutil # check for running processes
+
 
 ## apparat
 import constants
@@ -23,7 +25,7 @@ DEBUG = False
 # -----------------------------------------------------------------------------------------------
 def cmd_exists(cmd):
     """Method to check if a command exists."""
-    debug_output(__name__, 'cmd_exists', 'starting', 0)
+    debug_output(__name__, 'cmd_exists', 'starting', 1)
     return subprocess.call('type ' + cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 
@@ -54,11 +56,16 @@ def check_arguments():
         show_help()
         sys.exit()
 
-    debug_output(__name__, 'check_arguments', 'finished', 1)
+    debug_output(__name__, 'check_arguments', 'Arguments supplied by user are fine', 1)
 
 
-def debug_output(source_script, source_function, message, message_type=0):
-    """Method to print debug messages (if debug = True)."""
+def debug_output(source_script, source_function, message, message_type=1):
+    """
+        Method to print debug messages (if debug = True).
+        message_type 1 = info
+        message_type 2 = warning
+        message_type 3 = error
+    """
     if DEBUG is True:
         timestamp = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
 
@@ -66,25 +73,21 @@ def debug_output(source_script, source_function, message, message_type=0):
 
         source_file = str(source_script)
         if(source_file == '__main__'):
-            source_file = 'apparat_launcher'
-        source_file = source_file.ljust(20)
+            source_file = constants.APP_NAME
+        source_file = source_file.ljust(25)
 
-        # colorize the message
-        if(message_type == 1): # Info
-            text_color = constants.C_GREEN
-            message_type_class = ' I '
-        elif(message_type == 2): # Warning
+        ## select the color based on message_type
+        if(message_type == 2): # Warning
             text_color = constants.C_YELLOW
             message_type_class = ' W '
         elif(message_type == 3): # Error
             text_color = constants.C_RED
             message_type_class = ' E '
-        else: # Other = default value for message type
-            text_color = constants.C_BLUE_LIGHT
-            message_type_class = ' O '
+        else: # Default = Info
+            text_color = constants.C_GREEN
+            message_type_class = ' I '
 
-        ## format: time + message_type_class + source + message
-        #print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source+" "+text_color+message+constants.C_DEFAULT)
+        ## format: time + message_type_class + source file + source method + message
         print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source_file+" "+source_function+" "+text_color+message+constants.C_DEFAULT)
 
 
@@ -96,18 +99,17 @@ def generate_timestamp():
 
 def check_linux_requirements():
     """Method to check the used linux packages on app start"""
-    debug_output(__name__, 'check_linux_requirements', 'Starting requirements checks', 0)
+    debug_output(__name__, 'check_linux_requirements', 'Starting requirements checks', 1)
 
-    ## needed for session commands:
-    REQUIRED_LINUX_PACKAGES = ('gnome-screensaver-command', 'gnome-session-quit', 'systemctl', 'xdg-open', 'xdotool')
+    REQUIRED_LINUX_PACKAGES = ('gnome-screensaver-command', 'gnome-session-quit', 'systemctl', 'xdg-open', 'xdotool', 'xkill')
 
     for i, (a) in enumerate(REQUIRED_LINUX_PACKAGES):
-        debug_output(__name__, 'check_linux_requirements', 'Checking '+a, 0)
+        debug_output(__name__, 'check_linux_requirements', 'Checking '+a, 1)
         if which(REQUIRED_LINUX_PACKAGES[i]) is None:
             debug_output(__name__, 'check_linux_requirements', 'Error: '+REQUIRED_LINUX_PACKAGES[i]+' is missing. Please check if is available via your package system.', 3)
             sys.exit()
 
-    debug_output(__name__, 'check_linux_requirements', 'Requirements checks finished ', 1)
+    debug_output(__name__, 'check_linux_requirements', 'Requirements checks finished successfully', 1)
 
 
 
@@ -153,7 +155,7 @@ def check_platform():
         debug_output(__name__, 'check_platform', 'Detected linux', 1)
         debug_output(__name__, 'check_platform', 'Desktop environment: '+os.environ.get('DESKTOP_SESSION'), 1) # Issue: 24
         if(os.environ.get('DESKTOP_SESSION') != 'gnome'):
-            debug_output(__name__, 'check_platform', 'Here be dragons (Untested desktop environment)', 2)
+            debug_output(__name__, 'check_platform', 'Here be dragons (Untested desktop environment)', 1)
         return
 
     else: # anything else (darwin = Mac OS, win32 = windows)
@@ -164,5 +166,31 @@ def check_platform():
 
 def trunc_at(s, d, n=3):
     """Returns s truncated at the n'th (3rd by default) occurrence of the delimiter, d."""
-    debug_output(__name__, 'trunc_at', 'starting', 0)
+    debug_output(__name__, 'trunc_at', 'starting', 1)
     return d.join(s.split(d)[:n])
+
+
+def check_running_processes_by_name(application_name):
+    """checks if there are already existing instances/processes of an given app - to decide if launching or focusing makes more sense"""
+    debug_output(__name__, 'check_running_processes_by_name', "Checking for existing instances of: "+application_name, 1)
+    for pid in psutil.pids():
+        try:
+            p = psutil.Process(pid)
+            if p.name() == application_name:
+                debug_output(__name__, 'check_running_processes_by_name', 'Found instance of: '+ str(p.cmdline())+' ### Details: '+str(p), 1)
+                debug_output(__name__, 'check_running_processes_by_name', 'Name: '+str(p.name()), 1)
+                debug_output(__name__, 'check_running_processes_by_name', 'PID: '+str(p.pid), 1)
+                return
+
+                ## Try to set focus to the already running app instance
+                #isubprocess.Popen(['wmctrl', '-R', application_name]) # works in general - but is not useable like that as launcher is loosing focus hehe
+                #
+                ## focus app
+                #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" --name "+str(p.name())+" windowactivate"], shell=True)
+                #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" windowactivate"], shell=True)
+                #subprocess.Popen(["xdotool search --name "+str(p.name())+" windowactivate"], shell=True)
+        except:
+            debug_output(__name__, 'check_running_processes_by_name', 'Problems detected, error catched', 3)
+            return
+
+    debug_output(__name__, 'check_running_processes_by_name', 'No matching process found for application_name: "'+application_name+'"', 1)
