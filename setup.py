@@ -28,14 +28,12 @@ setup(
     ## What does your project relate to?
     keywords='application launcher',
 
+    ## include images from gfx subfolder
     package_data={'apparat_launcher': [
         'gfx/core/*/*.png',
         'gfx/plugins/*/*/*.png',
     ]},
-    #package_data={'apparat_launcher': ['gfx/*']},
 
-    ## test folder
-    #test_suite="apparat_launcher",
 
     include_package_data=True,
 
