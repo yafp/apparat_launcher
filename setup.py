@@ -4,28 +4,28 @@ from setuptools import setup
 
 
 setup(
-    # project name
+    ## project name
     name='apparat_launcher',
 
-    # description
+    ## description
     description='An application launcher for linux',
     long_description=open('README.md').read(),
 
-    # package name
+    ## package name
     packages=['apparat_launcher'],
 
-    # version number
+    ## version number
     version='0.1',
 
-    # Author & contact
+    ## Author & contact
     author='yafp',
     author_email='apparat_launcher@yafp.de',
     url='https://github.com/yafp/apparat_launcher',
 
-    # License
+    ## License
     license='GPLv3',
 
-    # What does your project relate to?
+    ## What does your project relate to?
     keywords='application launcher',
 
     package_data={'apparat_launcher': [
@@ -33,6 +33,9 @@ setup(
         'gfx/plugins/*/*/*.png',
     ]},
     #package_data={'apparat_launcher': ['gfx/*']},
+
+    ## test folder
+    #test_suite="apparat_launcher",
 
     include_package_data=True,
 
@@ -42,7 +45,7 @@ setup(
         #'pyxdg>=0.25'
     ],
 
-    # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    ## See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
@@ -50,18 +53,18 @@ setup(
         #   5 - Production/Stable
         'Development Status :: 3 - Alpha',
 
-        # Environment
+        ## Environment
         'Environment :: X11 Applications :: Gnome',
 
-        # Indicate who your project is intended for
+        ## Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
 
-        # Pick your license as you wish (should match "license" above)
+        ## Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
+        ## Specify the Python versions you support here. In particular, ensure
+        ## that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
