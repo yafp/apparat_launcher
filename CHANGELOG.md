@@ -3,6 +3,10 @@ Changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
+# 201705xx
+* Reset UI function takes now care about icon-size as well
+
+
 # 20170518
 * Plugins: Added new plugin Kill (using xkill)                                          (Issue: #66)
 * Optimized code to detect running application processes

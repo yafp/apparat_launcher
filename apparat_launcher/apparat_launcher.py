@@ -899,17 +899,29 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         ## reset the status
         self.status_notification_reset()
 
+        # baustelle
+        global icon_size
+        icon_size = ini.read_single_ini_value('General', 'icon_size') # update preference value
+
+        ## Some general bitmaps which might be needed for some button states
+        self.ui__bt_img_search = wx.Bitmap('gfx/core/'+icon_size+'/search.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_img_blank = wx.Bitmap('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_img_execute_black = wx.Bitmap('gfx/core/'+icon_size+'/execute_black.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_img_appicon = wx.Bitmap('gfx/core/'+icon_size+'/appIcon.png', wx.BITMAP_TYPE_PNG)
+
         ## reset the combobox
         self.ui__cb_search.Clear() # clear all list values
         self.ui__cb_search.SetValue('') # clear search field
         self.ui__cb_search.SetFocus() # set focus to search
 
         ## reset command button & txt
+        self.ui__bt_command.SetBitmapDisabled(self.ui__bt_img_appicon)
         self.ui__bt_command.Enable(False) # reset primary button by disabling it
         self.ui__bt_command.SetToolTipString("") # set tooltip
         self.ui__txt_command.SetValue('') # reset txt command
 
         ## reset parameter button & txt
+        self.ui__bt_parameter.SetBitmapDisabled(self.ui__bt_img_search)
         self.ui__bt_parameter.Enable(False)
         self.ui__bt_parameter.SetToolTipString('')
         self.ui__txt_parameter.SetValue('') # reset txt parameter

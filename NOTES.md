@@ -4,26 +4,48 @@ apparat_launcher notes
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
-# Check scripts using pylint
-```pylint *.py```
+# Developing
+## Debugging
+Usage: ```python -m pdb apparat_launcher.py```
 
-# Creating requirements.txt
-## Requirements
-```pip install pipreqs```
-## Creation
-```pipreqs /path/to/project```
-
-
-# Packaging
-## Creating a minimal setup.py
-* http://python-packaging.readthedocs.io/en/latest/minimal.html
+## Pylint
+Pylint is a linter for Python.
+Usage: ```pylint *.py```
 
 ## Travis CI
-Add .travis.yml
+Travis CI can help doing automated builds after each commit to the repository. Repo needs a ```.travis.yml``` in the core folder
 https://travis-ci.org/profile/yafp
 
-# Debugging
-```python -m pdb apparat_launcher.py```
+
+
+# Building
+
+## Requirements.txt
+### Pre-Requirements
+Usage: ```pip install pipreqs```
+### Creation of requirements.txt
+Usage:  ```pipreqs /path/to/project```
+
+## Setup.py
+* http://python-packaging.readthedocs.io/en/latest/minimal.html
+
+### Help
+Usage: 
+```python setup.py --help```
+```python setup.py --help install```
+
+
+### Tests
+Usage: ```python setup.py test```
+
+### Builds
+Usage: ```python setup.py build```
+
+### Install
+Usage: ```python setup.py install```
+
+
+
 
 
 
