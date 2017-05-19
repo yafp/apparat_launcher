@@ -3,7 +3,7 @@
 -->
 [![Issues](https://img.shields.io/github/issues/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues)
 [![Issues Closed](https://img.shields.io/github/issues-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues?q=is%3Aclosed)
-
+[![Build Status](https://travis-ci.org/yafp/apparat_launcher.svg?branch=master)](https://travis-ci.org/yafp/apparat_launcher)
 
 # <a name="top"> apparat_launcher
 
