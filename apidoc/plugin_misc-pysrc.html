@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>plugin_misc</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Module&nbsp;plugin_misc
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="plugin_misc-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="plugin_misc-module.html">Module plugin_misc</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/python</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-docstring">"""plugin: misc (optional)"""</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment">## general</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">wx</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment">## apparat</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-0" class="py-name" targets="Module ini=ini-module.html"><a title="ini" class="py-name" href="#" onclick="return doclink('link-0', 'ini', 'link-0');">ini</a></tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Module tools=tools-module.html"><a title="tools" class="py-name" href="#" onclick="return doclink('link-1', 'tools', 'link-1');">tools</a></tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment"># -----------------------------------------------------------------------------------------------</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-comment"># CONSTANTS</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment"># -----------------------------------------------------------------------------------------------</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt id="link-2" class="py-name" targets="Variable plugin_core.TRIGGER=plugin_core-module.html#TRIGGER,Variable plugin_kill.TRIGGER=plugin_kill-module.html#TRIGGER,Variable plugin_misc.TRIGGER=plugin_misc-module.html#TRIGGER,Variable plugin_nautilus.TRIGGER=plugin_nautilus-module.html#TRIGGER,Variable plugin_passwordgen.TRIGGER=plugin_passwordgen-module.html#TRIGGER,Variable plugin_screenshot.TRIGGER=plugin_screenshot-module.html#TRIGGER,Variable plugin_search_internet.TRIGGER=plugin_search_internet-module.html#TRIGGER,Variable plugin_search_local.TRIGGER=plugin_search_local-module.html#TRIGGER,Variable plugin_session.TRIGGER=plugin_session-module.html#TRIGGER,Variable plugin_shell.TRIGGER=plugin_shell-module.html#TRIGGER"><a title="plugin_core.TRIGGER
+plugin_kill.TRIGGER
+plugin_misc.TRIGGER
+plugin_nautilus.TRIGGER
+plugin_passwordgen.TRIGGER
+plugin_screenshot.TRIGGER
+plugin_search_internet.TRIGGER
+plugin_search_local.TRIGGER
+plugin_session.TRIGGER
+plugin_shell.TRIGGER" class="py-name" href="#" onclick="return doclink('link-2', 'TRIGGER', 'link-2');">TRIGGER</a></tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-string">'!open'</tt><tt class="py-op">,</tt><tt class="py-op">)</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-comment"># -----------------------------------------------------------------------------------------------</tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-comment"># FUNCTIONS</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"><tt class="py-comment"># -----------------------------------------------------------------------------------------------</tt> </tt>
+<a name="parse"></a><div id="parse-def"><a name="L23"></a><tt class="py-lineno">23</tt> <a class="py-toggle" href="#" id="parse-toggle" onclick="return toggle('parse');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="plugin_misc-module.html#parse">parse</a><tt class="py-op">(</tt><tt class="py-param">current_search_string</tt><tt class="py-op">,</tt> <tt class="py-param">main_window</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="parse-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="parse-expanded"><a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line">    <tt class="py-docstring">"""Validates the misc command and calls the matching sub function"""</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line">    <tt id="link-3" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-3', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Function tools.debug_output()=tools-module.html#debug_output"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-4', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'parse'</tt><tt class="py-op">,</tt> <tt class="py-string">'starting'</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">    <tt class="py-comment"># Reset status notification back to OK</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">    <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">status_notification_reset</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">    <tt class="py-name">icon_size</tt> <tt class="py-op">=</tt> <tt id="link-5" class="py-name"><a title="ini" class="py-name" href="#" onclick="return doclink('link-5', 'ini', 'link-0');">ini</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Function ini.read_single_ini_value()=ini-module.html#read_single_ini_value"><a title="ini.read_single_ini_value" class="py-name" href="#" onclick="return doclink('link-6', 'read_single_ini_value', 'link-6');">read_single_ini_value</a></tt><tt class="py-op">(</tt><tt class="py-string">'General'</tt><tt class="py-op">,</tt> <tt class="py-string">'icon_size'</tt><tt class="py-op">)</tt> <tt class="py-comment"># get preference value</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line"> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-name">current_search_string</tt><tt class="py-op">.</tt><tt class="py-name">startswith</tt><tt class="py-op">(</tt><tt class="py-string">'!open'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">        <tt id="link-7" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-7', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-8', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'parse'</tt><tt class="py-op">,</tt> <tt class="py-string">'Case: Open'</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">        <tt id="link-9" class="py-name" targets="Function plugin_misc.prepare_plugin_misc_open()=plugin_misc-module.html#prepare_plugin_misc_open"><a title="plugin_misc.prepare_plugin_misc_open" class="py-name" href="#" onclick="return doclink('link-9', 'prepare_plugin_misc_open', 'link-9');">prepare_plugin_misc_open</a></tt><tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">,</tt> <tt class="py-name">icon_size</tt><tt class="py-op">)</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">        <tt id="link-10" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-10', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-11', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'parse'</tt><tt class="py-op">,</tt> <tt class="py-string">'Error: Unexpected misc plugin command'</tt><tt class="py-op">,</tt> <tt class="py-number">3</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">        <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">status_notification_display_error</tt><tt class="py-op">(</tt><tt class="py-string">'Unexpected misc plugin command'</tt><tt class="py-op">)</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line"> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">    <tt id="link-12" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-12', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-13" class="py-name"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-13', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'parse'</tt><tt class="py-op">,</tt> <tt class="py-string">'finished'</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line"> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line"> </tt>
+<a name="prepare_plugin_misc_open"></a><div id="prepare_plugin_misc_open-def"><a name="L43"></a><tt class="py-lineno">43</tt> <a class="py-toggle" href="#" id="prepare_plugin_misc_open-toggle" onclick="return toggle('prepare_plugin_misc_open');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="plugin_misc-module.html#prepare_plugin_misc_open">prepare_plugin_misc_open</a><tt class="py-op">(</tt><tt class="py-param">main_window</tt><tt class="py-op">,</tt> <tt class="py-param">icon_size</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="prepare_plugin_misc_open-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="prepare_plugin_misc_open-expanded"><a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">    <tt class="py-docstring">"""Plugin Misc - Open - Opens file or location using xdg-open"""</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">    <tt id="link-14" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-14', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-15', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'prepare_plugin_misc_open'</tt><tt class="py-op">,</tt> <tt class="py-string">'starting'</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">    <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">plugin__update_general_ui_information</tt><tt class="py-op">(</tt><tt class="py-string">'Misc (Open)'</tt><tt class="py-op">)</tt> <tt class="py-comment">## update plugin info</tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line"> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">    <tt class="py-comment">## command button &amp; txt</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">    <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_command_img</tt> <tt class="py-op">=</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Image</tt><tt class="py-op">(</tt><tt class="py-string">'gfx/plugins/misc/'</tt><tt class="py-op">+</tt><tt class="py-name">icon_size</tt><tt class="py-op">+</tt><tt class="py-string">'/open.png'</tt><tt class="py-op">,</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">BITMAP_TYPE_PNG</tt><tt class="py-op">)</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">    <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_command</tt><tt class="py-op">.</tt><tt class="py-name">SetBitmap</tt><tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_command_img</tt><tt class="py-op">.</tt><tt class="py-name">ConvertToBitmap</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">    <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_command</tt><tt class="py-op">.</tt><tt class="py-name">SetToolTipString</tt><tt class="py-op">(</tt><tt class="py-string">'Open'</tt><tt class="py-op">)</tt> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line"> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt><tt class="py-op">(</tt><tt class="py-name">len</tt><tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__cb_search</tt><tt class="py-op">.</tt><tt class="py-name">GetValue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">6</tt><tt class="py-op">)</tt> <tt class="py-keyword">and</tt>  <tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__cb_search</tt><tt class="py-op">.</tt><tt class="py-name">GetValue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">6</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> <tt class="py-op">!=</tt> <tt class="py-string">''</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">        <tt class="py-comment">## parameter button</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">        <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_parameter</tt><tt class="py-op">.</tt><tt class="py-name">SetToolTipString</tt><tt class="py-op">(</tt><tt class="py-string">'Open'</tt><tt class="py-op">)</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">        <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_parameter_img</tt> <tt class="py-op">=</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Image</tt><tt class="py-op">(</tt><tt class="py-string">'gfx/core/'</tt><tt class="py-op">+</tt><tt class="py-name">icon_size</tt><tt class="py-op">+</tt><tt class="py-string">'/execute.png'</tt><tt class="py-op">,</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">BITMAP_TYPE_PNG</tt><tt class="py-op">)</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">        <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_parameter</tt><tt class="py-op">.</tt><tt class="py-name">SetBitmap</tt><tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__bt_parameter_img</tt><tt class="py-op">.</tt><tt class="py-name">ConvertToBitmap</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line"> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">        <tt class="py-comment">## set parameter</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__cb_search</tt><tt class="py-op">.</tt><tt class="py-name">GetValue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">6</tt><tt class="py-op">:</tt><tt class="py-number">7</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-string">'~'</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">            <tt id="link-16" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-16', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-17', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'prepare_plugin_misc_open'</tt><tt class="py-op">,</tt> <tt class="py-string">'Replacing ~'</tt><tt class="py-op">,</tt> <tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">            <tt class="py-name">home</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">environ</tt><tt class="py-op">[</tt><tt class="py-string">'HOME'</tt><tt class="py-op">]</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">            <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__txt_parameter</tt><tt class="py-op">.</tt><tt class="py-name">SetValue</tt><tt class="py-op">(</tt><tt class="py-name">home</tt><tt class="py-op">+</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__cb_search</tt><tt class="py-op">.</tt><tt class="py-name">GetValue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">7</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-comment"># possible parameter</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">            <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__txt_parameter</tt><tt class="py-op">.</tt><tt class="py-name">SetValue</tt><tt class="py-op">(</tt><tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__cb_search</tt><tt class="py-op">.</tt><tt class="py-name">GetValue</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">6</tt><tt class="py-op">:</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> <tt class="py-comment"># possible parameter</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line"> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">        <tt class="py-comment">## set command</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">        <tt class="py-name">main_window</tt><tt class="py-op">.</tt><tt class="py-name">ui__txt_command</tt><tt class="py-op">.</tt><tt class="py-name">SetValue</tt><tt class="py-op">(</tt><tt class="py-string">'xdg-open'</tt><tt class="py-op">)</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">    <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">        <tt id="link-18" class="py-name"><a title="tools" class="py-name" href="#" onclick="return doclink('link-18', 'tools', 'link-1');">tools</a></tt><tt class="py-op">.</tt><tt id="link-19" class="py-name"><a title="tools.debug_output" class="py-name" href="#" onclick="return doclink('link-19', 'debug_output', 'link-4');">debug_output</a></tt><tt class="py-op">(</tt><tt class="py-name">__name__</tt><tt class="py-op">,</tt> <tt class="py-string">'prepare_plugin_misc_open'</tt><tt class="py-op">,</tt> <tt class="py-string">'Incomplete input, waiting for more...'</tt><tt class="py-op">,</tt> <tt class="py-number">2</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1
+    on Tue May 23 13:20:09 2017
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
