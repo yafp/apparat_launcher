@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - an application launcher for linux"""
+"""several useful tools like debug_output and similar"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -97,20 +97,19 @@ def generate_timestamp():
     return timestamp
 
 
-def check_linux_requirements():
+def check_general_requirements():
     """Method to check the used linux packages on app start"""
-    debug_output(__name__, 'check_linux_requirements', 'Starting requirements checks', 1)
+    debug_output(__name__, 'check_general_requirements', 'Starting requirements checks', 1)
 
-    REQUIRED_LINUX_PACKAGES = ('gnome-screensaver-command', 'gnome-session-quit', 'systemctl', 'xdg-open', 'xdotool', 'xkill')
+    REQUIRED_GENERAL_PACKAGES = ('xdotool',)
 
-    for i, (a) in enumerate(REQUIRED_LINUX_PACKAGES):
-        debug_output(__name__, 'check_linux_requirements', 'Checking '+a, 1)
-        if which(REQUIRED_LINUX_PACKAGES[i]) is None:
-            debug_output(__name__, 'check_linux_requirements', 'Error: '+REQUIRED_LINUX_PACKAGES[i]+' is missing. Please check if is available via your package system.', 3)
+    for i, (a) in enumerate(REQUIRED_GENERAL_PACKAGES):
+        debug_output(__name__, 'check_general_requirements', 'Checking '+a, 1)
+        if which(REQUIRED_GENERAL_PACKAGES[i]) is None:
+            debug_output(__name__, 'check_general_requirements', 'Error: '+REQUIRED_GENERAL_PACKAGES[i]+' is missing. Please check if is available via your package system.', 3)
             sys.exit()
 
-    debug_output(__name__, 'check_linux_requirements', 'Requirements checks finished successfully', 1)
-
+    debug_output(__name__, 'check_general_requirements', 'General requirements checks finished successfully', 1)
 
 
 def which(program):
@@ -189,7 +188,7 @@ def check_running_processes_by_name(application_name):
                 #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" --name "+str(p.name())+" windowactivate"], shell=True)
                 #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" windowactivate"], shell=True)
                 #subprocess.Popen(["xdotool search --name "+str(p.name())+" windowactivate"], shell=True)
-        except:
+        except Exception:
             debug_output(__name__, 'check_running_processes_by_name', 'Problems detected, error catched', 3)
             return
 

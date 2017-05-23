@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: screenshot"""
+"""plugin: screenshot (optional)"""
 
 # general
 import os
@@ -20,33 +20,37 @@ TRIGGER = ('!ss', '!fs',)
 # FUNCTIONS
 # -----------------------------------------------------------------------------------------------
 
-def prepare_general(current_search_string, main_window):
-    """Prepare General"""
+def parse(current_search_string, main_window):
+    """Validates input and loads the command related sub function"""
     tools.debug_output(__name__, 'prepare_general', 'starting', 1)
 
-    # Reset status notification back to OK
+    ## Reset status notification back to OK
     main_window.status_notification_reset()
 
     icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
+    ## Selective Screenshot
+    #
     if current_search_string == "!ss":
-        tools.debug_output(__name__, 'prepare_general', 'Case: Selective Screenshot', 1)
+        tools.debug_output(__name__, 'parse', 'Case: Selective Screenshot', 1)
         prepare_selective_screenshot(main_window, icon_size)
 
+    ## Full Screenshot
+    #
     elif current_search_string == "!fs":
-        tools.debug_output(__name__, 'prepare_general', 'Case: Full Screenshot', 1)
+        tools.debug_output(__name__, 'parse', 'Case: Full Screenshot', 1)
         prepare_full_screenshot(main_window, icon_size)
 
+    ## Invalid input
+    #
     else:
-        tools.debug_output(__name__, 'prepare_general', 'Error: Unexpected screenshot plugin command', 3)
+        tools.debug_output(__name__, 'parse', 'Error: Unexpected screenshot plugin command', 3)
         main_window.status_notification_display_error('Unexpected screenshot plugin command')
-
-    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
-
+        return
 
 
 def prepare_selective_screenshot(main_window, icon_size):
-    """Prepare selective screenshot"""
+    """Prepare UI for selective screenshot"""
     tools.debug_output(__name__, 'prepare_selective_screenshot', 'starting', 1)
 
     ## update plugin info
@@ -69,7 +73,7 @@ def prepare_selective_screenshot(main_window, icon_size):
 
 
 def prepare_full_screenshot(main_window, icon_size):
-    """Prepare full screenshot"""
+    """Prepare UI for full screenshot"""
     tools.debug_output(__name__, 'prepare_full_screenshot', 'starting', 1)
 
     ## update plugin info

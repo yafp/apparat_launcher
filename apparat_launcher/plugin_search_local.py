@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: search-internet"""
+"""plugin: search-internet (optional)"""
 
 ## general
 import difflib # for intelligent list sort

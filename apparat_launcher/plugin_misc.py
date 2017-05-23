@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: misc"""
+"""plugin: misc (optional)"""
 
 ## general
 import os
@@ -20,9 +20,9 @@ TRIGGER = ('!open',)
 # -----------------------------------------------------------------------------------------------
 # FUNCTIONS
 # -----------------------------------------------------------------------------------------------
-def prepare_general(current_search_string, main_window):
-    """Prepare General"""
-    tools.debug_output(__name__, 'prepare_general', 'starting', 1)
+def parse(current_search_string, main_window):
+    """Validates the misc command and calls the matching sub function"""
+    tools.debug_output(__name__, 'parse', 'starting', 1)
 
     # Reset status notification back to OK
     main_window.status_notification_reset()
@@ -30,14 +30,14 @@ def prepare_general(current_search_string, main_window):
     icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     if current_search_string.startswith('!open'):
-        tools.debug_output(__name__, 'prepare_general', 'Case: Open', 1)
+        tools.debug_output(__name__, 'parse', 'Case: Open', 1)
         prepare_plugin_misc_open(main_window, icon_size)
 
     else:
-        tools.debug_output(__name__, 'prepare_general', 'Error: Unexpected misc plugin command', 3)
+        tools.debug_output(__name__, 'parse', 'Error: Unexpected misc plugin command', 3)
         main_window.status_notification_display_error('Unexpected misc plugin command')
 
-    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
+    tools.debug_output(__name__, 'parse', 'finished', 1)
 
 
 def prepare_plugin_misc_open(main_window, icon_size):

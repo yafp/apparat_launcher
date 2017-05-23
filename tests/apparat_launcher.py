@@ -14,8 +14,6 @@ class TestFactorial(unittest.TestCase):
         The actual test.
         Any method which starts with ``test_`` will considered as a test case.
         """
-        #res = fact(5)
-        #self.assertEqual(res, 120)
 
 
 if __name__ == '__main__':

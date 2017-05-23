@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - an application launcher for linux"""
+"""Defines some constants like appname, UI size and color-codes"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS

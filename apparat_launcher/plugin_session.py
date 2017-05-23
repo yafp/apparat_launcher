@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: session"""
+"""plugin: session  (optional)"""
 
 # general
 import wx
@@ -14,9 +14,9 @@ import tools
 TRIGGER = ('!hibernate', '!sleep', '!lock', '!logout', '!reboot', '!restart', '!shutdown', '!halt', '!screensaver', '!saver',)
 
 
-def prepare_general(current_search_string, main_window):
-    """Prepare General"""
-    tools.debug_output(__name__, 'prepare_general', 'starting with searchstring: '+current_search_string, 1)
+def parse(current_search_string, main_window):
+    """parse"""
+    tools.debug_output(__name__, 'parse', 'starting with searchstring: '+current_search_string, 1)
 
     # Reset status notification back to OK
     main_window.status_notification_reset()
@@ -48,11 +48,9 @@ def prepare_general(current_search_string, main_window):
         prepare_plugin_session_screensaver(main_window, icon_size)
 
     else:
-        tools.debug_output(__name__, 'parse_user_search_input', 'Error: Unexpected session command', 3)
+        tools.debug_output(__name__, 'parse', 'Error: Unexpected session command', 3)
         main_window.status_notification_display_error('Unexpected session plugin command')
         return
-
-    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
 
 
 def prepare_plugin_session_hibernate(main_window, icon_size):

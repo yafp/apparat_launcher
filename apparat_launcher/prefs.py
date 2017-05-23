@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - an application launcher for linux"""
+"""preference UI"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -11,6 +11,7 @@ import wx
 ## apparat
 import constants
 import ini
+import requirements
 import tools
 
 
@@ -466,12 +467,21 @@ class UITabPluginCommands(wx.Panel):
 
     def on_plugin_checkbox_change(self, event):
         """Triggered if a checkbox state is changing and writes the new state to ini"""
-        btn = event.GetEventObject().GetLabel()
-        value = event.GetEventObject().GetValue()
+        btn = event.GetEventObject().GetLabel() # button label
+        value = event.GetEventObject().GetValue() # button value
+        ui_element = event.GetEventObject() # object itself
 
         if value is True:
-            tools.debug_output(__name__, 'on_plugin_checkbox_change', 'Enabled Plugin: '+btn, 1)
-            ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'True')
+            check_requirements = requirements.check_plugin_requirements(btn) # check if requirements for this plugin are fulfilled, otherwise enabling doesnt make sense
+            if check_requirements is True:
+                tools.debug_output(__name__, 'on_plugin_checkbox_change', 'Enabled Plugin: '+btn, 1)
+                ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'True')
+            else:
+                tools.debug_output(__name__, 'on_plugin_checkbox_change', 'Can not enable plugin: '+btn+' due to missing requirements', 3)
+                ui_element.SetValue(False)
+                ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'False')
+                wx.MessageBox('Plugin can not be enabled because of missing requirements', 'Error', wx.OK | wx.ICON_WARNING)
+
         else:
             tools.debug_output(__name__, 'on_plugin_checkbox_change', 'Disabled Plugin: '+btn, 1)
             ini.write_single_ini_value('Plugins', 'plugin_'+btn, 'False')

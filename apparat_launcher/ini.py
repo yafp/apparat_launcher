@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - an application launcher for linux"""
+"""Handles the ini/config file read, write and validation operations"""
 
 
 # -----------------------------------------------------------------------------------------------

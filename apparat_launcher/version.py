@@ -1,4 +1,4 @@
 #!/usr/bin/python
-"""apparat_launcher - an application launcher for linux"""
+"""Defines the application version string"""
 
-APP_VERSION = '20170519.01'
+APP_VERSION = '20170523.01'

@@ -17,12 +17,19 @@ Travis CI can help doing automated builds after each commit to the repository. R
 https://travis-ci.org/profile/yafp
 
 
+# Documentation
+## Epydoc
+Generating API documentation via epydoc
+
+Usage:  ```epydoc apparat_launcher/*.py -v -o apidoc/```
+
 
 # Building
 
 ## Requirements.txt
 ### Pre-Requirements
 Usage: ```pip install pipreqs```
+
 ### Creation of requirements.txt
 Usage:  ```pipreqs /path/to/project```
 

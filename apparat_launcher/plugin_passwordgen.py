@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: passwordgen"""
+"""plugin: passwordgen (optional)"""
 
 ## general
 import os
@@ -23,9 +23,9 @@ TRIGGER = ('!pw', '!password',)
 # -----------------------------------------------------------------------------------------------
 # FUNCTIONS
 # -----------------------------------------------------------------------------------------------
-def prepare_general(current_search_string, main_window):
-    """Prepare General"""
-    tools.debug_output(__name__, 'prepare_general', 'starting', 1)
+def parse(current_search_string, main_window):
+    """Valides the input and prepares the UI for executing the password command"""
+    tools.debug_output(__name__, 'parse', 'starting', 1)
 
     ## Reset status notification back to OK
     main_window.status_notification_reset()
@@ -33,14 +33,14 @@ def prepare_general(current_search_string, main_window):
     icon_size = ini.read_single_ini_value('General', 'icon_size') # get preference value
 
     if current_search_string == ('!pw') or current_search_string == ('!password'):
-        tools.debug_output(__name__, 'prepare_general', 'Case: Password Generator', 1)
+        tools.debug_output(__name__, 'parse', 'Case: Password Generator', 1)
         prepare_plugin_passwordgen(main_window, icon_size)
 
     else:
-        tools.debug_output(__name__, 'prepare_general', 'Error: Unexpected passwordgen plugin command', 3)
+        tools.debug_output(__name__, 'parse', 'Error: Unexpected passwordgen plugin command', 3)
         main_window.status_notification_display_error('Unexpected passwordgen plugin command')
 
-    tools.debug_output(__name__, 'prepare_general', 'finished', 1)
+    tools.debug_output(__name__, 'parse', 'finished', 1)
 
 
 def prepare_plugin_passwordgen(main_window, icon_size):
@@ -144,7 +144,7 @@ def make_pseudo_word(syllables=5, add_number=False):
 
 
 def get_random_word():
-    """Picks a random file from the file words"""
+    """Picks a random file from the wordlist file (words)"""
     wordlist = open('words', 'r')
     line = next(wordlist)
     for num, wordlist in enumerate(wordlist):

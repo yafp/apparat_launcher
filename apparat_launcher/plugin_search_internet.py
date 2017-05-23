@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: search-internet"""
+"""plugin: search-internet (optional)"""
 
 # general
 import webbrowser
@@ -119,7 +119,7 @@ DESCRIPTIONS = (
 # FUNCTIONS
 # -----------------------------------------------------------------------------------------------
 
-def prepare_internet_search(main_window, current_search_string):
+def parse(main_window, current_search_string):
     """Updates the UI according to the matching internet-search trigger"""
     tools.debug_output(__name__, 'prepare_internet_search', 'starting', 1)
 
@@ -135,7 +135,7 @@ def prepare_internet_search(main_window, current_search_string):
 
     ## check if there is NO space after the trigger - abort this function and reset some parts of the UI
     if(len(current_search_string) >= 4) and (current_search_string[3] != " "):
-        tools.debug_output(__name__, 'prepare_internet_search', 'No space after trigger - should reset icons', 1)
+        tools.debug_output(__name__, 'parse', 'No space after trigger - should reset icons', 1)
         main_window.plugin__update_general_ui_information('')
         main_window.status_notification_display_error('Invalid input')
         return

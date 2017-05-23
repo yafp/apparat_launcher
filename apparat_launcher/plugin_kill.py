@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""apparat_launcher - plugin: kill"""
+"""plugin: kill (optional)"""
 
 ## general
 import wx
@@ -19,9 +19,9 @@ TRIGGER = ('!kill', '!xkill',)
 # -----------------------------------------------------------------------------------------------
 # FUNCTIONS
 # -----------------------------------------------------------------------------------------------
-def prepare_plugin_kill(main_window):
-    """Plugin kill"""
-    tools.debug_output(__name__, 'prepare_plugin_kill', 'starting', 1)
+def parse(main_window):
+    """Prepares the UI for executing the xkill command"""
+    tools.debug_output(__name__, 'parse', 'starting', 1)
 
     main_window.status_notification_reset() # Reset status notification back to OK
     main_window.plugin__update_general_ui_information('Kill') # update plugin info

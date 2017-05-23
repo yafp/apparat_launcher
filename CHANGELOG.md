@@ -3,6 +3,11 @@ Changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
+
+# 20170523
+* Reworking requirements check (is now plugin specific)                                 (Issue: #67)
+
+
 # 20170519
 * Reset UI function takes now care about icon-size as well
 * Project is now using Travis CI for building etc...                                    (Issue: #51)

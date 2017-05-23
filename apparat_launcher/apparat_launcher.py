@@ -25,7 +25,6 @@ else: # python 2.x
     import platform                     # check platform & linux distribution
     import webbrowser                   # for opening urls (example: github project page)
     import subprocess                   # for checking if cmd_exists
-    import psutil                       # check for running processes
     import wx                           # for all the WX GUI items
     import xdg                          # for icon & icon-theme handling
     import xdg.IconTheme                # for icon & icon-theme handling
@@ -366,7 +365,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         """If an item of the result-list was selected"""
         tools.debug_output(__name__, 'on_combobox_select_item', 'starting with event: '+str(event), 1)
 
-        if(self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search'): # Local search is always using xdg-open - special case
+        if(self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search'): # Local search is always using xdg open - special case
             self.ui__txt_parameter.SetValue(self.ui__cb_search.GetValue().lower()) # write command to command text field
         else: # default-case
             self.ui__txt_command.SetValue(self.ui__cb_search.GetValue().lower()) # write command to command text field
@@ -534,12 +533,13 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         ## collect all plugin commands from the enabled plugins and add them to the dropdown
         plugin_commands = plugin_core.TRIGGER # add core commands
+
         for current_plugin in plugin_core.PLUGINS:
             if current_plugin != 'plugin_search_local': # plugin_search_local gets ignored
                 ## check if plugin is currently enabled
                 tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Checking if '+current_plugin+' is enabled', 1)
                 ini_value_for_current_plugin = ini.read_single_ini_value('Plugins', current_plugin) # get current value from ini
-                ## add plugin commands/trigger to tuple
+                ## if plugin is enabled - add plugin commands/trigger to tuple
                 if ini_value_for_current_plugin == 'True':
                     tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'Adding commands of '+current_plugin+' to enabled plugin command list', 1)
                     plugin_commands = plugin_commands + eval(current_plugin).TRIGGER # add plugin commands to plugin_commands tuple
@@ -604,63 +604,49 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
                 ## Plugin: Core (can not be disabled)
                 if  current_search_string.startswith(plugin_core.TRIGGER):
-                    plugin_core.prepare_general(current_search_string, self)
+                    plugin_core.parse(current_search_string, self)
                     return
 
                 ## Plugin: Kill
                 cur_ini_value_for_plugin_kill = ini.read_single_ini_value('Plugins', 'plugin_kill') # get current value from ini
                 if cur_ini_value_for_plugin_kill == 'True':
                     if current_search_string in plugin_kill.TRIGGER:
-                        plugin_kill.prepare_plugin_kill(self)
+                        plugin_kill.parse(self)
                         return
 
                 ## Plugin: Misc
                 cur_ini_value_for_plugin_misc = ini.read_single_ini_value('Plugins', 'plugin_misc') # get current value from ini
                 if cur_ini_value_for_plugin_misc == 'True':
                     if current_search_string.startswith(plugin_misc.TRIGGER):
-                        plugin_misc.prepare_general(current_search_string, self)
-                        return
-
-                ## Plugin: Screenshot
-                cur_ini_value_for_plugin_screenshot = ini.read_single_ini_value('Plugins', 'plugin_screenshot') # get current value from ini
-                if cur_ini_value_for_plugin_screenshot == 'True':
-                    if current_search_string in plugin_screenshot.TRIGGER:
-                        plugin_screenshot.prepare_general(current_search_string, self)
+                        plugin_misc.parse(current_search_string, self)
                         return
 
                 ## Plugin: Nautilus
                 cur_ini_value_for_plugin_nautilus = ini.read_single_ini_value('Plugins', 'plugin_nautilus') # get current value from ini
                 if cur_ini_value_for_plugin_nautilus == 'True':
                     if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
-                        plugin_nautilus.prepare_general(current_search_string, self)
+                        plugin_nautilus.parse(current_search_string, self)
                         return
 
                 ## Plugin: PasswordGen
                 cur_ini_value_for_plugin_passwordgen = ini.read_single_ini_value('Plugins', 'plugin_passwordgen') # get current value from ini
                 if cur_ini_value_for_plugin_passwordgen == 'True':
                     if current_search_string in plugin_passwordgen.TRIGGER:
-                        plugin_passwordgen.prepare_general(current_search_string, self)
+                        plugin_passwordgen.parse(current_search_string, self)
                         return
 
-                ## Plugin: Session
-                cur_ini_value_for_plugin_session = ini.read_single_ini_value('Plugins', 'plugin_session') # get current value from ini
-                if cur_ini_value_for_plugin_session == 'True':
-                    if current_search_string in plugin_session.TRIGGER:
-                        plugin_session.prepare_general(current_search_string, self)
+                ## Plugin: Screenshot
+                cur_ini_value_for_plugin_screenshot = ini.read_single_ini_value('Plugins', 'plugin_screenshot') # get current value from ini
+                if cur_ini_value_for_plugin_screenshot == 'True':
+                    if current_search_string in plugin_screenshot.TRIGGER:
+                        plugin_screenshot.parse(current_search_string, self)
                         return
-
-                ## Plugin: Shell
-                cur_ini_value_for_plugin_shell = ini.read_single_ini_value('Plugins', 'plugin_shell') # get current value from ini
-                if cur_ini_value_for_plugin_shell == 'True':
-                    if  current_search_string.startswith(plugin_shell.TRIGGER):
-                        plugin_shell.prepare_general(current_search_string, self)
-                        return
-
+item and label
                 ## Plugin: Internet-Search
                 cur_ini_value_for_plugin_internet_search = ini.read_single_ini_value('Plugins', 'plugin_search_internet') # get current value from ini
                 if cur_ini_value_for_plugin_internet_search == 'True':
                     if current_search_string[0:3] in plugin_search_internet.TRIGGER:
-                        plugin_search_internet.prepare_internet_search(self, current_search_string)
+                        plugin_search_internet.parse(self, current_search_string)
                         return
 
                 ## Plugin: Local Search
@@ -670,13 +656,28 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                         plugin_search_local.search_user_files(self, current_search_string)
                         return
 
+                ## Plugin: Session
+                cur_ini_value_for_plugin_session = ini.read_single_ini_value('Plugins', 'plugin_session') # get current value from ini
+                if cur_ini_value_for_plugin_session == 'True':
+                    if current_search_string in plugin_session.TRIGGER:
+                        plugin_session.parse(current_search_string, self)
+                        return
+
+                ## Plugin: Shell
+                cur_ini_value_for_plugin_shell = ini.read_single_ini_value('Plugins', 'plugin_shell') # get current value from ini
+                if cur_ini_value_for_plugin_shell == 'True':
+                    if  current_search_string.startswith(plugin_shell.TRIGGER):
+                        plugin_shell.parse(current_search_string, self)
+                        return
+
+
                 ## Most likely a wrong plugin command as nothing matches so far in this case
                 tools.debug_output(__name__, 'parse_user_input', 'User input didnt match any plugin trigger', 2)
 
                 ## reset plugin information
                 self.ui__txt_plugin_information.SetValue('')
 
-                # reset status icon as we got no hit
+                ## reset status icon as we got no hit
                 self.status_notification_reset()
 
                 ## reset result-count
@@ -1071,7 +1072,7 @@ def main():
     app = App(False)
     tools.check_arguments() # check launch parameter / arguments
     tools.check_platform() # Check if platform is supported at all, otherwise abort
-    tools.check_linux_requirements() # check if needed linux packages are available/installed
+    tools.check_general_requirements() # check if needed linux packages are available/installed
     ini.validate() # validate ini file
 
     frame = MyFrame(None, constants.APP_NAME) # Main UI window
