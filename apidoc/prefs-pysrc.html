@@ -27,7 +27,12 @@
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/yafp/apparat_launcher">apparat_launcher</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table width="100%" cellpadding="0" cellspacing="0">
@@ -53,7 +58,7 @@
 <h1 class="epydoc">Source Code for <a href="prefs-module.html">Module prefs</a></h1>
 <pre class="py-src">
 <a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment">#!/usr/bin/python</tt> </tt>
-<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-docstring">"""preference UI"""</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-docstring">"""Manages the preference UI"""</tt> </tt>
 <a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"> </tt>
 <a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-comment"># -----------------------------------------------------------------------------------------------</tt> </tt>
 <a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-comment"># IMPORTS</tt> </tt>
@@ -80,10 +85,12 @@
 </div><div id="PreferenceWindow.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="PreferenceWindow.__init__-expanded"><a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line">        <tt class="py-docstring">"""Initialize the preference window"""</tt> </tt>
 <a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line">        <tt class="py-comment">## define style of preference window</tt> </tt>
 <a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line">        <tt class="py-name">pref_window_style</tt> <tt class="py-op">=</tt> <tt class="py-op">(</tt><tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">SYSTEM_MENU</tt> <tt class="py-op">|</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">CAPTION</tt> <tt class="py-op">|</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">CLOSE_BOX</tt> <tt class="py-op">|</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">CLIP_CHILDREN</tt> <tt class="py-op">|</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">STAY_ON_TOP</tt> <tt class="py-op">|</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">FRAME_NO_TASKBAR</tt><tt class="py-op">)</tt> </tt>
-<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Frame</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method prefs.PreferenceWindow.__init__()=prefs.PreferenceWindow-class.html#__init__,Method prefs.UITabGeneral.__init__()=prefs.UITabGeneral-class.html#__init__,Method prefs.UITabPluginCommands.__init__()=prefs.UITabPluginCommands-class.html#__init__,Method prefs.UITabStatistics.__init__()=prefs.UITabStatistics-class.html#__init__"><a title="prefs.PreferenceWindow.__init__
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Frame</tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Method apparat_launcher.MyFrame.__init__()=apparat_launcher.MyFrame-class.html#__init__,Method prefs.PreferenceWindow.__init__()=prefs.PreferenceWindow-class.html#__init__,Method prefs.UITabGeneral.__init__()=prefs.UITabGeneral-class.html#__init__,Method prefs.UITabPluginCommands.__init__()=prefs.UITabPluginCommands-class.html#__init__,Method prefs.UITabStatistics.__init__()=prefs.UITabStatistics-class.html#__init__,Method tray_icon.TaskBarIcon.__init__()=tray_icon.TaskBarIcon-class.html#__init__"><a title="apparat_launcher.MyFrame.__init__
+prefs.PreferenceWindow.__init__
 prefs.UITabGeneral.__init__
 prefs.UITabPluginCommands.__init__
-prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink('link-4', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">,</tt> <tt class="py-name">idd</tt><tt class="py-op">,</tt> <tt id="link-5" class="py-name"><a title="constants" class="py-name" href="#" onclick="return doclink('link-5', 'constants', 'link-0');">constants</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Variable constants.APP_NAME=constants-module.html#APP_NAME"><a title="constants.APP_NAME" class="py-name" href="#" onclick="return doclink('link-6', 'APP_NAME', 'link-6');">APP_NAME</a></tt><tt class="py-op">+</tt><tt class="py-string">' - Preferences'</tt><tt class="py-op">,</tt> <tt class="py-name">size</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-number">500</tt><tt class="py-op">,</tt> <tt class="py-number">600</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">style</tt><tt class="py-op">=</tt><tt class="py-name">pref_window_style</tt><tt class="py-op">)</tt> </tt>
+prefs.UITabStatistics.__init__
+tray_icon.TaskBarIcon.__init__" class="py-name" href="#" onclick="return doclink('link-4', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">,</tt> <tt class="py-name">idd</tt><tt class="py-op">,</tt> <tt id="link-5" class="py-name"><a title="constants" class="py-name" href="#" onclick="return doclink('link-5', 'constants', 'link-0');">constants</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Variable constants.APP_NAME=constants-module.html#APP_NAME"><a title="constants.APP_NAME" class="py-name" href="#" onclick="return doclink('link-6', 'APP_NAME', 'link-6');">APP_NAME</a></tt><tt class="py-op">+</tt><tt class="py-string">' - Preferences'</tt><tt class="py-op">,</tt> <tt class="py-name">size</tt><tt class="py-op">=</tt><tt class="py-op">(</tt><tt class="py-number">500</tt><tt class="py-op">,</tt> <tt class="py-number">600</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">style</tt><tt class="py-op">=</tt><tt class="py-name">pref_window_style</tt><tt class="py-op">)</tt> </tt>
 <a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
 <a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">        <tt class="py-comment">## Create a panel and notebook (tabs holder)</tt> </tt>
 <a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">        <tt class="py-name">p</tt> <tt class="py-op">=</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">)</tt> </tt>
@@ -125,10 +132,12 @@ prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink
 <a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
 <a name="UITabGeneral.__init__"></a><div id="UITabGeneral.__init__-def"><a name="L69"></a><tt class="py-lineno"> 69</tt> <a class="py-toggle" href="#" id="UITabGeneral.__init__-toggle" onclick="return toggle('UITabGeneral.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="prefs.UITabGeneral-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">parent</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-comment"># pylint:disable=too-many-statements</tt> </tt>
 </div><a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">        <tt class="py-docstring">"""Inits the general tab"""</tt> </tt>
-<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="prefs.PreferenceWindow.__init__
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">.</tt><tt id="link-15" class="py-name"><a title="apparat_launcher.MyFrame.__init__
+prefs.PreferenceWindow.__init__
 prefs.UITabGeneral.__init__
 prefs.UITabPluginCommands.__init__
-prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink('link-15', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
+prefs.UITabStatistics.__init__
+tray_icon.TaskBarIcon.__init__" class="py-name" href="#" onclick="return doclink('link-15', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
 <a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"> </tt>
 <a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">        <tt class="py-comment">## show language</tt> </tt>
 <a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">        <tt class="py-comment">##</tt> </tt>
@@ -245,10 +254,12 @@ prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink
 <a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line"> </tt>
 <a name="UITabStatistics.__init__"></a><div id="UITabStatistics.__init__-def"><a name="L186"></a><tt class="py-lineno">186</tt> <a class="py-toggle" href="#" id="UITabStatistics.__init__-toggle" onclick="return toggle('UITabStatistics.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="prefs.UITabStatistics-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">parent</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
 </div><div id="UITabStatistics.__init__-collapsed" style="display:none;" pad="+++" indent="++++++++"></div><div id="UITabStatistics.__init__-expanded"><a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line">        <tt class="py-docstring">"""Inits the statistics tab"""</tt> </tt>
-<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">.</tt><tt id="link-49" class="py-name"><a title="prefs.PreferenceWindow.__init__
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">.</tt><tt id="link-49" class="py-name"><a title="apparat_launcher.MyFrame.__init__
+prefs.PreferenceWindow.__init__
 prefs.UITabGeneral.__init__
 prefs.UITabPluginCommands.__init__
-prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink('link-49', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
+prefs.UITabStatistics.__init__
+tray_icon.TaskBarIcon.__init__" class="py-name" href="#" onclick="return doclink('link-49', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
 <a name="L189"></a><tt class="py-lineno">189</tt>  <tt class="py-line"> </tt>
 <a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">        <tt class="py-comment">## show app start counter</tt> </tt>
 <a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">        <tt class="py-name">cur_ini_value_for_apparat_started</tt> <tt class="py-op">=</tt> <tt id="link-50" class="py-name"><a title="ini" class="py-name" href="#" onclick="return doclink('link-50', 'ini', 'link-1');">ini</a></tt><tt class="py-op">.</tt><tt id="link-51" class="py-name"><a title="ini.read_single_ini_value" class="py-name" href="#" onclick="return doclink('link-51', 'read_single_ini_value', 'link-17');">read_single_ini_value</a></tt><tt class="py-op">(</tt><tt class="py-string">'Statistics'</tt><tt class="py-op">,</tt> <tt class="py-string">'apparat_started'</tt><tt class="py-op">)</tt> <tt class="py-comment"># get current value from ini</tt> </tt>
@@ -279,10 +290,12 @@ prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink
 <a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line"> </tt>
 <a name="UITabPluginCommands.__init__"></a><div id="UITabPluginCommands.__init__-def"><a name="L217"></a><tt class="py-lineno">217</tt> <a class="py-toggle" href="#" id="UITabPluginCommands.__init__-toggle" onclick="return toggle('UITabPluginCommands.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="prefs.UITabPluginCommands-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">parent</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> <tt class="py-comment"># pylint:disable=too-many-statements, too-many-branches, too-many-locals</tt> </tt>
 </div><a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line">        <tt class="py-docstring">"""Inits the plugin-commands tab"""</tt> </tt>
-<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="prefs.PreferenceWindow.__init__
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">        <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Panel</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="apparat_launcher.MyFrame.__init__
+prefs.PreferenceWindow.__init__
 prefs.UITabGeneral.__init__
 prefs.UITabPluginCommands.__init__
-prefs.UITabStatistics.__init__" class="py-name" href="#" onclick="return doclink('link-56', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
+prefs.UITabStatistics.__init__
+tray_icon.TaskBarIcon.__init__" class="py-name" href="#" onclick="return doclink('link-56', '__init__', 'link-4');">__init__</a></tt><tt class="py-op">(</tt><tt class="py-name">self</tt><tt class="py-op">,</tt> <tt class="py-name">parent</tt><tt class="py-op">)</tt> </tt>
 <a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"> </tt>
 <a name="L221"></a><tt class="py-lineno">221</tt>  <tt class="py-line">        <tt class="py-comment"># Create a font using wx.FontInfo</tt> </tt>
 <a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">        <tt class="py-name">font</tt> <tt class="py-op">=</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">Font</tt><tt class="py-op">(</tt><tt class="py-number">10</tt><tt class="py-op">,</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">FONTFAMILY_DEFAULT</tt><tt class="py-op">,</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">FONTSTYLE_ITALIC</tt><tt class="py-op">,</tt> <tt class="py-name">wx</tt><tt class="py-op">.</tt><tt class="py-name">FONTWEIGHT_NORMAL</tt><tt class="py-op">,</tt> <tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
@@ -575,14 +588,19 @@ expandto(location.href);
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/yafp/apparat_launcher">apparat_launcher</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Tue May 23 13:20:09 2017
+    on Tue May 30 12:06:26 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

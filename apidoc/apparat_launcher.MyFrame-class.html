@@ -27,7 +27,12 @@
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/yafp/apparat_launcher">apparat_launcher</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table width="100%" cellpadding="0" cellspacing="0">
@@ -53,28 +58,18 @@
 </table>
 <!-- ==================== CLASS DESCRIPTION ==================== -->
 <h1 class="epydoc">Class MyFrame</h1><p class="nomargin-top"><span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame">source&nbsp;code</a></span></p>
-<pre class="base-tree">
-     object --+                    
-              |                    
-wx._core.Object --+                
-                  |                
-wx._core.EvtHandler --+            
-                      |            
-        wx._core.Window --+        
-                          |        
- wx._windows.TopLevelWindow --+    
-                              |    
-              wx._windows.Frame --+
-                                  |
-                                 <strong class="uidshort">MyFrame</strong>
-</pre>
-
-<dl><dt>Known Subclasses:</dt>
-<dd>
-      <ul class="subclass-list">
-<li><a href="apparat_launcher.TaskBarIcon-class.html">TaskBarIcon</a></li>  </ul>
-</dd></dl>
-
+<center>
+<center>  <map id="class_hierarchy_for_myframe" name="class_hierarchy_for_myframe">
+<area shape="rect" id="node1" href="apparat_launcher.MyFrame-class.html" title="MyFrame" alt="" coords="69,279,147,304"/>
+<area shape="rect" id="node2" href="javascript:void(0);" title="wx._core.EvtHandler" alt="" coords="36,60,180,85"/>
+<area shape="rect" id="node4" href="javascript:void(0);" title="wx._core.Window" alt="" coords="45,115,171,140"/>
+<area shape="rect" id="node3" href="javascript:void(0);" title="wx._core.Object" alt="" coords="49,5,167,31"/>
+<area shape="rect" id="node6" href="javascript:void(0);" title="wx._windows.TopLevelWindow" alt="" coords="5,169,211,195"/>
+<area shape="rect" id="node5" href="javascript:void(0);" title="wx._windows.Frame" alt="" coords="37,224,179,249"/>
+</map>
+  <img src="class_hierarchy_for_myframe.gif" alt='' usemap="#class_hierarchy_for_myframe" ismap="ismap" class="graph-without-title" />
+</center>
+</center>
 <hr />
 <p>Class for MainWindow</p>
 
@@ -107,6 +102,43 @@ wx._core.EvtHandler --+
       Initialize the MainWindow</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame.__init__">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="OnEnter"></a><span class="summary-sig-name">OnEnter</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">event</span>)</span><br />
+      If cursor is on the main-window itself</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame.OnEnter">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="OnLeave"></a><span class="summary-sig-name">OnLeave</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">event</span>)</span><br />
+      If focus is no longer on the main-window, but maybe on items of the 
+      main-window</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame.OnLeave">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -356,7 +388,7 @@ wx._core.EvtHandler --+
           <td><span class="summary-sig"><a name="get_enabled_plugin_trigger"></a><span class="summary-sig-name">get_enabled_plugin_trigger</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">current_search_string</span>,
         <span class="summary-sig-arg">autocomplete</span>=<span class="summary-sig-default">True</span>)</span><br />
-      Fill result list with all commands/triggers from the enabled plugins</td>
+      Fill result list with all triggers from the enabled plugins</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame.get_enabled_plugin_trigger">source&nbsp;code</a></span>
             
@@ -396,6 +428,26 @@ wx._core.EvtHandler --+
       Searches for executables</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame.search_executables">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="colorizeTxtCommand"></a><span class="summary-sig-name">colorizeTxtCommand</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">current_search_string</span>,
+        <span class="summary-sig-arg">primary_result</span>)</span><br />
+      Colorize or highlight the current search string (substring) in the 
+      currently selected search result/command</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="apparat_launcher-pysrc.html#MyFrame.colorizeTxtCommand">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1075,14 +1127,19 @@ wx._core.EvtHandler --+
       <th>&nbsp;&nbsp;&nbsp;<a
         href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
 
-      <th class="navbar" width="100%"></th>
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="https://github.com/yafp/apparat_launcher">apparat_launcher</a></th>
+          </tr></table></th>
   </tr>
 </table>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
     Generated by Epydoc 3.0.1
-    on Tue May 23 12:32:15 2017
+    on Tue May 30 12:06:26 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
