@@ -22,50 +22,51 @@ Icons
 
 # plugins
 ## core
-* help.png
+* help.png                  fa-info-circle
 * preferences.png           fa-cogs
 ## kill
-* kill.png                  fi-skull
+* kill.png                  fi-skull !!!
 ## misc
-* open.png
+* open.png                  fa-external-link-square
 ## nautilus
-* goto.png
+* goto.png                  fa-map-signs
 * network.png               fa-sitemap
-* recent.png
-* trash.png
+* recent.png                fa-files-o
+* trash.png                 fa-trash
 ## screenshot
-* screenshot_full.png
-* screenshot_selective.png
+* screenshot_full.png       fa-desktop
+* screenshot_selective.png  fa-window-restore
 ## search_internet
-* amazon.png
-* bandcamp.png
-* duckduckgo.png
-* facebook.png
-* flickr.png
-* github.png
-* google.png
-* lastfm.png
-* maps.png
-* reddit.png
-* soundcloud.png
-* stack-exchange.png
-* stack-overflow.png
-* tumblr.png
-* twitter.png
-* vimeo.png
-* wikipedia.png
-* youtube.png
+* amazon.png                fa-amazon
+* bandcamp.png              fa-bandcamp
+* duckduckgo.png            
+* facebook.png              fa-facebook-square
+* generic-bookmark.png      fa-bookmark
+* flickr.png                fa-flickr
+* github.png                fa-github-square
+* google.png                fa-google
+* lastfm.png                fa-lastfm-square
+* maps.png                  fa-map-o
+* reddit.png                fa-reddit-square
+* soundcloud.png            fa-soundcloud
+* stack-exchange.png        fa-stack-exchange
+* stack-overflow.png        fa-stack-overflow
+* tumblr.png                fa-tumblr-square
+* twitter.png               fa-twitter-square
+* vimeo.png                 fa-vimeo-square
+* wikipedia.png             fa-wikipedia-w
+* youtube.png               fa-youtube-square
 ## search_local
-* file.png
-* files.png
-* search.png                  fi-page-search
+* file.png                  fa-file-o
+* files.png                 fa-files-o
+* search.png                fi-page-search !!!
 ## session
-* hibernate.png
-* lock.png
-* logout.png
-* reboot.png
-* screensaver.png
-* shutdown.png
+* hibernate.png             fa-pause-circle
+* lock.png                  fa-lock
+* logout.png                fa-sign-out
+* reboot.png                fa-refresh
+* screensaver.png           fa-snowflake-o
+* shutdown.png              fa-power-off
 ## shell
-* shell.png                   fa-terminal
+* shell.png                 fa-terminal
 
