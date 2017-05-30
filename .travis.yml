@@ -4,7 +4,7 @@ python:
   - "2.7"
 
 ## system package requirements
-before_install:
+#before_install:
     #- sudo apt-get update -qq
     #- sudo apt-get install xdotool
 
