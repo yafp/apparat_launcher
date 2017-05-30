@@ -131,21 +131,23 @@ def execute_password_generation(main_window):
 
 # via comments in: http://stackoverflow.com/questions/7479442/high-quality-simple-random-password-generator
 def make_pseudo_word(syllables=5, add_number=False):
-    """Alternate random consonants & vowels creating decent memorable passwords"""
+    """Generate memorizable passwords"""
     rnd = random.SystemRandom()
     s = string.ascii_lowercase
     vowels = 'aeiou'
     consonants = ''.join([x for x in s if x not in vowels])
-    pwd = ''.join([rnd.choice(consonants)+rnd.choice(vowels)
-    for x in 'x'*syllables]).title()
-    if add_number:
+    pwd = ''
+    for x in 'x'*syllables:
+        pwd = pwd+''.join(rnd.choice(consonants)+rnd.choice(vowels))
+
+    if add_number is True:
         pwd += str(rnd.choice(range(10)))
     return pwd
 
 
 def get_random_word():
-    """Picks a random file from the wordlist file (words)"""
-    wordlist = open('words', 'r')
+    """Picks a random file from the wordlist file (plugin_passwordgen_dict)"""
+    wordlist = open('plugin_passwordgen_dict', 'r')
     line = next(wordlist)
     for num, wordlist in enumerate(wordlist):
         if random.randrange(num + 2):
@@ -158,7 +160,7 @@ def generate_xkcd_password():
     """Generated an xkcd like password - see: https://xkcd.com/936/"""
     single = ''
     full = ''
-    for x in range(0, 5):
+    for _ in range(0, 5):
         single = get_random_word()
         single = single.rstrip()
         full = full+' '+single

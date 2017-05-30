@@ -4,8 +4,18 @@ Changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
+# 20170530
+* Moved trayicon and traymenu code to new file tray_icon.py
+* UI: reduced main window height from 460px to 430px
+* UI: Text command has now a highlight for the user input string
+* Plugins: Optimized plugin-commands-search regarding when to autocomplete and when not
+* Plugin Internet Search: adding support for blog.fefe.de
+* tools.py: Added general support for syslog in debug_output                            (Issue: #68)
+
+
 # 20170523
 * Reworking requirements check (is now plugin specific)                                 (Issue: #67)
+* Adding first version of apidoc (using epydoc)
 
 
 # 20170519

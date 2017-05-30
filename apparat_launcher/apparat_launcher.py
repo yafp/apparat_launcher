@@ -1,11 +1,10 @@
 #!/usr/bin/python
-"""apparat_launcher - an application launcher for linux"""
+"""Core script of apparat_launcher"""
 
 # NAME:         apparat_launcher
 # DESCRIPTION:  an application launcher for linux
 # AUTHOR:       yafp
 # URL:          https://github.com/yafp/apparat_launcher
-
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -44,6 +43,7 @@ else: # python 2.x
     import plugin_session
     import plugin_shell
     import tools                        # contains helper-tools
+    import tray_icon                    # tray icon and menu
     import version                      # defines the appat version
 
 
@@ -80,7 +80,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.mainUI = wx.Frame.__init__(self, parent, title=title, size=(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT), style=main_ui_style) # Custom Frame
 
         self.SetSizeHintsSz(wx.Size(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT), wx.Size(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT)) # forcing min and max size to same values - prevents resizing option
-        self.tbicon = TaskBarIcon(self)
+        self.tbicon = tray_icon.TaskBarIcon(self)
         self.Bind(wx.EVT_CLOSE, self.on_close_application)
 
         ## define and set an application icon
@@ -95,23 +95,32 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_img_execute_black = wx.Bitmap('gfx/core/'+icon_size+'/execute_black.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_img_appicon = wx.Bitmap('gfx/core/'+icon_size+'/appIcon.png', wx.BITMAP_TYPE_PNG)
 
+        ## Button: status
+        self.ui__bt_status_img = wx.Bitmap('gfx/core/16/blank.png', wx.BITMAP_TYPE_PNG)
+        self.ui__bt_status = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_status_img, size=(self.ui__bt_status_img.GetWidth()+16, self.ui__bt_status_img.GetHeight()+16))
+        self.ui__bt_status.SetBitmapFocus(wx.NullBitmap)
+        self.ui__bt_status.SetBitmapHover(wx.NullBitmap)
+        self.ui__bt_status.SetLabel('Status')
+        self.ui__bt_status.Enable(False)
+
+        ## Text: Plugin Information
+        self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
+        self.ui__txt_plugin_information.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
+        self.ui__txt_plugin_information.SetMinSize(wx.Size(586, 18))
+        self.ui__txt_plugin_information.SetMaxSize(wx.Size(586, 18))
+        self.ui__txt_plugin_information.Enable(False)
+        self.ui__txt_plugin_information.SetLabel('Plugin Information')
+        self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
+
         ## Button: Preferences
         self.ui__bt_prefs_img = wx.Bitmap('gfx/core/16/prefs.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_prefs_img_focus = wx.Bitmap('gfx/core/16/prefs_black.png', wx.BITMAP_TYPE_PNG) # #c0392b
-        self.ui__bt_prefs = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_prefs_img, size=(self.ui__bt_prefs_img.GetWidth()+15, self.ui__bt_prefs_img.GetHeight()+15))
+        self.ui__bt_prefs = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_prefs_img, size=(self.ui__bt_prefs_img.GetWidth()+16, self.ui__bt_prefs_img.GetHeight()+16))
         self.ui__bt_prefs.SetBitmapFocus(self.ui__bt_prefs_img_focus)
         self.ui__bt_prefs.SetBitmapHover(self.ui__bt_prefs_img_focus)
         self.ui__bt_prefs.SetLabel('Preferences')
         self.ui__bt_prefs.SetToolTipString(u'Preferences')
         self.ui__bt_prefs.Enable(True)
-
-        ## Button: status
-        self.ui__bt_status_img = wx.Bitmap('gfx/core/16/blank.png', wx.BITMAP_TYPE_PNG)
-        self.ui__bt_status = wx.BitmapButton(self, id=wx.ID_ANY, style=wx.NO_BORDER, bitmap=self.ui__bt_status_img, size=(self.ui__bt_status_img.GetWidth()+15, self.ui__bt_status_img.GetHeight()+15))
-        self.ui__bt_status.SetBitmapFocus(wx.NullBitmap)
-        self.ui__bt_status.SetBitmapHover(wx.NullBitmap)
-        self.ui__bt_status.SetLabel('Status')
-        self.ui__bt_status.Enable(False)
 
         ## Text: result counter
         self.ui__txt_result_counter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE)
@@ -128,15 +137,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__cb_search = wx.ComboBox(self, wx.ID_ANY, u'', wx.DefaultPosition, wx.Size(550, 50), search_results, style=combo_box_style)
         self.ui__cb_search.SetFont(wx.Font(24, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__cb_search.SetLabel('Search')
-
-        ## Text: Plugin Information
-        self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
-        self.ui__txt_plugin_information.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
-        self.ui__txt_plugin_information.SetMinSize(wx.Size(600, 18))
-        self.ui__txt_plugin_information.SetMaxSize(wx.Size(600, 18))
-        self.ui__txt_plugin_information.Enable(False)
-        self.ui__txt_plugin_information.SetLabel('Plugin Information')
-        self.ui__txt_plugin_information.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## Button: command
         self.ui__bt_command_img = wx.Image('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
@@ -160,7 +160,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_parameter.Enable(False)
 
         ## Text: command
-        self.ui__txt_command = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
+        self.ui__txt_command = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH | wx.TE_MULTILINE ) # baustelle - rich & multiline wegen coloring
         self.ui__txt_command.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_command.SetMinSize(wx.Size(300, 18))
         self.ui__txt_command.SetMaxSize(wx.Size(300, 18))
@@ -186,32 +186,35 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         ## Layout/Sizer
         ##
         b_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
-        # line 1
+
+        ## line 1: status - plugin-info - preferences
         box0 = wx.BoxSizer(wx.HORIZONTAL)
         box0.Add(self.ui__bt_status, 0, wx.ALIGN_LEFT, 100) # status icon button
-        box0.AddStretchSpacer(1)
+        box0.Add(self.ui__txt_plugin_information, 0, wx.CENTRE) # plugin info
         box0.Add(self.ui__bt_prefs, 0, wx.ALIGN_RIGHT, 100) # preferences icon button
         b_sizer.Add(box0, 0, wx.EXPAND)
-        b_sizer.AddSpacer(5)
-        # horizontal sub-item 1
+
+        ## line 2: search
         box1 = wx.BoxSizer(wx.HORIZONTAL)
         box1.Add(self.ui__txt_result_counter, 0, wx.CENTRE) # result counter
         box1.Add(self.ui__cb_search, 0, wx.CENTRE) # combobox
         b_sizer.Add(box1, 0, wx.CENTRE)
-        b_sizer.AddSpacer(5)
-        b_sizer.Add(self.ui__txt_plugin_information, 0, wx.CENTRE) # plugin info
-        b_sizer.AddSpacer(5)
-        # horizontal sub-item 2
+        b_sizer.AddSpacer(2)
+
+        ## line 3: buttons
         box2 = wx.BoxSizer(wx.HORIZONTAL)
         box2.Add(self.ui__bt_command, 0, wx.CENTRE) # application button
         box2.Add(self.ui__bt_parameter, 0, wx.CENTRE) # parameter button
         b_sizer.Add(box2, 0, wx.CENTRE)
-        # horizontal sub-item 3
+
+        ## line 4: text command and parameter
         box3 = wx.BoxSizer(wx.HORIZONTAL)
         box3.Add(self.ui__txt_command, 0, wx.CENTRE) # command
         box3.Add(self.ui__txt_parameter, 0, wx.CENTRE) # parameter
         b_sizer.Add(box3, 0, wx.CENTRE)
         b_sizer.AddSpacer(10)
+
+        ## line 5: version
         b_sizer.Add(self.ui__txt_version_information, 0, wx.CENTRE) # version
         self.SetSizer(b_sizer)
 
@@ -243,12 +246,26 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         #self.Bind(wx.EVT_KEY_DOWN, self.on_key_down) ## Handle clicks outside of the expected area main ui or none
 
+        # Bind mouse in & out of main window events
+        wx.EVT_ENTER_WINDOW(self, self.OnEnter)
+        wx.EVT_LEAVE_WINDOW(self, self.OnLeave)
+
+
         ## Finish setting up the main UI & show it
         transparency = ini.read_single_ini_value('General', 'transparency') # get preference value
         self.SetTransparent(int(transparency))       # 0-255
         self.ui__cb_search.SetFocus()     # set focus to search
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
+
+
+    def OnEnter(self, event):
+        """If cursor is on the main-window itself"""
+        tools.debug_output(__name__, 'OnEnter', 'Mouse focus is on the main window', 1)
+
+    def OnLeave(self, event):
+        """If focus is no longer on the main-window, but maybe on items of the main-window"""
+        tools.debug_output(__name__, 'OnLeave', 'Mouse focus is not on the main window but maybe on elements of it', 1)
 
 
     def on_key_down(self, event):
@@ -322,6 +339,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             tools.debug_output(__name__, 'on_clicked', 'Something else got clicked', 2)
 
 
+    # method exists in apprat_launcher & tray_icon right now - Baustelle
     def open_preference_window(self):
         """Opens the preference window"""
         tools.debug_output(__name__, 'open_preference_window', 'starting', 1)
@@ -398,7 +416,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         tools.debug_output(__name__, 'on_combobox_popup_close', 'finished', 1)
 
 
-    def on_combobox_key_press(self, event):
+    def on_combobox_key_press(self, event): # pylint:disable=too-many-branches
         """If content of the searchfield of the combobox changes"""
         tools.debug_output(__name__, 'on_combobox_key_press', 'starting with event: '+str(event), 1)
         global is_combobox_open
@@ -418,7 +436,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         elif current_keycode == wx.WXK_BACK: # Key: Backspace
             tools.debug_output(__name__, 'on_combobox_key_press', 'Pressed Backspace', 1)
             current_search_string = self.ui__cb_search.GetValue().lower()
-            if current_search_string.startswith('!'):
+            if(current_search_string.startswith('!')) and (self.ui__txt_result_counter.GetValue() != '0'): # if user is correcting a wrong input - dont autocomplete again
                 self.get_enabled_plugin_trigger(current_search_string, autocomplete=False) # False to prevent re-autocomplete after user tried to revert the former autocomplete
             else: # most likely a normal search for executables
                 self.parse_user_input(current_search_string)
@@ -528,7 +546,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
 
     def get_enabled_plugin_trigger(self, current_search_string, autocomplete=True):
-        """Fill result list with all commands/triggers from the enabled plugins"""
+        """Fill result list with all triggers from the enabled plugins"""
         tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'starting', 1)
 
         ## collect all plugin commands from the enabled plugins and add them to the dropdown
@@ -567,17 +585,18 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         if(len(plugin_commands) == 0):
             self.status_notification_display_error('Invalid input')
 
-        elif(len(plugin_commands) == 1):
+        elif(len(plugin_commands) == 1): # there is only 1 matching plugin commands
             self.status_notification_got_distinct_result()
 
-            if(autocomplete is True):
+            if(autocomplete is True): # lets autocomplete
                 self.ui__cb_search.SetSelection(0)
                 self.parse_user_input(self.ui__cb_search.GetValue().lower()) # to parse the new command and adopt the UI to it
 
             self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
 
-        else: # > 1
-            self.status_notification_reset()
+        else: # > 1 plugin command
+            self.status_notification_reset() # reset status 
+            self.ui__txt_plugin_information.SetValue('') # reset plugin information
 
         tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'found '+str(len(plugin_commands))+' plugin trigger for current user input: '+current_search_string, 1)
 
@@ -624,7 +643,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                 ## Plugin: Nautilus
                 cur_ini_value_for_plugin_nautilus = ini.read_single_ini_value('Plugins', 'plugin_nautilus') # get current value from ini
                 if cur_ini_value_for_plugin_nautilus == 'True':
-                    if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'):
+                    if current_search_string in plugin_nautilus.TRIGGER or current_search_string.startswith('!goto'): # goto = special case as it accepts parameter
                         plugin_nautilus.parse(current_search_string, self)
                         return
 
@@ -641,7 +660,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
                     if current_search_string in plugin_screenshot.TRIGGER:
                         plugin_screenshot.parse(current_search_string, self)
                         return
-item and label
+
                 ## Plugin: Internet-Search
                 cur_ini_value_for_plugin_internet_search = ini.read_single_ini_value('Plugins', 'plugin_search_internet') # get current value from ini
                 if cur_ini_value_for_plugin_internet_search == 'True':
@@ -724,14 +743,14 @@ item and label
             ## update status button
             self.status_notification_display_error('No executables found')
 
-            ## update command button
-            self.ui__bt_command.Enable(True)
+            ## update command button & txt
+            self.ui__bt_command.Enable(False)
             self.ui__bt_command_img = wx.Image('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_command.SetBitmap(self.ui__bt_command_img.ConvertToBitmap())
             self.ui__bt_command.SetToolTipString("") # set tooltip
             self.ui__txt_command.SetValue('') # set command
 
-            ## update parameter button
+            ## update parameter button & txt
             self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_parameter.SetBitmap(self.ui__bt_parameter_img.ConvertToBitmap())
             self.ui__txt_parameter.SetValue('') # set parameter
@@ -744,6 +763,9 @@ item and label
             self.ui__bt_command.Enable(True) # Enable command button
             self.ui__bt_command.SetToolTipString(search_results[0]) # set tooltip
             self.ui__txt_command.SetValue(search_results[0]) # update command txt
+
+            ## colorize command
+            self.colorizeTxtCommand(current_search_string, search_results[0])
 
             ## parameter button & txt
             self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
@@ -765,7 +787,10 @@ item and label
             self.ui__bt_command.SetToolTipString(search_results[0])
             self.ui__txt_command.SetValue(search_results[0])             # assume first search result is the way to go
 
-            ## parameter button
+            ## colorize txt command
+            self.colorizeTxtCommand(current_search_string, search_results[0])
+
+            ## parameter button & txt
             self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
             self.ui__bt_parameter.SetBitmap(self.ui__bt_parameter_img.ConvertToBitmap())
             self.ui__bt_parameter.Enable(True) # Enable parameter button
@@ -774,6 +799,13 @@ item and label
 
             ## check if application is already running - should offer an option to change to this instance besides starting a new one
             tools.check_running_processes_by_name(search_results[0])
+
+
+    def colorizeTxtCommand(self, current_search_string, primary_result):
+        """Colorize or highlight the current search string (substring) in the currently selected search result/command"""
+        highlightStartPos = primary_result.find(current_search_string) # start position
+        highlightLength = highlightStartPos + len(current_search_string) # length
+        self.ui__txt_command.SetStyle(highlightStartPos, highlightLength, wx.TextAttr(wx.BLACK, wx.Colour(38,156,88)))
 
 
     def do_execute(self): # pylint:disable=too-many-branches, too-many-statements
@@ -785,6 +817,11 @@ item and label
             tools.debug_output(__name__, 'do_execute', 'Command is empty, nothing to do. Aborting', 3)
             return
 
+        # show plugin information if it is a plugin
+        if(self.ui__txt_plugin_information.GetValue() != ''):
+            tools.debug_output(__name__, 'do_execute', self.ui__txt_plugin_information.GetValue(), 1)
+
+        # show command and parameter
         tools.debug_output(__name__, 'do_execute', 'starting with command: "'+command+'" and parameter: "'+parameter+'"', 1)
 
         ## Plugin: Misc
@@ -897,12 +934,14 @@ item and label
         """Method to reset the User-Interface of the Apps main-window"""
         tools.debug_output(__name__, 'reset_ui', 'Starting UI reset', 1)
 
-        ## reset the status
-        self.status_notification_reset()
-
-        # baustelle
         global icon_size
         icon_size = ini.read_single_ini_value('General', 'icon_size') # update preference value
+
+        global is_resetted
+        is_resetted = True
+
+        ## reset the status
+        self.status_notification_reset()
 
         ## Some general bitmaps which might be needed for some button states
         self.ui__bt_img_search = wx.Bitmap('gfx/core/'+icon_size+'/search.png', wx.BITMAP_TYPE_PNG)
@@ -931,119 +970,7 @@ item and label
         self.ui__txt_plugin_information.SetValue('') # reset plugin name field
         self.ui__txt_result_counter.SetValue('0') # reset the result counter
 
-        global is_resetted
-        is_resetted = True
-
         tools.debug_output(__name__, 'reset_ui', 'Finished UI reset', 1)
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# TRAY-MENU
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def create_menu_item(menu, label, func):
-    """Generates single menu items for the tray icon popup menu"""
-    tools.debug_output(__name__, 'create_menu_item', 'Menuitem: '+label, 1)
-    item = wx.MenuItem(menu, -1, label)
-    menu.Bind(wx.EVT_MENU, func, id=item.GetId())
-    menu.AppendItem(item)
-    return item
-
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# APP_TRAY_ICON
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-class TaskBarIcon(wx.TaskBarIcon, MyFrame): # pylint:disable=too-many-ancestors
-
-    """Class for the Task Bar Icon"""
-
-    def __init__(self, frame):
-        """Method to initialize the tray icon"""
-        tools.debug_output(__name__, '__init__ (TaskBarIcon)', 'starting', 1)
-        self.frame = frame
-        super(TaskBarIcon, self).__init__()
-        self.set_tray_icon(constants.APP_TRAY_ICON)
-        self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_app_tray_icon_left_click)
-        tools.debug_output(__name__, '__init__ (TaskBarIcon)', 'Task icon is ready now', 1)
-
-
-    def CreatePopupMenu(self): # pylint:disable=invalid-name
-        """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
-        tools.debug_output(__name__, 'CreatePopupMenu', 'starting', 1)
-        menu = wx.Menu()
-        create_menu_item(menu, 'Show', self.on_tray_popup_left_show)
-        menu.AppendSeparator()
-        create_menu_item(menu, 'Preferences', self.on_tray_popup_click_preferences)
-        create_menu_item(menu, 'About', self.on_tray_popup_click_about)
-        create_menu_item(menu, 'GitHub', self.on_tray_popup_click_github)
-        menu.AppendSeparator()
-        create_menu_item(menu, 'Exit', self.on_tray_popup_click_exit)
-        return menu
-
-
-    def set_tray_icon(self, path):
-        """Method to set the icon for the TrayIconMenu item"""
-        icon = wx.IconFromBitmap(wx.Bitmap(path))
-        self.SetIcon(icon, constants.APP_TRAY_TOOLTIP)
-
-
-    def on_app_tray_icon_left_click(self, event):
-        """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
-        tools.debug_output(__name__, 'on_app_tray_icon_left_click', 'starting with event: '+str(event), 1)
-        self.execute_tray_icon_left_click()
-
-
-    def execute_tray_icon_left_click(self):
-        """Method to handle left click on the tray icon - toggles visibility of the Main Window"""
-        if self.frame.IsIconized(): # if main window is minimized
-            tools.debug_output(__name__, 'execute_tray_icon_left_click', 'MainWindow is now visible', 1)
-            self.frame.Raise()
-        else: # if main window is shown
-            tools.debug_output(__name__, 'execute_tray_icon_left_click', 'MainWindow is now hidden/minimized', 1)
-            self.frame.Iconize(True)
-
-
-    def on_tray_popup_left_show(self, event):
-        """Method to handle click in the 'Show mainwindow' tray menu item"""
-        tools.debug_output(__name__, 'on_tray_popup_left_show', 'starting with event: '+str(event), 1)
-        if self.frame.IsIconized(): # if main window is minimized
-            tools.debug_output(__name__, 'on_tray_popup_left_show', 'MainWindow is now visible', 1)
-            self.frame.Raise()
-        else: # if main window is shown
-            tools.debug_output(__name__, 'on_tray_popup_left_show', 'MainWindow is already shown, nothing to do here', 1)
-
-
-    def on_tray_popup_click_preferences(self, event):
-        """Method to handle click in the 'Preferences' tray menu item"""
-        tools.debug_output(__name__, 'on_tray_popup_click_preferences', 'starting with event: '+str(event), 1)
-        self.open_preference_window()
-
-
-    def on_tray_popup_click_about(self, event):
-        """Method to handle click in the 'About' tray menu item"""
-        tools.debug_output(__name__, 'on_tray_popup_click_about', 'starting with event: '+str(event), 1)
-        aboutInfo = wx.AboutDialogInfo()
-        aboutInfo.SetName(constants.APP_NAME)
-        aboutInfo.SetVersion(version.APP_VERSION)
-        aboutInfo.SetDescription((constants.APP_DESCRIPTION))
-        aboutInfo.SetLicense(open("../LICENSE").read())
-        aboutInfo.SetWebSite(constants.APP_URL)
-        aboutInfo.SetIcon(wx.Icon('gfx/core/'+icon_size+'/appIcon.png', wx.BITMAP_TYPE_PNG, 128, 128))
-        aboutInfo.AddDeveloper("yafp")
-        #aboutInfo.AddDeveloper('Name of other contributors') # additional devs/contributors
-        wx.AboutBox(aboutInfo)
-
-
-    def on_tray_popup_click_exit(self, event):
-        """Method to handle click in the 'Exit' tray menu item"""
-        tools.debug_output(__name__, 'on_tray_popup_click_exit', 'starting with event: '+str(event), 1)
-        wx.CallAfter(self.frame.Close)
-
-
-    def on_tray_popup_click_github(self, event):
-        """Method to handle click on the 'GitHub' tray menu item"""
-        tools.debug_output(__name__, 'on_tray_popup_click_github', 'starting with event: '+str(event), 1)
-        tools.debug_output(__name__, 'on_tray_popup_click_github', 'Opening: '+constants.APP_URL, 1)
-        webbrowser.open(constants.APP_URL) # Go to github
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

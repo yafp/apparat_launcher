@@ -1,9 +1,11 @@
 <!---
 [![Code Health](https://landscape.io/github/yafp/apparat_launcher/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat_launcher/master)
 -->
+[![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](LICENSE)
 [![Issues](https://img.shields.io/github/issues/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues)
 [![Issues Closed](https://img.shields.io/github/issues-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues?q=is%3Aclosed)
 [![Build Status](https://travis-ci.org/yafp/apparat_launcher.svg?branch=master)](https://travis-ci.org/yafp/apparat_launcher)
+
 
 # <a name="top"> apparat_launcher
 
@@ -36,7 +38,6 @@ This program is currently in a very early development state.
     * [Shell](#shell)
   * [Contributing](#contributing)
   * [Credits](#credits)
-  * [License](#license)
 
 
 ## <a name="description">Description
@@ -179,6 +180,7 @@ Optional plugin which offers easy access to some popular web-services
 | ```!bc```        |                | _searchstring_ | BandCamp               |
 | ```!dd```        |                | _searchstring_ | DuckDuckGo             |
 | ```!fb```        |                | _searchstring_ | FaceBook               |
+| ```!fe```        |                | _searchstring_ | Fefe                   |
 | ```!fl```        |                | _searchstring_ | Flickr                 |
 | ```!gh```        |                | _searchstring_ | GitHub                 |
 | ```!gi```        |                | _searchstring_ | Google Images          |
@@ -230,17 +232,15 @@ Optional plugin which allows running terminal commands from within the launcher
 ## <a name="contributing">Contributing
 Please check the [Contribution guidelines for this project](.github/CONTRIBUTING.md)
 
+![bomb](https://raw.githubusercontent.com/yafp/apparat_launcher/master/docs/bomb.gif)
+
 
 ## <a name="credits">Credits
-* Icons
+* Icons [Details](docs/icons.md)
   * [Font Awesome](http://fontawesome.io)
   * [Foundation Icons](http://zurb.com/playground/foundation-icon-fonts-3)
   * [FA2PNG](http://fa2png.io/)
-  * Color:
-    * Gray: #7f8c8d
-    * Red: #b92c0c
-    * Green: #269c58
-
-
-## <a name="license">License
-[![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](LICENSE)
+* Colors
+  * Gray (#7f8c8d or 127, 140, 141)
+  * Red (#b92c0c or 185, 44, 12)
+  * Green (#269c58 or 38, 156, 88)

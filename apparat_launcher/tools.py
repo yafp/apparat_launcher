@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""several useful tools like debug_output and similar"""
+"""Contains several useful helper function like debug_output and similar"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
@@ -10,6 +10,7 @@ import datetime # for timestamp in debug output
 import os
 import subprocess # for checking if cmd_exists
 import sys
+import syslog
 import psutil # check for running processes
 
 
@@ -56,8 +57,6 @@ def check_arguments():
         show_help()
         sys.exit()
 
-    debug_output(__name__, 'check_arguments', 'Arguments supplied by user are fine', 1)
-
 
 def debug_output(source_script, source_function, message, message_type=1):
     """
@@ -80,15 +79,26 @@ def debug_output(source_script, source_function, message, message_type=1):
         if(message_type == 2): # Warning
             text_color = constants.C_YELLOW
             message_type_class = ' W '
+            syslog_type = syslog.LOG_WARNING
         elif(message_type == 3): # Error
             text_color = constants.C_RED
             message_type_class = ' E '
+            syslog_type = syslog.LOG_ERR
         else: # Default = Info
             text_color = constants.C_GREEN
             message_type_class = ' I '
+            syslog_type = syslog.LOG_INFO
 
         ## format: time + message_type_class + source file + source method + message
         print(timestamp+" "+text_color+message_type_class+constants.C_DEFAULT+" "+source_file+" "+source_function+" "+text_color+message+constants.C_DEFAULT)
+
+        ## syslog tests - Issue #68
+        #
+        # LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG
+        enableSyslog = False
+        if(enableSyslog is True):
+            syslog.syslog(syslog_type, message)
+
 
 
 def generate_timestamp():
@@ -135,12 +145,12 @@ def which(program):
 
 
 def show_version():
-    """Show version"""
+    """Show version number in terminal"""
     print(version.APP_VERSION)
 
 
 def show_help():
-    """Show help"""
+    """Show help output in terminal"""
     print("\nParameter:")
     print("\t-d / --debug\tShow debug output")
     print("\t-h / --help\tShow help")
@@ -148,7 +158,7 @@ def show_help():
 
 
 def check_platform():
-    """Method to check the platform (supported or not)"""
+    """Method to check if the platform/operating system is supported or not"""
     ## Linux
     if sys.platform == "linux" or sys.platform == "linux2":
         debug_output(__name__, 'check_platform', 'Detected linux', 1)
@@ -188,8 +198,7 @@ def check_running_processes_by_name(application_name):
                 #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" --name "+str(p.name())+" windowactivate"], shell=True)
                 #subprocess.Popen(["xdotool search --pid "+str(p.pid)+" windowactivate"], shell=True)
                 #subprocess.Popen(["xdotool search --name "+str(p.name())+" windowactivate"], shell=True)
-        except Exception:
-            debug_output(__name__, 'check_running_processes_by_name', 'Problems detected, error catched', 3)
-            return
+        except psutil.NoSuchProcess:
+            debug_output(__name__, 'check_running_processes_by_name', 'Problems detected while finding running processes, error catched', 3)
 
     debug_output(__name__, 'check_running_processes_by_name', 'No matching process found for application_name: "'+application_name+'"', 1)

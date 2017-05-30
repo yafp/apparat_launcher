@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""plugin: search-internet (optional)"""
+"""plugin: search-local (optional)"""
 
 ## general
 import difflib # for intelligent list sort

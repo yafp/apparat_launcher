@@ -21,7 +21,9 @@ https://travis-ci.org/profile/yafp
 ## Epydoc
 Generating API documentation via epydoc
 
-Usage:  ```epydoc apparat_launcher/*.py -v -o apidoc/```
+### HTML Output
+Usage:  ```epydoc apparat_launcher/*.py --name=apparat_launcher --url=https://github.com/yafp/apparat_launcher --graph=classtree -v -o apidoc/```
+
 
 
 # Building
@@ -33,7 +35,7 @@ Usage: ```pip install pipreqs```
 ### Creation of requirements.txt
 Usage:  ```pipreqs /path/to/project```
 
-## Setup.py
+## setup.py
 * http://python-packaging.readthedocs.io/en/latest/minimal.html
 
 ### Help

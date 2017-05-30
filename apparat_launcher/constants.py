@@ -21,7 +21,7 @@ APP_INI_FOLDER = os.environ['HOME']+'/.config/apparat_launcher/'
 APP_INI_PATH = APP_INI_FOLDER+'apparat_launcher.ini'
 
 WINDOW_WIDTH = 650 # Default: 650
-WINDOW_HEIGHT = 460 # Default: 460
+WINDOW_HEIGHT = 430 # Default: 460
 
 
 # -----------------------------------------------------------------------------------------------

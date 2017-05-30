@@ -1,4 +1,4 @@
 #!/usr/bin/python
 """Defines the application version string"""
 
-APP_VERSION = '20170523.01'
+APP_VERSION = '20170530.01'

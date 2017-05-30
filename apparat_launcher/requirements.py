@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""checks the plugin requirements before enabling a plugin"""
+"""Handles plugin requirement checks while enabling a plugin"""
 
 # -----------------------------------------------------------------------------------------------
 # IMPORTS
