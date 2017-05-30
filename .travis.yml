@@ -5,8 +5,8 @@ python:
 
 ## system package requirements
 before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install xdotool
+    #- sudo apt-get update -qq
+    #- sudo apt-get install xdotool
 
 ## command to install dependencies
 install: 
