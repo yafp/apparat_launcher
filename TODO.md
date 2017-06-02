@@ -5,4 +5,5 @@ todo
 
 * Create python typical install procedure
 * when searching executables & app is running - focus it/bring it to foreground/active window
+* Check wxpython events and - vetoing events via Veto()
 

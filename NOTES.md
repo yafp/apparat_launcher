@@ -55,7 +55,5 @@ Usage: ```python setup.py install```
 
 
 
-
-
-
-
+# Sources
+* wxpython Tutorials: http://zetcode.com/wxpython/

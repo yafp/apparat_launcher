@@ -69,8 +69,8 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         """Initialize the MainWindow"""
         ## Update Statistics (ini) - Apparat launched
         tools.debug_output(__name__, '__init__', 'Updating statistics (apparat_started)', 1)
-        cur_app_start_count = ini.read_single_ini_value('Statistics', 'apparat_started')          # get current value from ini
-        ini.write_single_ini_value('Statistics', 'apparat_started', int(cur_app_start_count)+1)    # update ini +1
+        cur_app_start_count = ini.read_single_ini_value('Statistics', 'apparat_started') # get current value from ini
+        ini.write_single_ini_value('Statistics', 'apparat_started', int(cur_app_start_count)+1) # update ini +1
 
         global icon_size
         icon_size = ini.read_single_ini_value('General', 'icon_size') # update preference value
@@ -142,7 +142,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_command_img = wx.Image('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_command = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_command.SetBitmapHover(wx.NullBitmap)
-        #self.ui__bt_command.SetBitmapDisabled(self.ui__bt_img_blank)
         self.ui__bt_command.SetBitmapDisabled(self.ui__bt_img_appicon)
         self.ui__bt_command.SetBitmap(self.ui__bt_command_img.ConvertToBitmap())
         self.ui__bt_command.SetLabel('Applications')
@@ -153,14 +152,13 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_parameter = wx.BitmapButton(self, wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.Size(300, 300), wx.BU_AUTODRAW)
         self.ui__bt_parameter.SetBitmapFocus(self.ui__bt_img_execute_black) # image when in focus
         self.ui__bt_parameter.SetBitmapHover(wx.NullBitmap) # image on hover
-        #self.ui__bt_parameter.SetBitmapDisabled(self.ui__bt_img_blank)
         self.ui__bt_parameter.SetBitmapDisabled(self.ui__bt_img_search)
         self.ui__bt_parameter.SetBitmap(self.ui__bt_parameter_img.ConvertToBitmap())
         self.ui__bt_parameter.SetLabel('Options')
         self.ui__bt_parameter.Enable(False)
 
         ## Text: command
-        self.ui__txt_command = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH | wx.TE_MULTILINE ) # baustelle - rich & multiline wegen coloring
+        self.ui__txt_command = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH | wx.TE_MULTILINE) # rich & multiline for coloring
         self.ui__txt_command.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_command.SetMinSize(wx.Size(300, 18))
         self.ui__txt_command.SetMaxSize(wx.Size(300, 18))
@@ -184,7 +182,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
 
         ## Layout/Sizer
-        ##
         b_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
 
         ## line 1: status - plugin-info - preferences
@@ -246,10 +243,9 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         #self.Bind(wx.EVT_KEY_DOWN, self.on_key_down) ## Handle clicks outside of the expected area main ui or none
 
-        # Bind mouse in & out of main window events
-        wx.EVT_ENTER_WINDOW(self, self.OnEnter)
-        wx.EVT_LEAVE_WINDOW(self, self.OnLeave)
-
+        ## Bind mouse in & out of main window events
+        #wx.EVT_ENTER_WINDOW(self, self.OnEnter)
+        #wx.EVT_LEAVE_WINDOW(self, self.OnLeave)
 
         ## Finish setting up the main UI & show it
         transparency = ini.read_single_ini_value('General', 'transparency') # get preference value
@@ -257,15 +253,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__cb_search.SetFocus()     # set focus to search
         self.Center()                   # open window centered
         self.Show(True)                 # show main UI
-
-
-    def OnEnter(self, event):
-        """If cursor is on the main-window itself"""
-        tools.debug_output(__name__, 'OnEnter', 'Mouse focus is on the main window', 1)
-
-    def OnLeave(self, event):
-        """If focus is no longer on the main-window, but maybe on items of the main-window"""
-        tools.debug_output(__name__, 'OnLeave', 'Mouse focus is not on the main window but maybe on elements of it', 1)
 
 
     def on_key_down(self, event):
@@ -333,7 +320,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         tools.debug_output(__name__, 'on_clicked', 'starting with event: '+str(event), 1)
         btn = event.GetEventObject().GetLabel()
         if btn == 'Preferences':
-            tools.debug_output(__name__, 'on_clicked', 'Preferences', 1)
             self.open_preference_window()
         else:
             tools.debug_output(__name__, 'on_clicked', 'Something else got clicked', 2)
@@ -595,7 +581,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__cb_search.SetInsertionPointEnd() # set cursor to end of string
 
         else: # > 1 plugin command
-            self.status_notification_reset() # reset status 
+            self.status_notification_reset() # reset status
             self.ui__txt_plugin_information.SetValue('') # reset plugin information
 
         tools.debug_output(__name__, 'get_enabled_plugin_trigger', 'found '+str(len(plugin_commands))+' plugin trigger for current user input: '+current_search_string, 1)
@@ -765,7 +751,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__txt_command.SetValue(search_results[0]) # update command txt
 
             ## colorize command
-            self.colorizeTxtCommand(current_search_string, search_results[0])
+            self.colorize_txt_command(current_search_string, search_results[0])
 
             ## parameter button & txt
             self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
@@ -788,7 +774,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             self.ui__txt_command.SetValue(search_results[0])             # assume first search result is the way to go
 
             ## colorize txt command
-            self.colorizeTxtCommand(current_search_string, search_results[0])
+            self.colorize_txt_command(current_search_string, search_results[0])
 
             ## parameter button & txt
             self.ui__bt_parameter_img = wx.Image('gfx/core/'+icon_size+'/execute.png', wx.BITMAP_TYPE_PNG)
@@ -801,11 +787,11 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
             tools.check_running_processes_by_name(search_results[0])
 
 
-    def colorizeTxtCommand(self, current_search_string, primary_result):
+    def colorize_txt_command(self, current_search_string, primary_result):
         """Colorize or highlight the current search string (substring) in the currently selected search result/command"""
         highlightStartPos = primary_result.find(current_search_string) # start position
         highlightLength = highlightStartPos + len(current_search_string) # length
-        self.ui__txt_command.SetStyle(highlightStartPos, highlightLength, wx.TextAttr(wx.BLACK, wx.Colour(38,156,88)))
+        self.ui__txt_command.SetStyle(highlightStartPos, highlightLength, wx.TextAttr(wx.BLACK, wx.Colour(38, 156, 88)))
 
 
     def do_execute(self): # pylint:disable=too-many-branches, too-many-statements
@@ -940,9 +926,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         global is_resetted
         is_resetted = True
 
-        ## reset the status
-        self.status_notification_reset()
-
         ## Some general bitmaps which might be needed for some button states
         self.ui__bt_img_search = wx.Bitmap('gfx/core/'+icon_size+'/search.png', wx.BITMAP_TYPE_PNG)
         self.ui__bt_img_blank = wx.Bitmap('gfx/core/'+icon_size+'/blank.png', wx.BITMAP_TYPE_PNG)
@@ -969,6 +952,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         ## reset other stuff
         self.ui__txt_plugin_information.SetValue('') # reset plugin name field
         self.ui__txt_result_counter.SetValue('0') # reset the result counter
+        self.status_notification_reset() # reset the status
 
         tools.debug_output(__name__, 'reset_ui', 'Finished UI reset', 1)
 
@@ -980,10 +964,16 @@ class App(wx.App):
 
     """Class App"""
 
+    def __init__(self, *args, **kwargs):
+        """Init"""
+        self.app_name = constants.APP_NAME+'.lock'
+        self.apparat_instance = wx.SingleInstanceChecker(self.app_name)
+        wx.App.__init__(self, *args)
+        #print kwargs
+
+
     def OnInit(self): # pylint:disable=invalid-name
         """While starting the app (checks for already running instances)"""
-        self.name = constants.APP_NAME+'.lock'
-        self.apparat_instance = wx.SingleInstanceChecker(self.name)
         if self.apparat_instance.IsAnotherRunning(): # allow only 1 instance of apparat
             tools.debug_output(__name__, 'OnInit', 'An instance is already running. Aborting', 3)
             wx.MessageBox(constants.APP_NAME+' is already running. Aborting startup', 'Error', wx.OK | wx.ICON_WARNING)

@@ -4,6 +4,10 @@ Changelog
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
 
+# 20170602
+* Plugin Password Generator: changed default button to OK (memorable or not)
+
+
 # 20170530
 * Moved trayicon and traymenu code to new file tray_icon.py
 * UI: reduced main window height from 460px to 430px

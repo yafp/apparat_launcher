@@ -74,7 +74,7 @@ def execute_password_generation(main_window):
                 password_length = 8
                 wx.MessageBox('Forced minimal password length 8', 'Password Generator', wx.OK | wx.ICON_WARNING)
 
-            dial = wx.MessageDialog(None, 'Should the password be memorable?', 'Password Generator', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+            dial = wx.MessageDialog(None, 'Should the password be memorable?', 'Password Generator', wx.YES_NO | wx.YES_DEFAULT | wx.ICON_QUESTION)
             pw_type = dial.ShowModal()
 
             single_generated_password = ''
