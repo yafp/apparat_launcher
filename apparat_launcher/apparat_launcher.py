@@ -76,7 +76,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         icon_size = ini.read_single_ini_value('General', 'icon_size') # update preference value
 
         ## Define the style of the frame
-        main_ui_style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED | wx.FRAME_NO_TASKBAR)
+        main_ui_style = (wx.MINIMIZE_BOX | wx.CLIP_CHILDREN | wx.NO_BORDER | wx.FRAME_SHAPED | wx.FRAME_NO_TASKBAR) # wx.NO_BORDER = no window decoration & not moveable
         self.mainUI = wx.Frame.__init__(self, parent, title=title, size=(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT), style=main_ui_style) # Custom Frame
 
         self.SetSizeHintsSz(wx.Size(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT), wx.Size(constants.WINDOW_WIDTH, constants.WINDOW_HEIGHT)) # forcing min and max size to same values - prevents resizing option
@@ -86,6 +86,9 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         ## define and set an application icon
         app_icon = wx.Icon('gfx/core/16/appIcon.png', wx.BITMAP_TYPE_PNG)
         self.SetIcon(app_icon)
+
+        # color of main window
+        self.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## Define UI Elements
         ##
@@ -104,7 +107,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__bt_status.Enable(False)
 
         ## Text: Plugin Information
-        self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH2)
+        self.ui__txt_plugin_information = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH | wx.TE_MULTILINE)
         self.ui__txt_plugin_information.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_plugin_information.SetMinSize(wx.Size(586, 18))
         self.ui__txt_plugin_information.SetMaxSize(wx.Size(586, 18))
@@ -167,7 +170,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__txt_command.SetBackgroundColour(wx.Colour(237, 237, 237))
 
         ## Text: parameter
-        self.ui__txt_parameter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE)
+        self.ui__txt_parameter = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_CENTRE | wx.BORDER_NONE | wx.TE_RICH | wx.TE_MULTILINE )
         self.ui__txt_parameter.SetFont(wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_parameter.SetMinSize(wx.Size(300, 18))
         self.ui__txt_parameter.SetMaxSize(wx.Size(300, 18))
@@ -179,7 +182,6 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
         self.ui__txt_version_information = wx.StaticText(self, wx.ID_ANY, ' v'+version.APP_VERSION, wx.DefaultPosition, wx.DefaultSize, 0)
         self.ui__txt_version_information.SetFont(wx.Font(8, wx.MODERN, wx.NORMAL, wx.NORMAL, False, u'Sans'))
         self.ui__txt_version_information.SetForegroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_GRAYTEXT))
-
 
         ## Layout/Sizer
         b_sizer = wx.BoxSizer(wx.VERTICAL) # define layout container
@@ -371,7 +373,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         if(self.ui__txt_plugin_information.GetValue() == 'Plugin: Local Search'): # Local search is always using xdg open - special case
             self.ui__txt_parameter.SetValue(self.ui__cb_search.GetValue().lower()) # write command to command text field
-        else: # default-case
+        else: ## default-case
             self.ui__txt_command.SetValue(self.ui__cb_search.GetValue().lower()) # write command to command text field
             self.get_icon(self.ui__cb_search.GetValue().lower()) # get icon for selected executable
 
@@ -558,6 +560,7 @@ class MyFrame(wx.Frame): # pylint:disable=too-many-instance-attributes,too-many-
 
         ## update ui
         self.ui__cb_search.SetItems(plugin_commands) # update combobox
+
         self.ui__txt_result_counter.SetValue(str(len(plugin_commands))) # update result count
 
         ## update command

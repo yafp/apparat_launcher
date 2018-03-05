@@ -3,6 +3,10 @@ Changelog
 
 ![logo](https://raw.githubusercontent.com/yafp/apparat_launcher/master/apparat_launcher/gfx/core/128/appIcon.png)
 
+# 201706xx
+* Tray Menu: Shows application version string now
+* UI: All UI items should use the same grey color now
+
 
 # 20170602
 * Plugin Password Generator: changed default button to OK (memorable or not)

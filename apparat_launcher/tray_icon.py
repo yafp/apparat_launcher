@@ -20,12 +20,14 @@ import prefs
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # TRAY-MENU
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def create_menu_item(menu, label, func):
+def create_menu_item(menu, label, func, enable=True):
     """Generates single menu items for the tray icon popup menu"""
     tools.debug_output(__name__, 'create_menu_item', 'Menuitem: '+label, 1)
     item = wx.MenuItem(menu, -1, label)
     menu.Bind(wx.EVT_MENU, func, id=item.GetId())
     menu.AppendItem(item)
+    if enable is False:
+        item.Enable(False)
     return item
 
 
@@ -50,6 +52,8 @@ class TaskBarIcon(wx.TaskBarIcon): # pylint:disable=too-many-ancestors
         """Method to generate a Popupmenu for the TrayIcon (do NOT rename)"""
         tools.debug_output(__name__, 'CreatePopupMenu', 'starting', 1)
         menu = wx.Menu()
+        create_menu_item(menu, "Version "+version.APP_VERSION, self.on_tray_popup_click_github, enable=False) # disabled menu
+        menu.AppendSeparator()
         create_menu_item(menu, 'Show', self.on_tray_popup_left_show)
         menu.AppendSeparator()
         create_menu_item(menu, 'Preferences', self.on_tray_popup_click_preferences)

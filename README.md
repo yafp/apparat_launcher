@@ -2,13 +2,11 @@
 [![Code Health](https://landscape.io/github/yafp/apparat_launcher/master/landscape.svg?style=flat)](https://landscape.io/github/yafp/apparat_launcher/master)
 -->
 [![License](https://img.shields.io/badge/license-GPL3-brightgreen.svg)](LICENSE)
-<!-- GitHub -->
 [![Issues](https://img.shields.io/github/issues/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues)
 [![Issues Closed](https://img.shields.io/github/issues-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/issues?q=is%3Aclosed)
 [![PullRequests](https://img.shields.io/github/issues-pr/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/pulls)
 [![PullRequests-Closed](https://img.shields.io/github/issues-pr-closed/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/pulls?q=is%3Apr+is%3Aclosed)
 [![Contributors](https://img.shields.io/github/contributors/yafp/apparat_launcher.svg)](https://github.com/yafp/apparat_launcher/graphs/contributors)
-<!-- Travis -->
 [![Build Status](https://travis-ci.org/yafp/apparat_launcher.svg?branch=master)](https://travis-ci.org/yafp/apparat_launcher)
 
 
@@ -263,4 +261,3 @@ Please check [CONTRIBUTING.md](.github/CONTRIBUTING.md) for contribution guideli
   * [Font Awesome](http://fontawesome.io)
   * [Foundation Icons](http://zurb.com/playground/foundation-icon-fonts-3)
   * [FA2PNG](http://fa2png.io/)
-
