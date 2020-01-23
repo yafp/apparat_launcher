@@ -91,10 +91,8 @@ The following packages are needed:
 
 
 ## <a name="usage">Usage
-Simply run:
-```
-./apparat_launcher.py
-```
+* Navigate to apparat_launcher
+* Execute: ```./apparat_launcher.py```
 
 
 #### <a name="parameter">Parameter
