@@ -51,7 +51,7 @@ URLS = (
     'https://github.com/search?q=',
     'https://www.google.de/search?&tbm=isch&q=',
     'https://keep.google.com/',
-    'http://www.maps.google.de/maps/place/',
+    'https://www.google.com/maps/place/',
     'https://www.google.de/search?&tbm=nws&q=',
     'https://www.google.com/search?q=',
     'https://www.last.fm/search?q=',
